@@ -172,9 +172,9 @@ export default function AddScreen({
                 <div className="field-label">Terminé le</div>
                 <input
                   className="field-input"
+                  type="date"
                   value={form.date}
                   onChange={(e) => onFormChange('date', e.target.value)}
-                  placeholder="ex. 12 mars 2026"
                 />
               </div>
               <div style={{ flex: 1 }}>

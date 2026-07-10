@@ -70,3 +70,15 @@ export function sortList<T extends { name: string; pieces: number; difficulty?: 
 export function ratingLabel(puzzle: Pick<Puzzle, 'rating'>): string {
   return puzzle.rating > 0 ? `${puzzle.rating}/5` : 'Pas encore noté';
 }
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
+const dateFormatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+export function formatDate(value: string): string {
+  if (!value) return '—';
+  if (ISO_DATE.test(value)) {
+    const [y, m, d] = value.split('-').map(Number);
+    return dateFormatter.format(new Date(y, m - 1, d));
+  }
+  return value;
+}

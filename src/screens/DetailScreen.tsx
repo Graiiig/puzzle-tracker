@@ -1,6 +1,6 @@
 import ImageSlot from '../components/ImageSlot';
 import type { DetailSource, Puzzle, WishlistItem } from '../types';
-import { dotString, priorityStyle, ratingLabel, starString, statusStyle } from '../utils/format';
+import { dotString, formatDate, priorityStyle, ratingLabel, starString, statusStyle } from '../utils/format';
 
 interface DetailScreenProps {
   source: DetailSource;
@@ -141,7 +141,7 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
                   Terminé le
                 </div>
                 <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 15, color: 'oklch(28% 0.02 340)', marginTop: 2 }}>
-                  {puzzle.date}
+                  {formatDate(puzzle.date)}
                 </div>
               </div>
               <div style={{ flex: 1, background: 'white', borderRadius: 16, padding: '12px 14px' }}>
