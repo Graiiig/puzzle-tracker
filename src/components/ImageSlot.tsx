@@ -1,5 +1,6 @@
-import { useRef, type CSSProperties } from 'react';
+import { useRef, useState, type CSSProperties } from 'react';
 import { useImageStore } from '../hooks/ImageStore';
+import { compressImageFile } from '../utils/image';
 
 interface ImageSlotProps {
   id: string;
@@ -9,26 +10,28 @@ interface ImageSlotProps {
   style?: CSSProperties;
 }
 
-function readFileAsDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
 export default function ImageSlot({ id, shape = 'rounded', radius = 14, placeholder, style }: ImageSlotProps) {
   const { getImage, setImage } = useImageStore();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
   const src = getImage(id);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file) return;
-    const dataUrl = await readFileAsDataUrl(file);
-    setImage(id, dataUrl);
     e.target.value = '';
+    if (!file) return;
+    setBusy(true);
+    try {
+      const dataUrl = await compressImageFile(file);
+      const saved = await setImage(id, dataUrl);
+      if (!saved) {
+        window.alert("Impossible d'enregistrer cette photo : le stockage de l'appareil est plein.");
+      }
+    } catch {
+      window.alert("Impossible de lire cette photo.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -51,7 +54,9 @@ export default function ImageSlot({ id, shape = 'rounded', radius = 14, placehol
         ...style,
       }}
     >
-      {src ? (
+      {busy ? (
+        <span style={{ fontSize: 11, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>Chargement...</span>
+      ) : src ? (
         <img src={src} alt={placeholder} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (
         <>
