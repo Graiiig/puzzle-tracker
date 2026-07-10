@@ -1,0 +1,149 @@
+:root {
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: oklch(96% 0.015 70);
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+a {
+  color: oklch(60% 0.22 350);
+}
+
+a:hover {
+  color: oklch(52% 0.22 350);
+}
+
+input,
+textarea {
+  font-family: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: oklch(65% 0.02 340);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: radial-gradient(circle at 30% 20%, oklch(94% 0.06 350), oklch(96% 0.02 70) 60%);
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  background: oklch(97% 0.015 70);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media (min-width: 560px) {
+  #root {
+    padding: 40px 16px;
+  }
+
+  .app-shell {
+    min-height: 892px;
+    max-height: 892px;
+    border-radius: 28px;
+    box-shadow: 0 30px 80px oklch(20% 0.02 340 / 0.25);
+  }
+}
+
+.chip {
+  font-weight: 800;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 100px;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px oklch(50% 0.05 340 / 0.1);
+  border: none;
+}
+
+.card-row {
+  display: flex;
+  gap: 12px;
+  background: white;
+  border-radius: 20px;
+  padding: 10px;
+  box-shadow: 0 2px 10px oklch(50% 0.05 340 / 0.08);
+  cursor: pointer;
+  border: 2px solid transparent;
+  text-align: left;
+  width: 100%;
+  transition: border-color 0.15s ease;
+}
+
+.card-row:hover {
+  border-color: oklch(85% 0.1 350);
+}
+
+.card-row.wishlist-row:hover {
+  border-color: oklch(85% 0.08 310);
+}
+
+.fab {
+  position: absolute;
+  right: 22px;
+  bottom: 86px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  color: white;
+  font-size: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: oklch(55% 0.03 340);
+  margin-bottom: 6px;
+}
+
+.field-input {
+  width: 100%;
+  border: none;
+  background: white;
+  border-radius: 14px;
+  padding: 13px 14px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: oklch(28% 0.02 340);
+  outline: none;
+}
