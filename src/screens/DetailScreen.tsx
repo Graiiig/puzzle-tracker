@@ -8,11 +8,19 @@ interface DetailScreenProps {
   wishlistItem?: WishlistItem;
   onClose: () => void;
   onMarkAsBought: () => void;
+  onDelete: () => void;
 }
 
-export default function DetailScreen({ source, puzzle, wishlistItem, onClose, onMarkAsBought }: DetailScreenProps) {
+export default function DetailScreen({ source, puzzle, wishlistItem, onClose, onMarkAsBought, onDelete }: DetailScreenProps) {
   const item = source === 'collection' ? puzzle : wishlistItem;
   if (!item) return null;
+
+  function handleDelete() {
+    const label = source === 'collection' ? 'ce puzzle' : 'cette envie';
+    if (window.confirm(`Supprimer ${label} "${item!.name}" ? Cette action est définitive.`)) {
+      onDelete();
+    }
+  }
 
   const imgId = source === 'collection' ? 'puzzle-img-' + item.id : 'wish-img-' + item.id;
 
@@ -185,6 +193,22 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
             </div>
           </>
         )}
+
+        <div
+          onClick={handleDelete}
+          style={{
+            marginTop: 14,
+            textAlign: 'center',
+            padding: 12,
+            borderRadius: 16,
+            cursor: 'pointer',
+            fontSize: 13,
+            fontWeight: 800,
+            color: 'oklch(55% 0.2 25)',
+          }}
+        >
+          🗑️ Supprimer {source === 'collection' ? 'ce puzzle' : 'cette envie'}
+        </div>
       </div>
     </div>
   );

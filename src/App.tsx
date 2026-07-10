@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ImageStoreProvider } from './hooks/ImageStore';
+import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { EMPTY_FORM, RAW_COLLECTION, RAW_WISHLIST, SORT_MODES } from './data';
 import type { DetailSource, Genre, Priority, PuzzleForm, Screen, SortMode, Status } from './types';
@@ -20,6 +20,7 @@ function AppShell() {
   const [addMode, setAddMode] = useState<'collection' | 'wishlist'>('collection');
   const [form, setForm] = useState<PuzzleForm>({ ...EMPTY_FORM });
   const [nextId, setNextId] = useState(100);
+  const { clearImage } = useImageStore();
 
   function updateForm<K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -113,6 +114,26 @@ function AppShell() {
     setScreen('detail');
   }
 
+  function deleteSelected() {
+    if (detailSource === 'collection') {
+      const id = selectedPuzzle?.id;
+      if (!id) return;
+      setCollection((c) => c.filter((p) => p.id !== id));
+      clearImage('puzzle-img-' + id);
+      clearImage('gallery-' + id + '-before');
+      clearImage('gallery-' + id + '-during');
+      clearImage('gallery-' + id + '-after');
+      setScreen('home');
+    } else {
+      const id = selectedWishlistItem?.id;
+      if (!id) return;
+      setWishlist((w) => w.filter((x) => x.id !== id));
+      clearImage('wish-img-' + id);
+      setScreen('wishlist');
+    }
+    setSelectedId(null);
+  }
+
   const selectedPuzzle = collection.find((p) => p.id === selectedId) ?? collection[0];
   const selectedWishlistItem = wishlist.find((w) => w.id === selectedId) ?? wishlist[0];
 
@@ -149,6 +170,7 @@ function AppShell() {
           wishlistItem={detailSource === 'wishlist' ? selectedWishlistItem : undefined}
           onClose={() => setScreen(detailSource === 'wishlist' ? 'wishlist' : 'home')}
           onMarkAsBought={markAsBought}
+          onDelete={deleteSelected}
         />
       )}
 
