@@ -69,6 +69,10 @@ function AppShell() {
         status: p.status,
         priority: 'Moyenne',
         notes: p.notes,
+        rating: p.rating,
+        difficulty: p.difficulty,
+        date: p.date === '—' ? '' : p.date,
+        time: p.time === '—' ? '' : p.time,
       });
       setFormTargetId(p.id);
     } else {
@@ -83,6 +87,10 @@ function AppShell() {
         status: 'À faire',
         priority: w.priority,
         notes: w.notes,
+        rating: 0,
+        difficulty: 3,
+        date: '',
+        time: '',
       });
       setFormTargetId(w.id);
     }
@@ -113,6 +121,10 @@ function AppShell() {
                   genre: form.genre,
                   pieces: Number(form.pieces) || 0,
                   status: form.status,
+                  rating: form.rating,
+                  difficulty: form.difficulty,
+                  date: form.date.trim() || '—',
+                  time: form.time.trim() || '—',
                   notes: form.notes.trim() || '—',
                 }
               : p,
@@ -150,10 +162,10 @@ function AppShell() {
         genre: form.genre,
         pieces: Number(form.pieces) || 0,
         status: form.status,
-        rating: 0,
-        difficulty: 3,
-        date: form.status === 'Terminé' ? "aujourd'hui" : '—',
-        time: form.status === 'À faire' ? '—' : 'en cours',
+        rating: form.rating,
+        difficulty: form.difficulty,
+        date: form.date.trim() || (form.status === 'Terminé' ? "aujourd'hui" : '—'),
+        time: form.time.trim() || (form.status === 'À faire' ? '—' : 'en cours'),
         notes: form.notes.trim() || '—',
       };
       setCollection((c) => [...c, item]);

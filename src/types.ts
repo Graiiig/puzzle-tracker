@@ -35,6 +35,10 @@ export interface PuzzleForm {
   status: Status;
   priority: Priority;
   notes: string;
+  rating: number;
+  difficulty: number;
+  date: string;
+  time: string;
 }
 
 export type Screen = 'home' | 'wishlist' | 'detail' | 'add';

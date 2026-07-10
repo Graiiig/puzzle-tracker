@@ -1,5 +1,6 @@
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
+import RatingPicker from '../components/RatingPicker';
 import { ADD_GENRES, PRIORITIES, STATUSES } from '../data';
 import type { PuzzleForm } from '../types';
 import { chipStyle } from '../utils/format';
@@ -126,16 +127,67 @@ export default function AddScreen({
         </div>
 
         {mode === 'collection' && (
-          <div style={{ marginTop: 16 }}>
-            <div className="field-label" style={{ marginBottom: 8 }}>
-              Statut
+          <>
+            <div style={{ marginTop: 16 }}>
+              <div className="field-label" style={{ marginBottom: 8 }}>
+                Statut
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                {STATUSES.map((st) => (
+                  <Chip key={st} label={st} onClick={() => onFormChange('status', st)} style={chipStyle(st === form.status, 350)} />
+                ))}
+              </div>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              {STATUSES.map((st) => (
-                <Chip key={st} label={st} onClick={() => onFormChange('status', st)} style={chipStyle(st === form.status, 350)} />
-              ))}
+
+            <div style={{ display: 'flex', gap: 24, marginTop: 16 }}>
+              <div>
+                <div className="field-label" style={{ marginBottom: 8 }}>
+                  Évaluation
+                </div>
+                <RatingPicker
+                  value={form.rating}
+                  onChange={(v) => onFormChange('rating', v)}
+                  filledChar="★"
+                  emptyChar="☆"
+                  color="#FFB300"
+                />
+              </div>
+              <div>
+                <div className="field-label" style={{ marginBottom: 8 }}>
+                  Difficulté
+                </div>
+                <RatingPicker
+                  value={form.difficulty}
+                  onChange={(v) => onFormChange('difficulty', v)}
+                  filledChar="●"
+                  emptyChar="○"
+                  color="oklch(45% 0.16 300)"
+                  allowClear={false}
+                />
+              </div>
             </div>
-          </div>
+
+            <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+              <div style={{ flex: 1 }}>
+                <div className="field-label">Terminé le</div>
+                <input
+                  className="field-input"
+                  value={form.date}
+                  onChange={(e) => onFormChange('date', e.target.value)}
+                  placeholder="ex. 12 mars 2026"
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div className="field-label">Temps passé</div>
+                <input
+                  className="field-input"
+                  value={form.time}
+                  onChange={(e) => onFormChange('time', e.target.value)}
+                  placeholder="ex. 18h30"
+                />
+              </div>
+            </div>
+          </>
         )}
 
         {mode === 'wishlist' && (
@@ -152,7 +204,7 @@ export default function AddScreen({
         )}
 
         <div style={{ marginTop: 16 }}>
-          <div className="field-label">Note</div>
+          <div className="field-label">{mode === 'collection' ? 'Note perso' : "Pourquoi je le veux"}</div>
           <textarea
             className="field-input"
             value={form.notes}

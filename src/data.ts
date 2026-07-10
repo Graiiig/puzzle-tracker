@@ -138,4 +138,8 @@ export const EMPTY_FORM: PuzzleForm = {
   status: 'À faire',
   priority: 'Moyenne',
   notes: '',
+  rating: 0,
+  difficulty: 3,
+  date: '',
+  time: '',
 };
