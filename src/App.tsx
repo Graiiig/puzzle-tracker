@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { EMPTY_FORM, RAW_COLLECTION, RAW_WISHLIST, SORT_MODES } from './data';
-import type { DetailSource, Genre, Priority, PuzzleForm, Screen, SortMode, Status } from './types';
+import type { DetailSource, Genre, PuzzleForm, Screen, SortMode, Status } from './types';
 import HomeScreen from './screens/HomeScreen';
 import WishlistScreen from './screens/WishlistScreen';
 import DetailScreen from './screens/DetailScreen';
@@ -20,6 +20,8 @@ function AppShell() {
   const [addMode, setAddMode] = useState<'collection' | 'wishlist'>('collection');
   const [form, setForm] = useState<PuzzleForm>({ ...EMPTY_FORM });
   const [nextId, setNextId] = useState(100);
+  const [formTargetId, setFormTargetId] = useState('new-100');
+  const [isEditingForm, setIsEditingForm] = useState(false);
   const { clearImage } = useImageStore();
 
   function updateForm<K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) {
@@ -41,22 +43,105 @@ function AppShell() {
   function openAddFromHome() {
     setAddMode('collection');
     setForm({ ...EMPTY_FORM });
+    setIsEditingForm(false);
+    setFormTargetId('new-' + nextId);
     setScreen('add');
   }
 
   function openAddFromWishlist() {
     setAddMode('wishlist');
     setForm({ ...EMPTY_FORM });
+    setIsEditingForm(false);
+    setFormTargetId('new-' + nextId);
+    setScreen('add');
+  }
+
+  function openEditSelected() {
+    if (detailSource === 'collection') {
+      const p = selectedPuzzle;
+      if (!p) return;
+      setAddMode('collection');
+      setForm({
+        name: p.name,
+        brand: p.brand,
+        genre: p.genre,
+        pieces: String(p.pieces),
+        status: p.status,
+        priority: 'Moyenne',
+        notes: p.notes,
+      });
+      setFormTargetId(p.id);
+    } else {
+      const w = selectedWishlistItem;
+      if (!w) return;
+      setAddMode('wishlist');
+      setForm({
+        name: w.name,
+        brand: w.brand,
+        genre: w.genre,
+        pieces: String(w.pieces),
+        status: 'À faire',
+        priority: w.priority,
+        notes: w.notes,
+      });
+      setFormTargetId(w.id);
+    }
+    setIsEditingForm(true);
     setScreen('add');
   }
 
   function cancelAdd() {
+    if (isEditingForm) {
+      setScreen('detail');
+      return;
+    }
     setScreen(addMode === 'wishlist' ? 'wishlist' : 'home');
   }
 
   function submitForm() {
     if (!form.name.trim()) return;
-    const id = 'new-' + nextId;
+
+    if (isEditingForm) {
+      if (addMode === 'collection') {
+        setCollection((c) =>
+          c.map((p) =>
+            p.id === formTargetId
+              ? {
+                  ...p,
+                  name: form.name.trim(),
+                  brand: form.brand.trim() || 'Éditeur inconnu',
+                  genre: form.genre,
+                  pieces: Number(form.pieces) || 0,
+                  status: form.status,
+                  notes: form.notes.trim() || '—',
+                }
+              : p,
+          ),
+        );
+      } else {
+        setWishlist((w) =>
+          w.map((x) =>
+            x.id === formTargetId
+              ? {
+                  ...x,
+                  name: form.name.trim(),
+                  brand: form.brand.trim() || 'Éditeur inconnu',
+                  genre: form.genre,
+                  pieces: Number(form.pieces) || 0,
+                  priority: form.priority,
+                  notes: form.notes.trim() || '—',
+                }
+              : x,
+          ),
+        );
+      }
+      setSelectedId(formTargetId);
+      setScreen('detail');
+      setForm({ ...EMPTY_FORM });
+      return;
+    }
+
+    const id = formTargetId;
     if (addMode === 'collection') {
       const item = {
         id,
@@ -64,7 +149,7 @@ function AppShell() {
         brand: form.brand.trim() || 'Éditeur inconnu',
         genre: form.genre,
         pieces: Number(form.pieces) || 0,
-        status: form.status as Status,
+        status: form.status,
         rating: 0,
         difficulty: 3,
         date: form.status === 'Terminé' ? "aujourd'hui" : '—',
@@ -80,7 +165,7 @@ function AppShell() {
         brand: form.brand.trim() || 'Éditeur inconnu',
         genre: form.genre,
         pieces: Number(form.pieces) || 0,
-        priority: form.priority as Priority,
+        priority: form.priority,
         notes: form.notes.trim() || '—',
       };
       setWishlist((w) => [...w, item]);
@@ -171,12 +256,15 @@ function AppShell() {
           onClose={() => setScreen(detailSource === 'wishlist' ? 'wishlist' : 'home')}
           onMarkAsBought={markAsBought}
           onDelete={deleteSelected}
+          onEdit={openEditSelected}
         />
       )}
 
       {screen === 'add' && (
         <AddScreen
           mode={addMode}
+          isEditing={isEditingForm}
+          photoSlotId={(addMode === 'wishlist' ? 'wish-img-' : 'puzzle-img-') + formTargetId}
           onSetModeCollection={() => setAddMode('collection')}
           onSetModeWishlist={() => setAddMode('wishlist')}
           form={form}

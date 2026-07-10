@@ -6,6 +6,8 @@ import { chipStyle } from '../utils/format';
 
 interface AddScreenProps {
   mode: 'collection' | 'wishlist';
+  isEditing: boolean;
+  photoSlotId: string;
   onSetModeCollection: () => void;
   onSetModeWishlist: () => void;
   form: PuzzleForm;
@@ -16,6 +18,8 @@ interface AddScreenProps {
 
 export default function AddScreen({
   mode,
+  isEditing,
+  photoSlotId,
   onSetModeCollection,
   onSetModeWishlist,
   form,
@@ -54,27 +58,29 @@ export default function AddScreen({
           ←
         </div>
         <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 19, color: 'oklch(28% 0.02 340)' }}>
-          Ajouter un puzzle
+          {isEditing ? 'Modifier' : 'Ajouter un puzzle'}
         </div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 22px 28px' }}>
-        <div style={{ display: 'flex', background: 'oklch(93% 0.02 340)', borderRadius: 100, padding: 4, marginBottom: 18 }}>
-          <button
-            onClick={onSetModeCollection}
-            style={{ flex: 1, textAlign: 'center', padding: 9, borderRadius: 100, fontWeight: 800, fontSize: 13, border: 'none', ...modeCollectionStyle }}
-          >
-            🧩 Collection
-          </button>
-          <button
-            onClick={onSetModeWishlist}
-            style={{ flex: 1, textAlign: 'center', padding: 9, borderRadius: 100, fontWeight: 800, fontSize: 13, border: 'none', ...modeWishlistStyle }}
-          >
-            💗 Wishlist
-          </button>
-        </div>
+        {!isEditing && (
+          <div style={{ display: 'flex', background: 'oklch(93% 0.02 340)', borderRadius: 100, padding: 4, marginBottom: 18 }}>
+            <button
+              onClick={onSetModeCollection}
+              style={{ flex: 1, textAlign: 'center', padding: 9, borderRadius: 100, fontWeight: 800, fontSize: 13, border: 'none', ...modeCollectionStyle }}
+            >
+              🧩 Collection
+            </button>
+            <button
+              onClick={onSetModeWishlist}
+              style={{ flex: 1, textAlign: 'center', padding: 9, borderRadius: 100, fontWeight: 800, fontSize: 13, border: 'none', ...modeWishlistStyle }}
+            >
+              💗 Wishlist
+            </button>
+          </div>
+        )}
 
-        <ImageSlot id="add-photo-slot" shape="rounded" radius={16} style={{ width: '100%', height: 140 }} placeholder="ajouter une photo" />
+        <ImageSlot id={photoSlotId} shape="rounded" radius={16} style={{ width: '100%', height: 140 }} placeholder="ajouter une photo" />
 
         <div style={{ marginTop: 16 }}>
           <div className="field-label">Nom du puzzle</div>
@@ -173,7 +179,7 @@ export default function AddScreen({
             boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
           }}
         >
-          Enregistrer
+          {isEditing ? 'Enregistrer les modifications' : 'Enregistrer'}
         </div>
       </div>
     </div>

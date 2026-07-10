@@ -9,9 +9,10 @@ interface DetailScreenProps {
   onClose: () => void;
   onMarkAsBought: () => void;
   onDelete: () => void;
+  onEdit: () => void;
 }
 
-export default function DetailScreen({ source, puzzle, wishlistItem, onClose, onMarkAsBought, onDelete }: DetailScreenProps) {
+export default function DetailScreen({ source, puzzle, wishlistItem, onClose, onMarkAsBought, onDelete, onEdit }: DetailScreenProps) {
   const item = source === 'collection' ? puzzle : wishlistItem;
   if (!item) return null;
 
@@ -48,6 +49,27 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
           }}
         >
           ←
+        </div>
+        <div
+          onClick={onEdit}
+          style={{
+            position: 'absolute',
+            top: 14,
+            right: 14,
+            width: 38,
+            height: 38,
+            borderRadius: '50%',
+            background: 'oklch(20% 0.02 340 / 0.5)',
+            backdropFilter: 'blur(4px)',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 16,
+            cursor: 'pointer',
+          }}
+        >
+          ✏️
         </div>
       </div>
 
