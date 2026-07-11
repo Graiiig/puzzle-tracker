@@ -2,7 +2,7 @@ import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
 import type { Genre, Puzzle, SortMode } from '../types';
-import { chipStyle, sortList, starString, statusStyle } from '../utils/format';
+import { chipStyle, formatMinutesAsHours, parseTimeToMinutes, sortList, starString, statusStyle } from '../utils/format';
 import { collectGenres } from '../utils/genres';
 
 interface HomeScreenProps {
@@ -32,8 +32,10 @@ export default function HomeScreen({
   onGoWishlist,
   onSignOut,
 }: HomeScreenProps) {
-  const totalPieces = collection.reduce((sum, p) => sum + p.pieces, 0);
-  const doneCount = collection.filter((p) => p.status === 'Terminé').length;
+  const completed = collection.filter((p) => p.status === 'Terminé');
+  const doneCount = completed.length;
+  const donePieces = completed.reduce((sum, p) => sum + p.pieces, 0);
+  const doneMinutes = completed.reduce((sum, p) => sum + parseTimeToMinutes(p.time), 0);
 
   const q = search.trim().toLowerCase();
   const filtered = collection.filter((p) => {
@@ -80,21 +82,21 @@ export default function HomeScreen({
         <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
           <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 12px' }}>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
-              {collection.length}
+              {doneCount}
             </div>
-            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>puzzles</div>
+            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>terminés</div>
           </div>
           <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 12px' }}>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
-              {totalPieces.toLocaleString('fr-FR')}
+              {donePieces.toLocaleString('fr-FR')}
             </div>
             <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>pièces</div>
           </div>
           <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 12px' }}>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
-              {doneCount}
+              {formatMinutesAsHours(doneMinutes)}
             </div>
-            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>terminés</div>
+            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>heures</div>
           </div>
         </div>
 

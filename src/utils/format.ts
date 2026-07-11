@@ -82,3 +82,17 @@ export function formatDate(value: string): string {
   }
   return value;
 }
+
+export function parseTimeToMinutes(value: string): number {
+  const match = value.match(/(\d+)\s*h\s*(\d{1,2})?/i);
+  if (!match) return 0;
+  const hours = Number(match[1]) || 0;
+  const minutes = Number(match[2]) || 0;
+  return hours * 60 + minutes;
+}
+
+export function formatMinutesAsHours(totalMinutes: number): string {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${hours}h${String(minutes).padStart(2, '0')}`;
+}
