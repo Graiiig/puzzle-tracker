@@ -16,6 +16,7 @@ interface HomeScreenProps {
   onOpenPuzzle: (id: string) => void;
   onAdd: () => void;
   onGoWishlist: () => void;
+  onSignOut: () => void;
 }
 
 export default function HomeScreen({
@@ -29,6 +30,7 @@ export default function HomeScreen({
   onOpenPuzzle,
   onAdd,
   onGoWishlist,
+  onSignOut,
 }: HomeScreenProps) {
   const totalPieces = collection.reduce((sum, p) => sum + p.pieces, 0);
   const doneCount = collection.filter((p) => p.status === 'Terminé').length;
@@ -57,6 +59,8 @@ export default function HomeScreen({
             Mes Puzzles ✨
           </div>
           <div
+            onClick={onSignOut}
+            title="Se déconnecter"
             style={{
               width: 38,
               height: 38,
@@ -66,6 +70,7 @@ export default function HomeScreen({
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: 18,
+              cursor: 'pointer',
             }}
           >
             🧩

@@ -1,4 +1,4 @@
-import { useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useImageStore } from '../hooks/ImageStore';
 import { compressImageFile } from '../utils/image';
 
@@ -11,10 +11,14 @@ interface ImageSlotProps {
 }
 
 export default function ImageSlot({ id, shape = 'rounded', radius = 14, placeholder, style }: ImageSlotProps) {
-  const { getImage, setImage } = useImageStore();
+  const { getImage, setImage, ensureLoaded } = useImageStore();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const src = getImage(id);
+
+  useEffect(() => {
+    ensureLoaded(id);
+  }, [id, ensureLoaded]);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];

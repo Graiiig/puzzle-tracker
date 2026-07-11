@@ -1,17 +1,22 @@
 import { useState } from 'react';
+import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
-import { useLocalStorage } from './hooks/useLocalStorage';
-import { EMPTY_FORM, RAW_COLLECTION, RAW_WISHLIST, SORT_MODES } from './data';
-import type { DetailSource, Genre, PuzzleForm, Screen, SortMode, Status } from './types';
+import { usePuzzles } from './hooks/usePuzzles';
+import { useWishlist } from './hooks/useWishlist';
+import { EMPTY_FORM, SORT_MODES } from './data';
+import { hasLegacyData } from './lib/legacyImport';
+import type { DetailSource, Genre, Puzzle, PuzzleForm, Screen, SortMode, WishlistItem } from './types';
 import HomeScreen from './screens/HomeScreen';
 import WishlistScreen from './screens/WishlistScreen';
 import DetailScreen from './screens/DetailScreen';
 import AddScreen from './screens/AddScreen';
+import LoginScreen from './screens/LoginScreen';
+import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 
-function AppShell() {
+function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
   const [screen, setScreen] = useState<Screen>('home');
-  const [collection, setCollection] = useLocalStorage('puzzle-tracker:collection', RAW_COLLECTION);
-  const [wishlist, setWishlist] = useLocalStorage('puzzle-tracker:wishlist', RAW_WISHLIST);
+  const { collection, addPuzzle, updatePuzzle, deletePuzzle } = usePuzzles(userId);
+  const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem } = useWishlist(userId);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detailSource, setDetailSource] = useState<DetailSource>('collection');
   const [search, setSearch] = useState('');
@@ -19,9 +24,9 @@ function AppShell() {
   const [sortMode, setSortMode] = useState<SortMode>('Récent');
   const [addMode, setAddMode] = useState<'collection' | 'wishlist'>('collection');
   const [form, setForm] = useState<PuzzleForm>({ ...EMPTY_FORM });
-  const [nextId, setNextId] = useState(100);
-  const [formTargetId, setFormTargetId] = useState('new-100');
+  const [formTargetId, setFormTargetId] = useState<string>(() => crypto.randomUUID());
   const [isEditingForm, setIsEditingForm] = useState(false);
+  const [showImportPrompt, setShowImportPrompt] = useState(hasLegacyData);
   const { clearImage } = useImageStore();
 
   function updateForm<K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) {
@@ -44,7 +49,7 @@ function AppShell() {
     setAddMode('collection');
     setForm({ ...EMPTY_FORM });
     setIsEditingForm(false);
-    setFormTargetId('new-' + nextId);
+    setFormTargetId(crypto.randomUUID());
     setScreen('add');
   }
 
@@ -52,7 +57,7 @@ function AppShell() {
     setAddMode('wishlist');
     setForm({ ...EMPTY_FORM });
     setIsEditingForm(false);
-    setFormTargetId('new-' + nextId);
+    setFormTargetId(crypto.randomUUID());
     setScreen('add');
   }
 
@@ -106,46 +111,32 @@ function AppShell() {
     setScreen(addMode === 'wishlist' ? 'wishlist' : 'home');
   }
 
-  function submitForm() {
+  async function submitForm() {
     if (!form.name.trim()) return;
 
     if (isEditingForm) {
       if (addMode === 'collection') {
-        setCollection((c) =>
-          c.map((p) =>
-            p.id === formTargetId
-              ? {
-                  ...p,
-                  name: form.name.trim(),
-                  brand: form.brand.trim() || 'Éditeur inconnu',
-                  genre: form.genre,
-                  pieces: Number(form.pieces) || 0,
-                  status: form.status,
-                  rating: form.rating,
-                  difficulty: form.difficulty,
-                  date: form.date,
-                  time: form.time.trim() || '—',
-                  notes: form.notes.trim() || '—',
-                }
-              : p,
-          ),
-        );
+        await updatePuzzle(formTargetId, {
+          name: form.name.trim(),
+          brand: form.brand.trim() || 'Éditeur inconnu',
+          genre: form.genre,
+          pieces: Number(form.pieces) || 0,
+          status: form.status,
+          rating: form.rating,
+          difficulty: form.difficulty,
+          date: form.date,
+          time: form.time.trim() || '—',
+          notes: form.notes.trim() || '—',
+        });
       } else {
-        setWishlist((w) =>
-          w.map((x) =>
-            x.id === formTargetId
-              ? {
-                  ...x,
-                  name: form.name.trim(),
-                  brand: form.brand.trim() || 'Éditeur inconnu',
-                  genre: form.genre,
-                  pieces: Number(form.pieces) || 0,
-                  priority: form.priority,
-                  notes: form.notes.trim() || '—',
-                }
-              : x,
-          ),
-        );
+        await updateWishlistItem(formTargetId, {
+          name: form.name.trim(),
+          brand: form.brand.trim() || 'Éditeur inconnu',
+          genre: form.genre,
+          pieces: Number(form.pieces) || 0,
+          priority: form.priority,
+          notes: form.notes.trim() || '—',
+        });
       }
       setSelectedId(formTargetId);
       setScreen('detail');
@@ -155,7 +146,7 @@ function AppShell() {
 
     const id = formTargetId;
     if (addMode === 'collection') {
-      const item = {
+      const item: Puzzle = {
         id,
         name: form.name.trim(),
         brand: form.brand.trim() || 'Éditeur inconnu',
@@ -168,10 +159,10 @@ function AppShell() {
         time: form.time.trim() || (form.status === 'À faire' ? '—' : 'en cours'),
         notes: form.notes.trim() || '—',
       };
-      setCollection((c) => [...c, item]);
+      await addPuzzle(item);
       setScreen('home');
     } else {
-      const item = {
+      const item: WishlistItem = {
         id,
         name: form.name.trim(),
         brand: form.brand.trim() || 'Éditeur inconnu',
@@ -180,42 +171,41 @@ function AppShell() {
         priority: form.priority,
         notes: form.notes.trim() || '—',
       };
-      setWishlist((w) => [...w, item]);
+      await addWishlistItem(item);
       setScreen('wishlist');
     }
     setForm({ ...EMPTY_FORM });
-    setNextId((n) => n + 1);
   }
 
-  function markAsBought() {
+  async function markAsBought() {
     if (detailSource !== 'wishlist') return;
     const selected = wishlist.find((w) => w.id === selectedId);
     if (!selected) return;
-    const item = {
+    const item: Puzzle = {
       id: selected.id,
       name: selected.name,
       brand: selected.brand,
       genre: selected.genre,
       pieces: selected.pieces,
-      status: 'À faire' as Status,
+      status: 'À faire',
       rating: 0,
       difficulty: 3,
       date: '',
       time: '—',
       notes: selected.notes,
     };
-    setCollection((c) => [...c, item]);
-    setWishlist((w) => w.filter((x) => x.id !== selected.id));
+    await addPuzzle(item);
+    await deleteWishlistItem(selected.id);
     setDetailSource('collection');
     setSelectedId(item.id);
     setScreen('detail');
   }
 
-  function deleteSelected() {
+  async function deleteSelected() {
     if (detailSource === 'collection') {
       const id = selectedPuzzle?.id;
       if (!id) return;
-      setCollection((c) => c.filter((p) => p.id !== id));
+      await deletePuzzle(id);
       clearImage('puzzle-img-' + id);
       clearImage('gallery-' + id + '-before');
       clearImage('gallery-' + id + '-during');
@@ -224,7 +214,7 @@ function AppShell() {
     } else {
       const id = selectedWishlistItem?.id;
       if (!id) return;
-      setWishlist((w) => w.filter((x) => x.id !== id));
+      await deleteWishlistItem(id);
       clearImage('wish-img-' + id);
       setScreen('wishlist');
     }
@@ -235,7 +225,7 @@ function AppShell() {
   const selectedWishlistItem = wishlist.find((w) => w.id === selectedId) ?? wishlist[0];
 
   return (
-    <div className="app-shell">
+    <>
       {screen === 'home' && (
         <HomeScreen
           collection={collection}
@@ -248,6 +238,7 @@ function AppShell() {
           onOpenPuzzle={openPuzzle}
           onAdd={openAddFromHome}
           onGoWishlist={() => setScreen('wishlist')}
+          onSignOut={onSignOut}
         />
       )}
 
@@ -285,14 +276,60 @@ function AppShell() {
           onSubmit={submitForm}
         />
       )}
-    </div>
+
+      {showImportPrompt && (
+        <ImportLegacyDataOverlay
+          addPuzzle={addPuzzle}
+          addWishlistItem={addWishlistItem}
+          onDone={() => setShowImportPrompt(false)}
+        />
+      )}
+    </>
+  );
+}
+
+function AuthGate() {
+  const { user, loading, signOut } = useAuth();
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: 'oklch(55% 0.03 340)',
+          fontWeight: 700,
+        }}
+      >
+        Chargement...
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <LoginScreen />;
+  }
+
+  return (
+    <ImageStoreProvider userId={user.id}>
+      <AppShell
+        userId={user.id}
+        onSignOut={() => {
+          if (window.confirm('Se déconnecter ?')) signOut();
+        }}
+      />
+    </ImageStoreProvider>
   );
 }
 
 export default function App() {
   return (
-    <ImageStoreProvider>
-      <AppShell />
-    </ImageStoreProvider>
+    <AuthProvider>
+      <div className="app-shell">
+        <AuthGate />
+      </div>
+    </AuthProvider>
   );
 }
