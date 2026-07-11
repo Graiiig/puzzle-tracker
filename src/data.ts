@@ -1,7 +1,6 @@
 import type { Genre, Priority, PuzzleForm, Puzzle, SortMode, Status, WishlistItem } from './types';
 
-export const GENRES_ALL: Array<Genre | 'Tous'> = ['Tous', 'Paysage', 'Animaux', 'Art', 'Fantaisie', 'Ville'];
-export const ADD_GENRES: Genre[] = ['Paysage', 'Animaux', 'Art', 'Fantaisie', 'Ville'];
+export const DEFAULT_GENRES: Genre[] = ['Paysage', 'Animaux', 'Art', 'Fantaisie', 'Ville'];
 export const SORT_MODES: SortMode[] = ['Récent', 'Alphabétique', 'Pièces', 'Difficulté'];
 export const STATUSES: Status[] = ['À faire', 'En cours', 'Terminé'];
 export const PRIORITIES: Priority[] = ['Basse', 'Moyenne', 'Haute'];
@@ -133,7 +132,7 @@ export const RAW_WISHLIST: WishlistItem[] = [
 export const EMPTY_FORM: PuzzleForm = {
   name: '',
   brand: '',
-  genre: ADD_GENRES[0],
+  genre: DEFAULT_GENRES[0],
   pieces: '',
   status: 'À faire',
   priority: 'Moyenne',

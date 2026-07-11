@@ -1,9 +1,9 @@
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
-import { GENRES_ALL } from '../data';
 import type { Genre, Puzzle, SortMode } from '../types';
 import { chipStyle, sortList, starString, statusStyle } from '../utils/format';
+import { collectGenres } from '../utils/genres';
 
 interface HomeScreenProps {
   collection: Puzzle[];
@@ -42,6 +42,7 @@ export default function HomeScreen({
     return matchesGenre && matchesSearch;
   });
   const visible = sortList(filtered, sortMode);
+  const genreOptions: Array<Genre | 'Tous'> = ['Tous', ...collectGenres(collection)];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)', position: 'relative' }}>
@@ -129,7 +130,7 @@ export default function HomeScreen({
 
       <div style={{ display: 'flex', gap: 8, padding: '14px 20px 6px', flexShrink: 0 }}>
         <div style={{ flex: 1, display: 'flex', gap: 8, overflowX: 'auto' }}>
-          {GENRES_ALL.map((g) => (
+          {genreOptions.map((g) => (
             <Chip key={g} label={g} onClick={() => onGenreChange(g)} style={chipStyle(g === genre, 350)} />
           ))}
         </div>

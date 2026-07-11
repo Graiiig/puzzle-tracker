@@ -1,4 +1,4 @@
-export type Genre = 'Paysage' | 'Animaux' | 'Art' | 'Fantaisie' | 'Ville';
+export type Genre = string;
 export type Status = 'À faire' | 'En cours' | 'Terminé';
 export type Priority = 'Basse' | 'Moyenne' | 'Haute';
 export type SortMode = 'Récent' | 'Alphabétique' | 'Pièces' | 'Difficulté';

@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import RatingPicker from '../components/RatingPicker';
-import { ADD_GENRES, PRIORITIES, STATUSES } from '../data';
+import { PRIORITIES, STATUSES } from '../data';
 import type { PuzzleForm } from '../types';
 import { chipStyle } from '../utils/format';
 
@@ -9,6 +10,7 @@ interface AddScreenProps {
   mode: 'collection' | 'wishlist';
   isEditing: boolean;
   photoSlotId: string;
+  genreOptions: string[];
   onSetModeCollection: () => void;
   onSetModeWishlist: () => void;
   form: PuzzleForm;
@@ -21,6 +23,7 @@ export default function AddScreen({
   mode,
   isEditing,
   photoSlotId,
+  genreOptions,
   onSetModeCollection,
   onSetModeWishlist,
   form,
@@ -28,6 +31,18 @@ export default function AddScreen({
   onCancel,
   onSubmit,
 }: AddScreenProps) {
+  const [addingGenre, setAddingGenre] = useState(false);
+  const [newGenreName, setNewGenreName] = useState('');
+
+  const displayedGenres = genreOptions.includes(form.genre) ? genreOptions : [...genreOptions, form.genre];
+
+  function confirmNewGenre() {
+    const trimmed = newGenreName.trim();
+    if (trimmed) onFormChange('genre', trimmed);
+    setNewGenreName('');
+    setAddingGenre(false);
+  }
+
   const modeCollectionStyle =
     mode === 'collection'
       ? { background: 'white', color: 'oklch(45% 0.2 350)', boxShadow: '0 1px 4px oklch(50% 0.05 340 / 0.15)' }
@@ -120,9 +135,43 @@ export default function AddScreen({
             Genre
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {ADD_GENRES.map((g) => (
+            {displayedGenres.map((g) => (
               <Chip key={g} label={g} onClick={() => onFormChange('genre', g)} style={chipStyle(g === form.genre, 300)} />
             ))}
+            {addingGenre ? (
+              <input
+                autoFocus
+                value={newGenreName}
+                onChange={(e) => setNewGenreName(e.target.value)}
+                onBlur={confirmNewGenre}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    confirmNewGenre();
+                  }
+                }}
+                placeholder="Nom du genre"
+                style={{
+                  fontWeight: 800,
+                  fontSize: 13,
+                  padding: '7px 14px',
+                  borderRadius: 100,
+                  border: '1px solid oklch(75% 0.1 300)',
+                  outline: 'none',
+                  width: 130,
+                  fontFamily: "'Nunito',sans-serif",
+                }}
+              />
+            ) : (
+              <button
+                type="button"
+                onClick={() => setAddingGenre(true)}
+                className="chip"
+                style={{ background: 'white', color: 'oklch(50% 0.03 340)', border: '1px dashed oklch(75% 0.03 340)' }}
+              >
+                + Nouveau
+              </button>
+            )}
           </div>
         </div>
 

@@ -97,9 +97,6 @@ export default function LoginScreen() {
             <div style={{ marginTop: 14, fontSize: 12, color: 'oklch(55% 0.03 340)', textAlign: 'center', lineHeight: 1.5 }}>
               Pas de mot de passe : tu reçois un lien par email pour te connecter.
             </div>
-            <div style={{ marginTop: 24, fontSize: 10, color: 'oklch(75% 0.02 340)', textAlign: 'center', wordBreak: 'break-all' }}>
-              debug: {JSON.stringify(import.meta.env.VITE_SUPABASE_URL)}
-            </div>
           </form>
         )}
       </div>

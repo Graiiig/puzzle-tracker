@@ -15,6 +15,8 @@ Application de suivi de collection de puzzles : gérez votre collection, votre w
 3. Va dans **Authentication > URL Configuration** et ajoute l'URL de ton site (ex. `https://<user>.github.io/puzzle-tracker/` et `http://localhost:5173/` pour le dev local) dans **Redirect URLs**, pour que le lien magique reçu par email fonctionne.
 4. Récupère l'URL et la clé publique (`anon` / `public`) du projet dans **Project Settings > API**.
 
+Si tu avais déjà exécuté `schema.sql` avant l'ajout des genres personnalisés, exécute aussi `supabase/migrations/0002_free_genre.sql` pour lever la contrainte qui limitait les genres à une liste fixe.
+
 ## Variables d'environnement
 
 Copie `.env.example` vers `.env.local` et renseigne les deux valeurs récupérées ci-dessus :

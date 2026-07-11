@@ -5,6 +5,7 @@ import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { EMPTY_FORM, SORT_MODES } from './data';
 import { hasLegacyData } from './lib/legacyImport';
+import { collectGenres } from './utils/genres';
 import type { DetailSource, Genre, Puzzle, PuzzleForm, Screen, SortMode, WishlistItem } from './types';
 import HomeScreen from './screens/HomeScreen';
 import WishlistScreen from './screens/WishlistScreen';
@@ -268,6 +269,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           mode={addMode}
           isEditing={isEditingForm}
           photoSlotId={(addMode === 'wishlist' ? 'wish-img-' : 'puzzle-img-') + formTargetId}
+          genreOptions={collectGenres(collection, wishlist)}
           onSetModeCollection={() => setAddMode('collection')}
           onSetModeWishlist={() => setAddMode('wishlist')}
           form={form}
