@@ -63,3 +63,20 @@ npm run preview
 - **Photos** : cliquez sur n'importe quel emplacement photo pour importer une image depuis votre appareil ; stockées dans Supabase Storage, synchronisées entre appareils.
 - **Import des anciennes données** : si l'appli détecte des données enregistrées localement avant la mise en place des comptes, elle propose de les importer automatiquement après la première connexion.
 - **Installable (PWA)** : sur Android/Chrome, menu ⋮ > "Ajouter à l'écran d'accueil" (ou bannière d'installation automatique) pour avoir une icône et une appli plein écran, sans passer par le Play Store.
+
+## APK Android (sideload, sans Play Store)
+
+Le dossier `android/` (généré par [Capacitor](https://capacitorjs.com)) enveloppe l'appli dans une coquille native Android, avec l'appli web bundlée en local (l'appareil n'a donc pas besoin d'internet pour charger l'interface, seulement pour parler à Supabase). Il produit un vrai `.apk` à installer directement sur un téléphone (sideload), sans jamais publier sur le Play Store.
+
+Le build se fait via GitHub Actions (`.github/workflows/build-android.yml`), pas en local, car il nécessite le SDK Android + Gradle.
+
+**Configuration (une seule fois)** — ajoute ces secrets dans **Settings > Secrets and variables > Actions** du repo :
+
+- `ANDROID_KEYSTORE_BASE64` — le contenu encodé en base64 du fichier de clé de signature
+- `ANDROID_KEYSTORE_PASSWORD` — son mot de passe
+
+(les valeurs t'ont été fournies séparément — garde le fichier `.keystore` original en lieu sûr : sans lui, impossible de publier une mise à jour sous la même identité d'appli)
+
+**Pour builder l'APK** : onglet **Actions** du repo > workflow **"Build Android APK"** > **Run workflow**. Une fois terminé, télécharge l'artifact `mes-puzzles-apk` depuis la page du run, transfère l'APK sur ton téléphone et installe-le (Android demandera d'autoriser l'installation depuis cette source la première fois).
+
+Pour rebuilder l'APK avec le contenu web à jour (nouvelles fonctionnalités), relance simplement le workflow — il reconstruit l'appli web et la re-bundle à chaque run.
