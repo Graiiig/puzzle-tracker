@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import type { WishlistItem } from '../types';
 
-const COLUMNS = 'id, name, brand, genre, pieces, priority, notes';
+const COLUMNS = 'id, name, brand, genres, pieces, priority, notes';
 
 export function useWishlist(userId: string | null) {
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);

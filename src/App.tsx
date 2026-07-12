@@ -21,7 +21,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detailSource, setDetailSource] = useState<DetailSource>('collection');
   const [search, setSearch] = useState('');
-  const [genre, setGenre] = useState<Genre | 'Tous'>('Tous');
+  const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
   const [sortMode, setSortMode] = useState<SortMode>('Récent');
   const [addMode, setAddMode] = useState<'collection' | 'wishlist'>('collection');
   const [form, setForm] = useState<PuzzleForm>({ ...EMPTY_FORM });
@@ -32,6 +32,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
   function updateForm<K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  function toggleGenreFilter(g: Genre) {
+    setSelectedGenres((current) => (current.includes(g) ? current.filter((x) => x !== g) : [...current, g]));
   }
 
   function openPuzzle(id: string) {
@@ -70,7 +74,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       setForm({
         name: p.name,
         brand: p.brand,
-        genre: p.genre,
+        genres: [...p.genres],
         pieces: String(p.pieces),
         status: p.status,
         priority: 'Moyenne',
@@ -88,7 +92,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       setForm({
         name: w.name,
         brand: w.brand,
-        genre: w.genre,
+        genres: [...w.genres],
         pieces: String(w.pieces),
         status: 'À faire',
         priority: w.priority,
@@ -113,14 +117,14 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   }
 
   async function submitForm() {
-    if (!form.name.trim()) return;
+    if (!form.name.trim() || form.genres.length === 0) return;
 
     if (isEditingForm) {
       if (addMode === 'collection') {
         await updatePuzzle(formTargetId, {
           name: form.name.trim(),
           brand: form.brand.trim() || 'Éditeur inconnu',
-          genre: form.genre,
+          genres: form.genres,
           pieces: Number(form.pieces) || 0,
           status: form.status,
           rating: form.rating,
@@ -133,7 +137,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         await updateWishlistItem(formTargetId, {
           name: form.name.trim(),
           brand: form.brand.trim() || 'Éditeur inconnu',
-          genre: form.genre,
+          genres: form.genres,
           pieces: Number(form.pieces) || 0,
           priority: form.priority,
           notes: form.notes.trim() || '—',
@@ -151,7 +155,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         id,
         name: form.name.trim(),
         brand: form.brand.trim() || 'Éditeur inconnu',
-        genre: form.genre,
+        genres: form.genres,
         pieces: Number(form.pieces) || 0,
         status: form.status,
         rating: form.rating,
@@ -167,7 +171,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         id,
         name: form.name.trim(),
         brand: form.brand.trim() || 'Éditeur inconnu',
-        genre: form.genre,
+        genres: form.genres,
         pieces: Number(form.pieces) || 0,
         priority: form.priority,
         notes: form.notes.trim() || '—',
@@ -186,7 +190,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       id: selected.id,
       name: selected.name,
       brand: selected.brand,
-      genre: selected.genre,
+      genres: selected.genres,
       pieces: selected.pieces,
       status: 'À faire',
       rating: 0,
@@ -232,8 +236,9 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           collection={collection}
           search={search}
           onSearchChange={setSearch}
-          genre={genre}
-          onGenreChange={setGenre}
+          selectedGenres={selectedGenres}
+          onToggleGenre={toggleGenreFilter}
+          onClearGenres={() => setSelectedGenres([])}
           sortMode={sortMode}
           onCycleSort={() => setSortMode(SORT_MODES[(SORT_MODES.indexOf(sortMode) + 1) % SORT_MODES.length])}
           onOpenPuzzle={openPuzzle}

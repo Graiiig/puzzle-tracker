@@ -90,18 +90,21 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
         <div style={{ fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)', marginTop: 2 }}>{item.brand}</div>
 
         <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
-          <span
-            style={{
-              background: 'oklch(93% 0.06 350)',
-              color: 'oklch(45% 0.2 350)',
-              fontWeight: 800,
-              fontSize: 12,
-              padding: '6px 12px',
-              borderRadius: 100,
-            }}
-          >
-            {item.genre}
-          </span>
+          {item.genres.map((g) => (
+            <span
+              key={g}
+              style={{
+                background: 'oklch(93% 0.06 350)',
+                color: 'oklch(45% 0.2 350)',
+                fontWeight: 800,
+                fontSize: 12,
+                padding: '6px 12px',
+                borderRadius: 100,
+              }}
+            >
+              {g}
+            </span>
+          ))}
           <span
             style={{
               background: 'oklch(92% 0.05 300)',

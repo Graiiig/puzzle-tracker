@@ -1,4 +1,4 @@
-import type { Puzzle, WishlistItem } from '../types';
+import type { Genre, Puzzle, WishlistItem } from '../types';
 
 const OLD_COLLECTION_KEY = 'puzzle-tracker:collection';
 const OLD_WISHLIST_KEY = 'puzzle-tracker:wishlist';
@@ -6,20 +6,65 @@ const IMPORTED_FLAG = 'puzzle-tracker:legacy-imported';
 const OLD_DB_NAME = 'puzzle-tracker';
 const OLD_STORE_NAME = 'images';
 
-function parseArray<T>(raw: string | null): T[] {
+function parseArray(raw: string | null): Record<string, unknown>[] {
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as T[]) : [];
+    return Array.isArray(parsed) ? (parsed as Record<string, unknown>[]) : [];
   } catch {
     return [];
   }
 }
 
+// Older exports stored a single `genre: string` instead of `genres: string[]`.
+function normalizeGenres(record: Record<string, unknown>): Genre[] {
+  if (Array.isArray(record.genres)) return record.genres as Genre[];
+  if (typeof record.genre === 'string' && record.genre) return [record.genre];
+  return [];
+}
+
+function str(record: Record<string, unknown>, key: string, fallback = ''): string {
+  const v = record[key];
+  return typeof v === 'string' ? v : fallback;
+}
+
+function num(record: Record<string, unknown>, key: string, fallback = 0): number {
+  const v = record[key];
+  return typeof v === 'number' ? v : fallback;
+}
+
+function toPuzzle(record: Record<string, unknown>, id: string): Puzzle {
+  return {
+    id,
+    name: str(record, 'name'),
+    brand: str(record, 'brand'),
+    genres: normalizeGenres(record),
+    pieces: num(record, 'pieces'),
+    status: str(record, 'status', 'À faire') as Puzzle['status'],
+    rating: num(record, 'rating'),
+    difficulty: num(record, 'difficulty', 3),
+    date: str(record, 'date'),
+    time: str(record, 'time'),
+    notes: str(record, 'notes'),
+  };
+}
+
+function toWishlistItem(record: Record<string, unknown>, id: string): WishlistItem {
+  return {
+    id,
+    name: str(record, 'name'),
+    brand: str(record, 'brand'),
+    genres: normalizeGenres(record),
+    pieces: num(record, 'pieces'),
+    priority: str(record, 'priority', 'Moyenne') as WishlistItem['priority'],
+    notes: str(record, 'notes'),
+  };
+}
+
 export function hasLegacyData(): boolean {
   if (localStorage.getItem(IMPORTED_FLAG)) return false;
-  const collection = parseArray<Puzzle>(localStorage.getItem(OLD_COLLECTION_KEY));
-  const wishlist = parseArray<WishlistItem>(localStorage.getItem(OLD_WISHLIST_KEY));
+  const collection = parseArray(localStorage.getItem(OLD_COLLECTION_KEY));
+  const wishlist = parseArray(localStorage.getItem(OLD_WISHLIST_KEY));
   return collection.length > 0 || wishlist.length > 0;
 }
 
@@ -73,8 +118,8 @@ export async function importLegacyData(options: {
 }): Promise<LegacyImportResult> {
   const result: LegacyImportResult = { puzzles: 0, wishlistItems: 0, photos: 0 };
 
-  const oldCollection = parseArray<Puzzle>(localStorage.getItem(OLD_COLLECTION_KEY));
-  const oldWishlist = parseArray<WishlistItem>(localStorage.getItem(OLD_WISHLIST_KEY));
+  const oldCollection = parseArray(localStorage.getItem(OLD_COLLECTION_KEY));
+  const oldWishlist = parseArray(localStorage.getItem(OLD_WISHLIST_KEY));
   const oldImages = await readOldImages();
 
   async function migrateImage(oldKey: string, newKey: string) {
@@ -85,9 +130,9 @@ export async function importLegacyData(options: {
   }
 
   for (const p of oldCollection) {
-    const oldId = p.id;
+    const oldId = String(p.id);
     const newId = crypto.randomUUID();
-    const ok = await options.addPuzzle({ ...p, id: newId });
+    const ok = await options.addPuzzle(toPuzzle(p, newId));
     if (ok) {
       result.puzzles += 1;
       await migrateImage('puzzle-img-' + oldId, 'puzzle-img-' + newId);
@@ -98,9 +143,9 @@ export async function importLegacyData(options: {
   }
 
   for (const w of oldWishlist) {
-    const oldId = w.id;
+    const oldId = String(w.id);
     const newId = crypto.randomUUID();
-    const ok = await options.addWishlistItem({ ...w, id: newId });
+    const ok = await options.addWishlistItem(toWishlistItem(w, newId));
     if (ok) {
       result.wishlistItems += 1;
       await migrateImage('wish-img-' + oldId, 'wish-img-' + newId);

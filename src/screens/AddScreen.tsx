@@ -34,11 +34,16 @@ export default function AddScreen({
   const [addingGenre, setAddingGenre] = useState(false);
   const [newGenreName, setNewGenreName] = useState('');
 
-  const displayedGenres = genreOptions.includes(form.genre) ? genreOptions : [...genreOptions, form.genre];
+  const displayedGenres = [...genreOptions, ...form.genres.filter((g) => !genreOptions.includes(g))];
+
+  function toggleGenre(g: string) {
+    const has = form.genres.includes(g);
+    onFormChange('genres', has ? form.genres.filter((x) => x !== g) : [...form.genres, g]);
+  }
 
   function confirmNewGenre() {
     const trimmed = newGenreName.trim();
-    if (trimmed) onFormChange('genre', trimmed);
+    if (trimmed && !form.genres.includes(trimmed)) onFormChange('genres', [...form.genres, trimmed]);
     setNewGenreName('');
     setAddingGenre(false);
   }
@@ -136,7 +141,7 @@ export default function AddScreen({
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {displayedGenres.map((g) => (
-              <Chip key={g} label={g} onClick={() => onFormChange('genre', g)} style={chipStyle(g === form.genre, 300)} />
+              <Chip key={g} label={g} onClick={() => toggleGenre(g)} style={chipStyle(form.genres.includes(g), 300)} />
             ))}
             {addingGenre ? (
               <input

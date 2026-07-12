@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import type { Puzzle } from '../types';
 
-const COLUMNS = 'id, name, brand, genre, pieces, status, rating, difficulty, date, time, notes';
+const COLUMNS = 'id, name, brand, genres, pieces, status, rating, difficulty, date, time, notes';
 
 export function usePuzzles(userId: string | null) {
   const [collection, setCollection] = useState<Puzzle[]>([]);

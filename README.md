@@ -17,6 +17,8 @@ Application de suivi de collection de puzzles : gérez votre collection, votre w
 
 Si tu avais déjà exécuté `schema.sql` avant l'ajout des genres personnalisés, exécute aussi `supabase/migrations/0002_free_genre.sql` pour lever la contrainte qui limitait les genres à une liste fixe.
 
+Si tu avais déjà exécuté `schema.sql` avant le support multi-genres, exécute aussi `supabase/migrations/0003_multi_genre.sql` pour passer d'un genre unique à plusieurs genres par puzzle (les données existantes sont conservées).
+
 ## Variables d'environnement
 
 Copie `.env.example` vers `.env.local` et renseigne les deux valeurs récupérées ci-dessus :

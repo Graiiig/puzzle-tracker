@@ -9,8 +9,9 @@ interface HomeScreenProps {
   collection: Puzzle[];
   search: string;
   onSearchChange: (value: string) => void;
-  genre: Genre | 'Tous';
-  onGenreChange: (g: Genre | 'Tous') => void;
+  selectedGenres: Genre[];
+  onToggleGenre: (g: Genre) => void;
+  onClearGenres: () => void;
   sortMode: SortMode;
   onCycleSort: () => void;
   onOpenPuzzle: (id: string) => void;
@@ -23,8 +24,9 @@ export default function HomeScreen({
   collection,
   search,
   onSearchChange,
-  genre,
-  onGenreChange,
+  selectedGenres,
+  onToggleGenre,
+  onClearGenres,
   sortMode,
   onCycleSort,
   onOpenPuzzle,
@@ -39,12 +41,12 @@ export default function HomeScreen({
 
   const q = search.trim().toLowerCase();
   const filtered = collection.filter((p) => {
-    const matchesGenre = genre === 'Tous' || p.genre === genre;
+    const matchesGenre = selectedGenres.length === 0 || p.genres.some((g) => selectedGenres.includes(g));
     const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q);
     return matchesGenre && matchesSearch;
   });
   const visible = sortList(filtered, sortMode);
-  const genreOptions: Array<Genre | 'Tous'> = ['Tous', ...collectGenres(collection)];
+  const genreOptions: Genre[] = collectGenres(collection);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)', position: 'relative' }}>
@@ -132,8 +134,9 @@ export default function HomeScreen({
 
       <div style={{ display: 'flex', gap: 8, padding: '14px 20px 6px', flexShrink: 0 }}>
         <div style={{ flex: 1, display: 'flex', gap: 8, overflowX: 'auto' }}>
+          <Chip label="Tous" onClick={onClearGenres} style={chipStyle(selectedGenres.length === 0, 350)} />
           {genreOptions.map((g) => (
-            <Chip key={g} label={g} onClick={() => onGenreChange(g)} style={chipStyle(g === genre, 350)} />
+            <Chip key={g} label={g} onClick={() => onToggleGenre(g)} style={chipStyle(selectedGenres.includes(g), 350)} />
           ))}
         </div>
         <div
