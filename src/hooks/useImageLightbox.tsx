@@ -2,6 +2,8 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 
 interface LightboxValue {
   openLightbox: (src: string) => void;
+  isLightboxOpen: boolean;
+  closeLightbox: () => void;
 }
 
 const LightboxContext = createContext<LightboxValue | null>(null);
@@ -19,7 +21,7 @@ export function ImageLightboxProvider({ children }: { children: ReactNode }) {
   }, [src]);
 
   return (
-    <LightboxContext.Provider value={{ openLightbox: setSrc }}>
+    <LightboxContext.Provider value={{ openLightbox: setSrc, isLightboxOpen: src !== null, closeLightbox: () => setSrc(null) }}>
       {children}
       {src && (
         <div

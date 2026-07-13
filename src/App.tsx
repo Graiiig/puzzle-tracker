@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
-import { ImageLightboxProvider } from './hooks/useImageLightbox';
+import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbox';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { EMPTY_FORM, SORT_MODES } from './data';
@@ -33,6 +35,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [showImportPrompt, setShowImportPrompt] = useState(hasLegacyData);
   const [exporting, setExporting] = useState(false);
   const { clearImage, downloadImage, setImage } = useImageStore();
+  const { isLightboxOpen, closeLightbox } = useImageLightbox();
 
   function updateForm<K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -119,6 +122,35 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     }
     setScreen(addMode === 'wishlist' ? 'wishlist' : 'home');
   }
+
+  function goBack() {
+    if (screen === 'add') {
+      cancelAdd();
+    } else if (screen === 'detail') {
+      setScreen(detailSource === 'wishlist' ? 'wishlist' : 'home');
+    } else if (screen === 'wishlist') {
+      setScreen('home');
+    }
+  }
+
+  const handleHardwareBackRef = useRef(() => {});
+  handleHardwareBackRef.current = () => {
+    if (isLightboxOpen) {
+      closeLightbox();
+    } else if (screen !== 'home') {
+      goBack();
+    } else {
+      CapacitorApp.exitApp();
+    }
+  };
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+    const listenerPromise = CapacitorApp.addListener('backButton', () => handleHardwareBackRef.current());
+    return () => {
+      listenerPromise.then((listener) => listener.remove());
+    };
+  }, []);
 
   async function submitForm() {
     if (!form.name.trim() || form.genres.length === 0) return;
