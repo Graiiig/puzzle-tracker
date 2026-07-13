@@ -18,6 +18,7 @@ interface HomeScreenProps {
   onAdd: () => void;
   onGoWishlist: () => void;
   onSignOut: () => void;
+  onExport: () => void;
 }
 
 export default function HomeScreen({
@@ -33,6 +34,7 @@ export default function HomeScreen({
   onAdd,
   onGoWishlist,
   onSignOut,
+  onExport,
 }: HomeScreenProps) {
   const completed = collection.filter((p) => p.status === 'Terminé');
   const doneCount = completed.length;
@@ -63,22 +65,41 @@ export default function HomeScreen({
           <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 26, color: 'white' }}>
             Mes Puzzles ✨
           </div>
-          <div
-            onClick={onSignOut}
-            title="Se déconnecter"
-            style={{
-              width: 38,
-              height: 38,
-              borderRadius: '50%',
-              background: 'oklch(97% 0.02 70 / 0.9)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 18,
-              cursor: 'pointer',
-            }}
-          >
-            🧩
+          <div style={{ display: 'flex', gap: 8 }}>
+            <div
+              onClick={onExport}
+              title="Exporter mes données"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                background: 'oklch(97% 0.02 70 / 0.9)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 16,
+                cursor: 'pointer',
+              }}
+            >
+              ⬇️
+            </div>
+            <div
+              onClick={onSignOut}
+              title="Se déconnecter"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                background: 'oklch(97% 0.02 70 / 0.9)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 18,
+                cursor: 'pointer',
+              }}
+            >
+              🧩
+            </div>
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>

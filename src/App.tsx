@@ -6,6 +6,7 @@ import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { EMPTY_FORM, SORT_MODES } from './data';
 import { hasLegacyData } from './lib/legacyImport';
+import { exportDataAsJson } from './utils/export';
 import { collectGenres } from './utils/genres';
 import type { DetailSource, Genre, Puzzle, PuzzleForm, Screen, SortMode, WishlistItem } from './types';
 import HomeScreen from './screens/HomeScreen';
@@ -246,6 +247,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onAdd={openAddFromHome}
           onGoWishlist={() => setScreen('wishlist')}
           onSignOut={onSignOut}
+          onExport={() => exportDataAsJson(collection, wishlist)}
         />
       )}
 
