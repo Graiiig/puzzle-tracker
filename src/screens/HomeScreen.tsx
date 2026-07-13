@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
@@ -40,6 +40,7 @@ export default function HomeScreen({
   onImport,
 }: HomeScreenProps) {
   const importInputRef = useRef<HTMLInputElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const completed = collection.filter((p) => p.status === 'Terminé');
   const doneCount = completed.length;
@@ -70,55 +71,21 @@ export default function HomeScreen({
           <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 26, color: 'white' }}>
             Mes Puzzles ✨
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <input
+            ref={importInputRef}
+            type="file"
+            accept="application/json"
+            style={{ display: 'none' }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              e.target.value = '';
+              if (file) onImport(file);
+            }}
+          />
+          <div style={{ position: 'relative' }}>
             <div
-              onClick={() => importInputRef.current?.click()}
-              title="Importer une sauvegarde"
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: '50%',
-                background: 'oklch(97% 0.02 70 / 0.9)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 16,
-                cursor: 'pointer',
-              }}
-            >
-              ⬆️
-            </div>
-            <input
-              ref={importInputRef}
-              type="file"
-              accept="application/json"
-              style={{ display: 'none' }}
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                e.target.value = '';
-                if (file) onImport(file);
-              }}
-            />
-            <div
-              onClick={onExport}
-              title="Exporter mes données"
-              style={{
-                width: 38,
-                height: 38,
-                borderRadius: '50%',
-                background: 'oklch(97% 0.02 70 / 0.9)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 16,
-                cursor: 'pointer',
-              }}
-            >
-              ⬇️
-            </div>
-            <div
-              onClick={onSignOut}
-              title="Se déconnecter"
+              onClick={() => setMenuOpen((v) => !v)}
+              title="Menu"
               style={{
                 width: 38,
                 height: 38,
@@ -133,6 +100,52 @@ export default function HomeScreen({
             >
               🧩
             </div>
+            {menuOpen && (
+              <>
+                <div onClick={() => setMenuOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 10 }} />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 46,
+                    right: 0,
+                    background: 'white',
+                    borderRadius: 14,
+                    boxShadow: '0 12px 32px oklch(20% 0.02 340 / 0.28)',
+                    overflow: 'hidden',
+                    zIndex: 20,
+                    minWidth: 230,
+                  }}
+                >
+                  {[
+                    { icon: '⬇️', label: 'Exporter mes données', onClick: onExport },
+                    { icon: '⬆️', label: 'Importer une sauvegarde', onClick: () => importInputRef.current?.click() },
+                    { icon: '🚪', label: 'Se déconnecter', onClick: onSignOut },
+                  ].map((item) => (
+                    <div
+                      key={item.label}
+                      onClick={() => {
+                        setMenuOpen(false);
+                        item.onClick();
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 10,
+                        padding: '12px 16px',
+                        fontSize: 14,
+                        fontWeight: 700,
+                        color: 'oklch(30% 0.02 340)',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      <span style={{ fontSize: 16 }}>{item.icon}</span>
+                      {item.label}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
         <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
