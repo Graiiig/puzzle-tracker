@@ -6,14 +6,19 @@ Application de suivi de collection de puzzles : gérez votre collection, votre w
 
 - React + TypeScript
 - Vite
-- [Supabase](https://supabase.com) : authentification (lien magique par email), base de données (Postgres) et stockage des photos. Le front-end reste 100% statique (déployable sur GitHub Pages) et parle directement à Supabase depuis le navigateur.
+- [Supabase](https://supabase.com) : authentification (code à 6 chiffres par email), base de données (Postgres) et stockage des photos. Le front-end reste 100% statique (déployable sur GitHub Pages) et parle directement à Supabase depuis le navigateur.
 
 ## Configuration Supabase (une seule fois)
 
 1. Crée un projet gratuit sur [supabase.com](https://supabase.com).
 2. Ouvre **SQL Editor** dans le dashboard du projet, colle le contenu de `supabase/schema.sql` et exécute-le. Ça crée les tables `puzzles` / `wishlist_items`, les policies de sécurité (chaque utilisateur ne voit que ses propres données), et le bucket de stockage `photos`.
-3. Va dans **Authentication > URL Configuration** et ajoute l'URL de ton site (ex. `https://<user>.github.io/puzzle-tracker/` et `http://localhost:5173/` pour le dev local) dans **Redirect URLs**, pour que le lien magique reçu par email fonctionne.
+3. Va dans **Authentication > URL Configuration** et ajoute l'URL de ton site (ex. `https://<user>.github.io/puzzle-tracker/` et `http://localhost:5173/` pour le dev local) dans **Redirect URLs**.
 4. Récupère l'URL et la clé publique (`anon` / `public`) du projet dans **Project Settings > API**.
+5. La connexion se fait avec un code à 6 chiffres reçu par email (plus fiable qu'un lien magique — notamment dans l'app Android, où cliquer un lien depuis l'email ouvre le navigateur au lieu de l'appli). Pour que le code apparaisse dans l'email, va dans **Authentication > Email Templates > Magic Link** et ajoute `{{ .Token }}` dans le template, par exemple :
+   ```html
+   <h2>Ton code de connexion</h2>
+   <p>Entre ce code dans l'application : <strong>{{ .Token }}</strong></p>
+   ```
 
 Si tu avais déjà exécuté `schema.sql` avant l'ajout des genres personnalisés, exécute aussi `supabase/migrations/0002_free_genre.sql` pour lever la contrainte qui limitait les genres à une liste fixe.
 
@@ -55,7 +60,7 @@ npm run preview
 
 ## Fonctionnalités
 
-- **Connexion** : lien magique par email, pas de mot de passe. Chaque compte a sa propre collection privée.
+- **Connexion** : code à 6 chiffres par email, pas de mot de passe. Chaque compte a sa propre collection privée.
 - **Collection** : recherche, filtres par genre, tri (récent / alphabétique / pièces / difficulté).
 - **Wishlist** : liste d'envies avec priorité, bouton "Marquer comme acheté" qui transfère l'item vers la collection.
 - **Détail** : notation, difficulté, galerie avant/pendant/après, note personnelle, date de fin (calendrier).

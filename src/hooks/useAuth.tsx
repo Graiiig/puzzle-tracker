@@ -6,6 +6,7 @@ interface AuthValue {
   user: User | null;
   loading: boolean;
   signInWithEmail: (email: string) => Promise<{ error: string | null }>;
+  verifyCode: (email: string, code: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -39,6 +40,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!error) return { error: null };
       const message = /fetch/i.test(error.message)
         ? 'Connexion impossible. Vérifie ta connexion internet et réessaie.'
+        : error.message;
+      return { error: message };
+    },
+    verifyCode: async (email, code) => {
+      const { error } = await supabase.auth.verifyOtp({ email, token: code.trim(), type: 'email' });
+      if (!error) return { error: null };
+      const message = /expired|invalid/i.test(error.message)
+        ? 'Code incorrect ou expiré. Vérifie le code ou demande-en un nouveau.'
         : error.message;
       return { error: message };
     },
