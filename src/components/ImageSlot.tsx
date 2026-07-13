@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useImageStore } from '../hooks/ImageStore';
+import { useImageLightbox } from '../hooks/useImageLightbox';
 import { compressImageFile } from '../utils/image';
 
 interface ImageSlotProps {
@@ -8,10 +9,13 @@ interface ImageSlotProps {
   radius?: number;
   placeholder: string;
   style?: CSSProperties;
+  /** Read-only: tapping an existing photo opens it full-screen instead of the file picker. */
+  viewOnly?: boolean;
 }
 
-export default function ImageSlot({ id, shape = 'rounded', radius = 14, placeholder, style }: ImageSlotProps) {
+export default function ImageSlot({ id, shape = 'rounded', radius = 14, placeholder, style, viewOnly = false }: ImageSlotProps) {
   const { getImage, setImage, ensureLoaded } = useImageStore();
+  const { openLightbox } = useImageLightbox();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const src = getImage(id);
@@ -41,6 +45,12 @@ export default function ImageSlot({ id, shape = 'rounded', radius = 14, placehol
   return (
     <div
       onClick={(e) => {
+        if (viewOnly) {
+          if (!src) return;
+          e.stopPropagation();
+          openLightbox(src);
+          return;
+        }
         e.stopPropagation();
         inputRef.current?.click();
       }}

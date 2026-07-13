@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
+import { ImageLightboxProvider } from './hooks/useImageLightbox';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { EMPTY_FORM, SORT_MODES } from './data';
@@ -321,12 +322,14 @@ function AuthGate() {
 
   return (
     <ImageStoreProvider userId={user.id}>
-      <AppShell
-        userId={user.id}
-        onSignOut={() => {
-          if (window.confirm('Se déconnecter ?')) signOut();
-        }}
-      />
+      <ImageLightboxProvider>
+        <AppShell
+          userId={user.id}
+          onSignOut={() => {
+            if (window.confirm('Se déconnecter ?')) signOut();
+          }}
+        />
+      </ImageLightboxProvider>
     </ImageStoreProvider>
   );
 }

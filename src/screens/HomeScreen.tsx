@@ -160,7 +160,7 @@ export default function HomeScreen({
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 20px 90px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {visible.map((p) => (
           <button key={p.id} className="card-row" onClick={() => onOpenPuzzle(p.id)}>
-            <ImageSlot id={'puzzle-img-' + p.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder="photo" />
+            <ImageSlot id={'puzzle-img-' + p.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder="photo" viewOnly />
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
               <div
                 style={{

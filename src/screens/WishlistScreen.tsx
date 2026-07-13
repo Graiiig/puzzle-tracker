@@ -49,7 +49,7 @@ export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onGoHome }
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 90px', display: 'flex', flexDirection: 'column', gap: 12 }}>
         {wishlist.map((w) => (
           <button key={w.id} className="card-row wishlist-row" onClick={() => onOpenItem(w.id)}>
-            <ImageSlot id={'wish-img-' + w.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder="photo" />
+            <ImageSlot id={'wish-img-' + w.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder="photo" viewOnly />
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
               <div
                 style={{
