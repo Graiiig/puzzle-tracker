@@ -6,7 +6,7 @@ Application de suivi de collection de puzzles : gérez votre collection, votre w
 
 - React + TypeScript
 - Vite
-- [Supabase](https://supabase.com) : authentification (code à 6 chiffres par email), base de données (Postgres) et stockage des photos. Le front-end reste 100% statique (déployable sur GitHub Pages) et parle directement à Supabase depuis le navigateur.
+- [Supabase](https://supabase.com) : authentification (code par email), base de données (Postgres) et stockage des photos. Le front-end reste 100% statique (déployable sur GitHub Pages) et parle directement à Supabase depuis le navigateur.
 
 ## Configuration Supabase (une seule fois)
 
@@ -14,7 +14,7 @@ Application de suivi de collection de puzzles : gérez votre collection, votre w
 2. Ouvre **SQL Editor** dans le dashboard du projet, colle le contenu de `supabase/schema.sql` et exécute-le. Ça crée les tables `puzzles` / `wishlist_items`, les policies de sécurité (chaque utilisateur ne voit que ses propres données), et le bucket de stockage `photos`.
 3. Va dans **Authentication > URL Configuration** et ajoute l'URL de ton site (ex. `https://<user>.github.io/puzzle-tracker/` et `http://localhost:5173/` pour le dev local) dans **Redirect URLs**.
 4. Récupère l'URL et la clé publique (`anon` / `public`) du projet dans **Project Settings > API**.
-5. La connexion se fait avec un code à 6 chiffres reçu par email (plus fiable qu'un lien magique — notamment dans l'app Android, où cliquer un lien depuis l'email ouvre le navigateur au lieu de l'appli). **Le template d'email par défaut de Supabase n'est pas modifiable sans SMTP personnalisé** — il faut donc en configurer un pour que le code apparaisse dans l'email (ça retire aussi la limite d'envoi très basse de l'emailer intégré gratuit de Supabase) :
+5. La connexion se fait avec un code reçu par email (plus fiable qu'un lien magique — notamment dans l'app Android, où cliquer un lien depuis l'email ouvre le navigateur au lieu de l'appli). **Le template d'email par défaut de Supabase n'est pas modifiable sans SMTP personnalisé** — il faut donc en configurer un pour que le code apparaisse dans l'email (ça retire aussi la limite d'envoi très basse de l'emailer intégré gratuit de Supabase) :
    1. Sur ton compte Gmail : **Compte Google > Sécurité > Validation en deux étapes** (active-la si besoin), puis **Mots de passe des applications** → crée-en un pour "Mail" / "Autre (Supabase)". Note le mot de passe généré (16 caractères).
    2. Dans le dashboard Supabase : **Project Settings > Authentication > SMTP Settings**, active **Enable Custom SMTP** et renseigne :
       - Sender email / Sender name : ton adresse Gmail / "Mes Puzzles"
@@ -68,7 +68,7 @@ npm run preview
 
 ## Fonctionnalités
 
-- **Connexion** : code à 6 chiffres par email, pas de mot de passe. Chaque compte a sa propre collection privée.
+- **Connexion** : code reçu par email, pas de mot de passe. Chaque compte a sa propre collection privée.
 - **Collection** : recherche, filtres par genre, tri (récent / alphabétique / pièces / difficulté).
 - **Wishlist** : liste d'envies avec priorité, bouton "Marquer comme acheté" qui transfère l'item vers la collection.
 - **Détail** : notation, difficulté, galerie avant/pendant/après, note personnelle, date de fin (calendrier).

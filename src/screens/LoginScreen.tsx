@@ -63,7 +63,7 @@ export default function LoginScreen() {
                 Vérifie ta boîte mail
               </div>
               <div style={{ fontSize: 14, color: 'oklch(50% 0.03 340)', marginTop: 8, lineHeight: 1.5 }}>
-                On a envoyé un code à 6 chiffres à <strong>{email}</strong>.
+                On a envoyé un code à <strong>{email}</strong>.
               </div>
             </div>
             <div className="field-label">Code de connexion</div>
@@ -74,11 +74,11 @@ export default function LoginScreen() {
               autoComplete="one-time-code"
               autoFocus
               required
-              maxLength={6}
+              maxLength={10}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-              placeholder="123456"
-              style={{ textAlign: 'center', letterSpacing: 6, fontSize: 20, fontWeight: 700 }}
+              placeholder="Code reçu par email"
+              style={{ textAlign: 'center', letterSpacing: 4, fontSize: 20, fontWeight: 700 }}
             />
             {error ? (
               <div style={{ marginTop: 8, fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.2 25)' }}>{error}</div>
@@ -162,7 +162,7 @@ export default function LoginScreen() {
               {status === 'sending' ? 'Envoi...' : 'Recevoir le code'}
             </button>
             <div style={{ marginTop: 14, fontSize: 12, color: 'oklch(55% 0.03 340)', textAlign: 'center', lineHeight: 1.5 }}>
-              Pas de mot de passe : tu reçois un code à 6 chiffres par email pour te connecter.
+              Pas de mot de passe : tu reçois un code par email pour te connecter.
             </div>
           </form>
         )}
