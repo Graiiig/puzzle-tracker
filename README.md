@@ -14,11 +14,19 @@ Application de suivi de collection de puzzles : gérez votre collection, votre w
 2. Ouvre **SQL Editor** dans le dashboard du projet, colle le contenu de `supabase/schema.sql` et exécute-le. Ça crée les tables `puzzles` / `wishlist_items`, les policies de sécurité (chaque utilisateur ne voit que ses propres données), et le bucket de stockage `photos`.
 3. Va dans **Authentication > URL Configuration** et ajoute l'URL de ton site (ex. `https://<user>.github.io/puzzle-tracker/` et `http://localhost:5173/` pour le dev local) dans **Redirect URLs**.
 4. Récupère l'URL et la clé publique (`anon` / `public`) du projet dans **Project Settings > API**.
-5. La connexion se fait avec un code à 6 chiffres reçu par email (plus fiable qu'un lien magique — notamment dans l'app Android, où cliquer un lien depuis l'email ouvre le navigateur au lieu de l'appli). Pour que le code apparaisse dans l'email, va dans **Authentication > Email Templates > Magic Link** et ajoute `{{ .Token }}` dans le template, par exemple :
-   ```html
-   <h2>Ton code de connexion</h2>
-   <p>Entre ce code dans l'application : <strong>{{ .Token }}</strong></p>
-   ```
+5. La connexion se fait avec un code à 6 chiffres reçu par email (plus fiable qu'un lien magique — notamment dans l'app Android, où cliquer un lien depuis l'email ouvre le navigateur au lieu de l'appli). **Le template d'email par défaut de Supabase n'est pas modifiable sans SMTP personnalisé** — il faut donc en configurer un pour que le code apparaisse dans l'email (ça retire aussi la limite d'envoi très basse de l'emailer intégré gratuit de Supabase) :
+   1. Sur ton compte Gmail : **Compte Google > Sécurité > Validation en deux étapes** (active-la si besoin), puis **Mots de passe des applications** → crée-en un pour "Mail" / "Autre (Supabase)". Note le mot de passe généré (16 caractères).
+   2. Dans le dashboard Supabase : **Project Settings > Authentication > SMTP Settings**, active **Enable Custom SMTP** et renseigne :
+      - Sender email / Sender name : ton adresse Gmail / "Mes Puzzles"
+      - Host : `smtp.gmail.com`
+      - Port : `587`
+      - Username : ton adresse Gmail complète
+      - Password : le mot de passe d'application généré à l'étape 1
+   3. Va ensuite dans **Authentication > Emails > Magic Link or OTP** et ajoute `{{ .Token }}` dans le contenu, par exemple :
+      ```html
+      <h2>Ton code de connexion</h2>
+      <p>Entre ce code dans l'application : <strong>{{ .Token }}</strong></p>
+      ```
 
 Si tu avais déjà exécuté `schema.sql` avant l'ajout des genres personnalisés, exécute aussi `supabase/migrations/0002_free_genre.sql` pour lever la contrainte qui limitait les genres à une liste fixe.
 
