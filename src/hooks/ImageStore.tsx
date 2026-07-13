@@ -10,6 +10,7 @@ interface ImageStoreValue {
   ensureLoaded: (id: string) => void;
   setImage: (id: string, dataUrl: string) => Promise<boolean>;
   clearImage: (id: string) => void;
+  downloadImage: (id: string) => Promise<string | null>;
 }
 
 const ImageStoreContext = createContext<ImageStoreValue | null>(null);
@@ -21,6 +22,15 @@ function dataUrlToBlob(dataUrl: string): Blob {
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
   return new Blob([bytes], { type: mime });
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
 }
 
 export function ImageStoreProvider({ userId, children }: { userId: string | null; children: ReactNode }) {
@@ -69,6 +79,12 @@ export function ImageStoreProvider({ userId, children }: { userId: string | null
           return next;
         });
         if (userId) supabase.storage.from('photos').remove([path(id)]).catch(() => {});
+      },
+      downloadImage: async (id) => {
+        if (!userId) return null;
+        const { data, error } = await supabase.storage.from('photos').download(path(id));
+        if (error || !data) return null;
+        return blobToDataUrl(data);
       },
     }),
     [urls, userId],

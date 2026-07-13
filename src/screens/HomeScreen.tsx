@@ -20,6 +20,7 @@ interface HomeScreenProps {
   onGoWishlist: () => void;
   onSignOut: () => void;
   onExport: () => void;
+  exporting: boolean;
   onImport: (file: File) => void;
 }
 
@@ -37,6 +38,7 @@ export default function HomeScreen({
   onGoWishlist,
   onSignOut,
   onExport,
+  exporting,
   onImport,
 }: HomeScreenProps) {
   const importInputRef = useRef<HTMLInputElement>(null);
@@ -117,13 +119,19 @@ export default function HomeScreen({
                   }}
                 >
                   {[
-                    { icon: '⬇️', label: 'Exporter mes données', onClick: onExport },
-                    { icon: '⬆️', label: 'Importer une sauvegarde', onClick: () => importInputRef.current?.click() },
-                    { icon: '🚪', label: 'Se déconnecter', onClick: onSignOut },
+                    {
+                      icon: '⬇️',
+                      label: exporting ? 'Export en cours...' : 'Exporter mes données',
+                      onClick: onExport,
+                      disabled: exporting,
+                    },
+                    { icon: '⬆️', label: 'Importer une sauvegarde', onClick: () => importInputRef.current?.click(), disabled: false },
+                    { icon: '🚪', label: 'Se déconnecter', onClick: onSignOut, disabled: false },
                   ].map((item) => (
                     <div
-                      key={item.label}
+                      key={item.icon}
                       onClick={() => {
+                        if (item.disabled) return;
                         setMenuOpen(false);
                         item.onClick();
                       }}
@@ -134,8 +142,8 @@ export default function HomeScreen({
                         padding: '12px 16px',
                         fontSize: 14,
                         fontWeight: 700,
-                        color: 'oklch(30% 0.02 340)',
-                        cursor: 'pointer',
+                        color: item.disabled ? 'oklch(65% 0.02 340)' : 'oklch(30% 0.02 340)',
+                        cursor: item.disabled ? 'default' : 'pointer',
                         whiteSpace: 'nowrap',
                       }}
                     >

@@ -31,7 +31,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [formTargetId, setFormTargetId] = useState<string>(() => crypto.randomUUID());
   const [isEditingForm, setIsEditingForm] = useState(false);
   const [showImportPrompt, setShowImportPrompt] = useState(hasLegacyData);
-  const { clearImage } = useImageStore();
+  const [exporting, setExporting] = useState(false);
+  const { clearImage, downloadImage, setImage } = useImageStore();
 
   function updateForm<K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -238,10 +239,21 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       return;
     }
     try {
-      const result = await importBackupFile(file, addPuzzle, addWishlistItem);
-      window.alert(`Import terminé : ${result.puzzles} puzzle(s) et ${result.wishlistItems} envie(s) ajouté(s).`);
+      const result = await importBackupFile(file, addPuzzle, addWishlistItem, setImage);
+      window.alert(
+        `Import terminé : ${result.puzzles} puzzle(s), ${result.wishlistItems} envie(s) et ${result.photos} photo(s) ajouté(s).`,
+      );
     } catch {
       window.alert("Impossible de lire ce fichier. Vérifie que c'est bien un export JSON de l'application.");
+    }
+  }
+
+  async function exportBackup() {
+    setExporting(true);
+    try {
+      await exportDataAsJson(collection, wishlist, downloadImage);
+    } finally {
+      setExporting(false);
     }
   }
 
@@ -264,7 +276,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onAdd={openAddFromHome}
           onGoWishlist={() => setScreen('wishlist')}
           onSignOut={onSignOut}
-          onExport={() => exportDataAsJson(collection, wishlist)}
+          onExport={exportBackup}
+          exporting={exporting}
           onImport={importBackup}
         />
       )}
