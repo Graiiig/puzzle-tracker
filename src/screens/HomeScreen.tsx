@@ -48,6 +48,7 @@ export default function HomeScreen({
   const doneCount = completed.length;
   const donePieces = completed.reduce((sum, p) => sum + p.pieces, 0);
   const doneMinutes = completed.reduce((sum, p) => sum + parseTimeToMinutes(p.time), 0);
+  const inProgressCount = collection.filter((p) => p.status === 'En cours').length;
 
   const q = search.trim().toLowerCase();
   const filtered = collection.filter((p) => {
@@ -156,20 +157,26 @@ export default function HomeScreen({
             )}
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-          <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 12px' }}>
+        <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+          <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 10px' }}>
+            <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
+              {inProgressCount}
+            </div>
+            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>en cours</div>
+          </div>
+          <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 10px' }}>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
               {doneCount}
             </div>
             <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>terminés</div>
           </div>
-          <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 12px' }}>
+          <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 10px' }}>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
               {donePieces.toLocaleString('fr-FR')}
             </div>
             <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>pièces</div>
           </div>
-          <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 12px' }}>
+          <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 10px' }}>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
               {formatMinutesAsHours(doneMinutes)}
             </div>
