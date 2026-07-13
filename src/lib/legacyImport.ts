@@ -33,7 +33,7 @@ function num(record: Record<string, unknown>, key: string, fallback = 0): number
   return typeof v === 'number' ? v : fallback;
 }
 
-function toPuzzle(record: Record<string, unknown>, id: string): Puzzle {
+export function toPuzzle(record: Record<string, unknown>, id: string): Puzzle {
   return {
     id,
     name: str(record, 'name'),
@@ -49,7 +49,7 @@ function toPuzzle(record: Record<string, unknown>, id: string): Puzzle {
   };
 }
 
-function toWishlistItem(record: Record<string, unknown>, id: string): WishlistItem {
+export function toWishlistItem(record: Record<string, unknown>, id: string): WishlistItem {
   return {
     id,
     name: str(record, 'name'),

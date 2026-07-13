@@ -7,6 +7,7 @@ import { useWishlist } from './hooks/useWishlist';
 import { EMPTY_FORM, SORT_MODES } from './data';
 import { hasLegacyData } from './lib/legacyImport';
 import { exportDataAsJson } from './utils/export';
+import { importBackupFile } from './utils/importBackup';
 import { collectGenres } from './utils/genres';
 import type { DetailSource, Genre, Puzzle, PuzzleForm, Screen, SortMode, WishlistItem } from './types';
 import HomeScreen from './screens/HomeScreen';
@@ -228,6 +229,22 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     setSelectedId(null);
   }
 
+  async function importBackup(file: File) {
+    if (
+      !window.confirm(
+        "Importer ce fichier de sauvegarde ? Les puzzles et envies qu'il contient seront ajoutés à ta collection actuelle (rien n'est supprimé ni remplacé).",
+      )
+    ) {
+      return;
+    }
+    try {
+      const result = await importBackupFile(file, addPuzzle, addWishlistItem);
+      window.alert(`Import terminé : ${result.puzzles} puzzle(s) et ${result.wishlistItems} envie(s) ajouté(s).`);
+    } catch {
+      window.alert("Impossible de lire ce fichier. Vérifie que c'est bien un export JSON de l'application.");
+    }
+  }
+
   const selectedPuzzle = collection.find((p) => p.id === selectedId) ?? collection[0];
   const selectedWishlistItem = wishlist.find((w) => w.id === selectedId) ?? wishlist[0];
 
@@ -248,6 +265,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onGoWishlist={() => setScreen('wishlist')}
           onSignOut={onSignOut}
           onExport={() => exportDataAsJson(collection, wishlist)}
+          onImport={importBackup}
         />
       )}
 

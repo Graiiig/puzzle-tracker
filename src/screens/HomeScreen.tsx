@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
@@ -19,6 +20,7 @@ interface HomeScreenProps {
   onGoWishlist: () => void;
   onSignOut: () => void;
   onExport: () => void;
+  onImport: (file: File) => void;
 }
 
 export default function HomeScreen({
@@ -35,7 +37,10 @@ export default function HomeScreen({
   onGoWishlist,
   onSignOut,
   onExport,
+  onImport,
 }: HomeScreenProps) {
+  const importInputRef = useRef<HTMLInputElement>(null);
+
   const completed = collection.filter((p) => p.status === 'Terminé');
   const doneCount = completed.length;
   const donePieces = completed.reduce((sum, p) => sum + p.pieces, 0);
@@ -66,6 +71,34 @@ export default function HomeScreen({
             Mes Puzzles ✨
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
+            <div
+              onClick={() => importInputRef.current?.click()}
+              title="Importer une sauvegarde"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: '50%',
+                background: 'oklch(97% 0.02 70 / 0.9)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 16,
+                cursor: 'pointer',
+              }}
+            >
+              ⬆️
+            </div>
+            <input
+              ref={importInputRef}
+              type="file"
+              accept="application/json"
+              style={{ display: 'none' }}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = '';
+                if (file) onImport(file);
+              }}
+            />
             <div
               onClick={onExport}
               title="Exporter mes données"
