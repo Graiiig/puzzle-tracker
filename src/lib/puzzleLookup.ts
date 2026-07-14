@@ -20,14 +20,20 @@ const API_KEY = import.meta.env.VITE_PUZZLE_LOOKUP_API_KEY as string | undefined
 /** Scan-to-prefill is an optional feature: unset env vars just disable it. */
 export const isPuzzleLookupConfigured = Boolean(BASE_URL && API_KEY);
 
-const TIMEOUT_MS = 12000;
+// puzzle-lookup tries up to two sources sequentially, each with its own
+// SOURCE_TIMEOUT_MS budget (40s by default) before falling back/giving up —
+// a "not found" that requires trying both can take close to twice that.
+// This must stay comfortably above the backend's worst case, or the backend
+// timeout budget it's meant to accommodate is unreachable from this client.
+const LOOKUP_TIMEOUT_MS = 90000;
+const IMAGE_TIMEOUT_MS = 15000;
 
 /** Never throws — any failure (network, timeout, bad response) degrades to "not found". */
 export async function lookupEan(ean: string): Promise<LookupResult> {
   if (!BASE_URL || !API_KEY) return { found: false };
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), LOOKUP_TIMEOUT_MS);
   try {
     const response = await fetch(`${BASE_URL}/lookup?ean=${encodeURIComponent(ean)}`, {
       headers: { 'x-api-key': API_KEY },
@@ -52,7 +58,7 @@ export async function fetchLookupImage(imageUrl: string): Promise<Blob | null> {
   if (!BASE_URL || !API_KEY) return null;
 
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const timer = setTimeout(() => controller.abort(), IMAGE_TIMEOUT_MS);
   try {
     const response = await fetch(`${BASE_URL}/image?url=${encodeURIComponent(imageUrl)}`, {
       headers: { 'x-api-key': API_KEY },
