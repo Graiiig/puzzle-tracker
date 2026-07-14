@@ -285,9 +285,6 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       if (!id) return;
       await deletePuzzle(id);
       clearImage('puzzle-img-' + id);
-      clearImage('gallery-' + id + '-before');
-      clearImage('gallery-' + id + '-during');
-      clearImage('gallery-' + id + '-after');
       setScreen('home');
     } else {
       const id = selectedWishlistItem?.id;

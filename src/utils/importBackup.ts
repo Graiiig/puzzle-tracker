@@ -34,9 +34,6 @@ export async function importBackupFile(
     if (ok) {
       result.puzzles += 1;
       await migratePhoto('puzzle-img-' + oldId, 'puzzle-img-' + newId);
-      await migratePhoto('gallery-' + oldId + '-before', 'gallery-' + newId + '-before');
-      await migratePhoto('gallery-' + oldId + '-during', 'gallery-' + newId + '-during');
-      await migratePhoto('gallery-' + oldId + '-after', 'gallery-' + newId + '-after');
     }
   }
   for (const w of rawWishlist) {

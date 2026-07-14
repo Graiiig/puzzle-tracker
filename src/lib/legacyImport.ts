@@ -136,9 +136,6 @@ export async function importLegacyData(options: {
     if (ok) {
       result.puzzles += 1;
       await migrateImage('puzzle-img-' + oldId, 'puzzle-img-' + newId);
-      await migrateImage('gallery-' + oldId + '-before', 'gallery-' + newId + '-before');
-      await migrateImage('gallery-' + oldId + '-during', 'gallery-' + newId + '-during');
-      await migrateImage('gallery-' + oldId + '-after', 'gallery-' + newId + '-after');
     }
   }
 
