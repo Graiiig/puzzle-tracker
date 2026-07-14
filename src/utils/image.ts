@@ -1,7 +1,8 @@
 const MAX_DIMENSION = 1000;
 const JPEG_QUALITY = 0.8;
 
-export function compressImageFile(file: File): Promise<string> {
+/** Accepts any Blob (a File input, or e.g. a fetched remote image). */
+export function compressImageFile(file: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const objectUrl = URL.createObjectURL(file);
     const img = new Image();

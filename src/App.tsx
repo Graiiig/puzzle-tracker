@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -11,6 +11,8 @@ import { hasLegacyData } from './lib/legacyImport';
 import { exportDataAsJson } from './utils/export';
 import { importBackupFile } from './utils/importBackup';
 import { collectGenres } from './utils/genres';
+import { isPuzzleLookupConfigured, lookupEan } from './lib/puzzleLookup';
+import { compressImageFile } from './utils/image';
 import type { DetailSource, Genre, Puzzle, PuzzleForm, Screen, SortMode, WishlistItem } from './types';
 import HomeScreen from './screens/HomeScreen';
 import WishlistScreen from './screens/WishlistScreen';
@@ -18,6 +20,10 @@ import DetailScreen from './screens/DetailScreen';
 import AddScreen from './screens/AddScreen';
 import LoginScreen from './screens/LoginScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
+
+// Lazy: @zxing/library is heavy and only needed by the small share of
+// sessions that actually open the barcode scanner.
+const BarcodeScanner = lazy(() => import('./components/BarcodeScanner'));
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
   const [screen, setScreen] = useState<Screen>('home');
@@ -34,8 +40,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [isEditingForm, setIsEditingForm] = useState(false);
   const [showImportPrompt, setShowImportPrompt] = useState(hasLegacyData);
   const [exporting, setExporting] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
+  const [scanning, setScanning] = useState(false);
   const { clearImage, downloadImage, setImage } = useImageStore();
   const { isLightboxOpen, closeLightbox } = useImageLightbox();
+  const photoSlotId = (addMode === 'wishlist' ? 'wish-img-' : 'puzzle-img-') + formTargetId;
 
   function updateForm<K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -121,6 +130,34 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       return;
     }
     setScreen(addMode === 'wishlist' ? 'wishlist' : 'home');
+  }
+
+  async function handleScanned(ean: string) {
+    setShowScanner(false);
+    setScanning(true);
+    try {
+      const result = await lookupEan(ean);
+      if (!result.found) return;
+
+      if (result.name) updateForm('name', result.name);
+      if (result.brand) updateForm('brand', result.brand);
+      if (result.pieces) updateForm('pieces', String(result.pieces));
+
+      if (result.imageUrl) {
+        try {
+          const response = await fetch(result.imageUrl);
+          if (response.ok) {
+            const blob = await response.blob();
+            const dataUrl = await compressImageFile(blob);
+            await setImage(photoSlotId, dataUrl);
+          }
+        } catch {
+          // Photo pre-fill is best-effort — the rest of the form is still usable.
+        }
+      }
+    } finally {
+      setScanning(false);
+    }
   }
 
   function goBack() {
@@ -339,7 +376,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         <AddScreen
           mode={addMode}
           isEditing={isEditingForm}
-          photoSlotId={(addMode === 'wishlist' ? 'wish-img-' : 'puzzle-img-') + formTargetId}
+          photoSlotId={photoSlotId}
           genreOptions={collectGenres(collection, wishlist)}
           onSetModeCollection={() => setAddMode('collection')}
           onSetModeWishlist={() => setAddMode('wishlist')}
@@ -347,7 +384,16 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onFormChange={updateForm}
           onCancel={cancelAdd}
           onSubmit={submitForm}
+          canScan={isPuzzleLookupConfigured}
+          scanning={scanning}
+          onScan={() => setShowScanner(true)}
         />
+      )}
+
+      {showScanner && (
+        <Suspense fallback={null}>
+          <BarcodeScanner onDetected={handleScanned} onClose={() => setShowScanner(false)} />
+        </Suspense>
       )}
 
       {showImportPrompt && (

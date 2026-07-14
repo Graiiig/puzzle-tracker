@@ -17,6 +17,9 @@ interface AddScreenProps {
   onFormChange: <K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) => void;
   onCancel: () => void;
   onSubmit: () => void;
+  canScan: boolean;
+  scanning: boolean;
+  onScan: () => void;
 }
 
 export default function AddScreen({
@@ -30,6 +33,9 @@ export default function AddScreen({
   onFormChange,
   onCancel,
   onSubmit,
+  canScan,
+  scanning,
+  onScan,
 }: AddScreenProps) {
   const [addingGenre, setAddingGenre] = useState(false);
   const [newGenreName, setNewGenreName] = useState('');
@@ -102,6 +108,29 @@ export default function AddScreen({
         )}
 
         <ImageSlot id={photoSlotId} shape="rounded" radius={16} style={{ width: '100%', height: 140 }} placeholder="ajouter une photo" />
+
+        {!isEditing && canScan && (
+          <div
+            onClick={scanning ? undefined : onScan}
+            style={{
+              marginTop: 12,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              padding: 12,
+              borderRadius: 14,
+              border: '1px dashed oklch(70% 0.1 320)',
+              color: 'oklch(45% 0.16 320)',
+              fontWeight: 800,
+              fontSize: 13,
+              cursor: scanning ? 'default' : 'pointer',
+              opacity: scanning ? 0.6 : 1,
+            }}
+          >
+            {scanning ? 'Recherche des infos du puzzle...' : '📷 Scanner un code-barre'}
+          </div>
+        )}
 
         <div style={{ marginTop: 16 }}>
           <div className="field-label">Nom du puzzle</div>
