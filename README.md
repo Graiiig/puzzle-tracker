@@ -91,7 +91,7 @@ npm run preview
 - **Connexion** : code reçu par email, pas de mot de passe. Chaque compte a sa propre collection privée.
 - **Collection** : recherche, filtres par genre, tri (récent / alphabétique / pièces / difficulté).
 - **Wishlist** : liste d'envies avec priorité, bouton "Marquer comme acheté" qui transfère l'item vers la collection.
-- **Détail** : notation, difficulté, galerie avant/pendant/après, note personnelle, date de fin (calendrier).
+- **Détail** : notation, difficulté, note personnelle, date de fin (calendrier).
 - **Ajout / modification** : formulaire unique pour ajouter ou modifier un puzzle, dans la collection ou la wishlist.
 - **Photos** : cliquez sur n'importe quel emplacement photo pour importer une image depuis votre appareil ; stockées dans Supabase Storage, synchronisées entre appareils.
 - **Scan de code-barre** (optionnel, voir configuration ci-dessus) : bouton "Scanner un code-barre" dans le formulaire d'ajout, pré-remplit nom/marque/nombre de pièces/photo si le puzzle est trouvé via [puzzle-lookup](https://github.com/Graiiig/puzzle-lookup). Nécessite la permission caméra (demandée au premier scan).

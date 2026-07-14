@@ -41,3 +41,28 @@ export async function lookupEan(ean: string): Promise<LookupResult> {
     clearTimeout(timer);
   }
 }
+
+/**
+ * Fetches a lookup result's image through puzzle-lookup's own /image proxy
+ * instead of the third-party host directly — that host generally won't send
+ * CORS headers for this app's origin, so a direct fetch() would just fail.
+ * Never throws — returns null on any failure.
+ */
+export async function fetchLookupImage(imageUrl: string): Promise<Blob | null> {
+  if (!BASE_URL || !API_KEY) return null;
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const response = await fetch(`${BASE_URL}/image?url=${encodeURIComponent(imageUrl)}`, {
+      headers: { 'x-api-key': API_KEY },
+      signal: controller.signal,
+    });
+    if (!response.ok) return null;
+    return await response.blob();
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}

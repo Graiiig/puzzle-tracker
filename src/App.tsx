@@ -11,7 +11,7 @@ import { hasLegacyData } from './lib/legacyImport';
 import { exportDataAsJson } from './utils/export';
 import { importBackupFile } from './utils/importBackup';
 import { collectGenres } from './utils/genres';
-import { isPuzzleLookupConfigured, lookupEan } from './lib/puzzleLookup';
+import { fetchLookupImage, isPuzzleLookupConfigured, lookupEan } from './lib/puzzleLookup';
 import { compressImageFile } from './utils/image';
 import type { DetailSource, Genre, Puzzle, PuzzleForm, Screen, SortMode, WishlistItem } from './types';
 import HomeScreen from './screens/HomeScreen';
@@ -45,6 +45,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const { clearImage, downloadImage, setImage } = useImageStore();
   const { isLightboxOpen, closeLightbox } = useImageLightbox();
   const photoSlotId = (addMode === 'wishlist' ? 'wish-img-' : 'puzzle-img-') + formTargetId;
+  // Lets an in-flight scan (lookup + image fetch can take several seconds)
+  // detect that the user has since moved on to a different add/edit session,
+  // so its result doesn't get written into whatever form is current by then.
+  const formTargetIdRef = useRef(formTargetId);
+  formTargetIdRef.current = formTargetId;
 
   function updateForm<K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -135,24 +140,27 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   async function handleScanned(ean: string) {
     setShowScanner(false);
     setScanning(true);
+    const scanTargetId = formTargetId;
+    const scanPhotoSlotId = photoSlotId;
+    const isStale = () => formTargetIdRef.current !== scanTargetId;
+
     try {
       const result = await lookupEan(ean);
-      if (!result.found) return;
+      if (isStale() || !result.found) return;
 
       if (result.name) updateForm('name', result.name);
       if (result.brand) updateForm('brand', result.brand);
-      if (result.pieces) updateForm('pieces', String(result.pieces));
+      if (result.pieces !== undefined) updateForm('pieces', String(result.pieces));
 
       if (result.imageUrl) {
-        try {
-          const response = await fetch(result.imageUrl);
-          if (response.ok) {
-            const blob = await response.blob();
+        const blob = await fetchLookupImage(result.imageUrl);
+        if (blob && !isStale()) {
+          try {
             const dataUrl = await compressImageFile(blob);
-            await setImage(photoSlotId, dataUrl);
+            if (!isStale()) await setImage(scanPhotoSlotId, dataUrl);
+          } catch {
+            // Photo pre-fill is best-effort — the rest of the form is still usable.
           }
-        } catch {
-          // Photo pre-fill is best-effort — the rest of the form is still usable.
         }
       }
     } finally {
