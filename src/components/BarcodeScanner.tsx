@@ -13,20 +13,43 @@ const EAN_FORMATS = [BarcodeFormat.EAN_13, BarcodeFormat.EAN_8];
 export default function BarcodeScanner({ onDetected, onClose }: BarcodeScannerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
+  // Read through a ref so the scan loop (started once, below) always calls the
+  // latest callback without needing to restart the camera on every re-render.
+  const onDetectedRef = useRef(onDetected);
+  onDetectedRef.current = onDetected;
 
   useEffect(() => {
     const hints = new Map();
     hints.set(DecodeHintType.POSSIBLE_FORMATS, EAN_FORMATS);
+    // Makes ZXing try harder per frame (multiple decode passes/rotations) —
+    // noticeably improves real-world detection of 1D barcodes at some cost
+    // of CPU, which is worth it here since scanning is a deliberate,
+    // short-lived action.
+    hints.set(DecodeHintType.TRY_HARDER, true);
     const reader = new BrowserMultiFormatReader(hints);
     let cancelled = false;
     let controls: IScannerControls | undefined;
 
     reader
-      .decodeFromConstraints({ video: { facingMode: 'environment' } }, videoRef.current!, (result, _err, ctrl) => {
-        if (cancelled || !result) return;
-        ctrl.stop();
-        onDetected(result.getText());
-      })
+      .decodeFromConstraints(
+        {
+          video: {
+            facingMode: 'environment',
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            // Best-effort: not supported by every browser/WebView, but
+            // continuous autofocus helps a lot for close-up barcode scans
+            // when it is.
+            advanced: [{ focusMode: 'continuous' } as unknown as MediaTrackConstraintSet],
+          },
+        },
+        videoRef.current!,
+        (result, _err, ctrl) => {
+          if (cancelled || !result) return;
+          ctrl.stop();
+          onDetectedRef.current(result.getText());
+        },
+      )
       .then((c) => {
         if (cancelled) {
           c.stop();
@@ -42,7 +65,7 @@ export default function BarcodeScanner({ onDetected, onClose }: BarcodeScannerPr
       cancelled = true;
       controls?.stop();
     };
-  }, [onDetected]);
+  }, []);
 
   return (
     <div style={{ position: 'fixed', inset: 0, background: 'black', zIndex: 1000, display: 'flex', flexDirection: 'column' }}>
