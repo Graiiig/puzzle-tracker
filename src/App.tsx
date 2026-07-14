@@ -48,10 +48,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   // Lets an in-flight scan (lookup + image fetch can take several seconds)
   // detect that the user has since moved on to a different add/edit session,
   // so its result doesn't get written into whatever form is current by then.
-  // Keyed on both addMode and formTargetId since photoSlotId is derived from
-  // both (they change together today, but this doesn't rely on that holding).
-  const sessionKeyRef = useRef(`${addMode}:${formTargetId}`);
-  sessionKeyRef.current = `${addMode}:${formTargetId}`;
+  // A counter rather than addMode/formTargetId: editing the same item twice
+  // in a row reuses the same addMode+id, so a value derived from those alone
+  // wouldn't catch that case, while this increments on every session start
+  // regardless of whether it happens to match a previous one.
+  const sessionGenerationRef = useRef(0);
 
   function updateForm<K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -74,6 +75,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   }
 
   function openAddFromHome() {
+    sessionGenerationRef.current += 1;
     setAddMode('collection');
     setForm({ ...EMPTY_FORM });
     setIsEditingForm(false);
@@ -82,6 +84,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   }
 
   function openAddFromWishlist() {
+    sessionGenerationRef.current += 1;
     setAddMode('wishlist');
     setForm({ ...EMPTY_FORM });
     setIsEditingForm(false);
@@ -90,6 +93,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   }
 
   function openEditSelected() {
+    sessionGenerationRef.current += 1;
     if (detailSource === 'collection') {
       const p = selectedPuzzle;
       if (!p) return;
@@ -142,9 +146,9 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   async function handleScanned(ean: string) {
     setShowScanner(false);
     setScanning(true);
-    const scanSessionKey = `${addMode}:${formTargetId}`;
+    const scanGeneration = sessionGenerationRef.current;
     const scanPhotoSlotId = photoSlotId;
-    const isStale = () => sessionKeyRef.current !== scanSessionKey;
+    const isStale = () => sessionGenerationRef.current !== scanGeneration;
 
     try {
       const result = await lookupEan(ean);
