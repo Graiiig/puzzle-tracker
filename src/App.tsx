@@ -48,8 +48,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   // Lets an in-flight scan (lookup + image fetch can take several seconds)
   // detect that the user has since moved on to a different add/edit session,
   // so its result doesn't get written into whatever form is current by then.
-  const formTargetIdRef = useRef(formTargetId);
-  formTargetIdRef.current = formTargetId;
+  // Keyed on both addMode and formTargetId since photoSlotId is derived from
+  // both (they change together today, but this doesn't rely on that holding).
+  const sessionKeyRef = useRef(`${addMode}:${formTargetId}`);
+  sessionKeyRef.current = `${addMode}:${formTargetId}`;
 
   function updateForm<K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -140,9 +142,9 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   async function handleScanned(ean: string) {
     setShowScanner(false);
     setScanning(true);
-    const scanTargetId = formTargetId;
+    const scanSessionKey = `${addMode}:${formTargetId}`;
     const scanPhotoSlotId = photoSlotId;
-    const isStale = () => formTargetIdRef.current !== scanTargetId;
+    const isStale = () => sessionKeyRef.current !== scanSessionKey;
 
     try {
       const result = await lookupEan(ean);
