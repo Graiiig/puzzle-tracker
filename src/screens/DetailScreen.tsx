@@ -159,26 +159,6 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
 
             <div style={{ marginTop: 20 }}>
               <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
-                Galerie
-              </div>
-              <div style={{ display: 'flex', gap: 10 }}>
-                <div style={{ flex: 1 }}>
-                  <ImageSlot id={'gallery-' + puzzle.id + '-before'} shape="rounded" radius={12} style={{ width: '100%', height: 76 }} placeholder="avant" />
-                  <div style={{ textAlign: 'center', fontSize: 10, fontWeight: 800, color: 'oklch(55% 0.03 340)', marginTop: 4 }}>Avant</div>
-                </div>
-                <div style={{ flex: 1 }}>
-                  <ImageSlot id={'gallery-' + puzzle.id + '-during'} shape="rounded" radius={12} style={{ width: '100%', height: 76 }} placeholder="pendant" />
-                  <div style={{ textAlign: 'center', fontSize: 10, fontWeight: 800, color: 'oklch(55% 0.03 340)', marginTop: 4 }}>Pendant</div>
-                </div>
-                <div style={{ flex: 1 }}>
-                  <ImageSlot id={'gallery-' + puzzle.id + '-after'} shape="rounded" radius={12} style={{ width: '100%', height: 76 }} placeholder="terminé" />
-                  <div style={{ textAlign: 'center', fontSize: 10, fontWeight: 800, color: 'oklch(55% 0.03 340)', marginTop: 4 }}>Terminé</div>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: 20 }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
                 Note perso
               </div>
               <div style={{ background: 'white', borderRadius: 16, padding: 14, fontSize: 14, lineHeight: 1.5, color: 'oklch(32% 0.02 340)', fontWeight: 600 }}>

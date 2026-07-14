@@ -2,12 +2,7 @@ import type { Puzzle, WishlistItem } from '../types';
 
 function photoIdsFor(collection: Puzzle[], wishlist: WishlistItem[]): string[] {
   return [
-    ...collection.flatMap((p) => [
-      'puzzle-img-' + p.id,
-      'gallery-' + p.id + '-before',
-      'gallery-' + p.id + '-during',
-      'gallery-' + p.id + '-after',
-    ]),
+    ...collection.map((p) => 'puzzle-img-' + p.id),
     ...wishlist.map((w) => 'wish-img-' + w.id),
   ];
 }
