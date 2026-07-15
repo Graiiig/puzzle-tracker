@@ -94,13 +94,15 @@ export default function AddScreen({
           <div style={{ display: 'flex', background: 'oklch(93% 0.02 340)', borderRadius: 100, padding: 4, marginBottom: 18 }}>
             <button
               onClick={onSetModeCollection}
-              style={{ flex: 1, textAlign: 'center', padding: 9, borderRadius: 100, fontWeight: 800, fontSize: 13, border: 'none', ...modeCollectionStyle }}
+              disabled={scanning}
+              style={{ flex: 1, textAlign: 'center', padding: 9, borderRadius: 100, fontWeight: 800, fontSize: 13, border: 'none', cursor: scanning ? 'default' : 'pointer', ...modeCollectionStyle }}
             >
               🧩 Collection
             </button>
             <button
               onClick={onSetModeWishlist}
-              style={{ flex: 1, textAlign: 'center', padding: 9, borderRadius: 100, fontWeight: 800, fontSize: 13, border: 'none', ...modeWishlistStyle }}
+              disabled={scanning}
+              style={{ flex: 1, textAlign: 'center', padding: 9, borderRadius: 100, fontWeight: 800, fontSize: 13, border: 'none', cursor: scanning ? 'default' : 'pointer', ...modeWishlistStyle }}
             >
               💗 Wishlist
             </button>
