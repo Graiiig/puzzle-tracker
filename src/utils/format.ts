@@ -63,7 +63,8 @@ export function sortList<T extends { name: string; pieces: number; difficulty?: 
   if (mode === 'Alphabétique') arr.sort((a, b) => a.name.localeCompare(b.name));
   else if (mode === 'Pièces') arr.sort((a, b) => b.pieces - a.pieces);
   else if (mode === 'Difficulté') arr.sort((a, b) => (b.difficulty ?? 0) - (a.difficulty ?? 0));
-  else arr.reverse();
+  // 'Récent': the list already arrives most-recent-first (fetched with
+  // created_at descending), so no reordering is needed here.
   return arr;
 }
 
