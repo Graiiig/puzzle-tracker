@@ -205,21 +205,26 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
   // Refetch on return to foreground so stale/empty data left over from a
   // previous session (or changes made elsewhere, e.g. the website) doesn't
-  // linger silently until the user thinks to pull-to-refresh.
+  // linger silently until the user thinks to pull-to-refresh. Native and web
+  // use a single, mutually exclusive signal each — Capacitor's WebView also
+  // fires visibilitychange on foreground, so listening to both there would
+  // double up the refresh.
   useEffect(() => {
     const refreshBoth = () => {
       refreshCollection();
       refreshWishlist();
     };
-    const resumeListenerPromise = Capacitor.isNativePlatform()
-      ? CapacitorApp.addListener('resume', refreshBoth)
-      : null;
+    if (Capacitor.isNativePlatform()) {
+      const listenerPromise = CapacitorApp.addListener('resume', refreshBoth);
+      return () => {
+        listenerPromise.then((listener) => listener.remove());
+      };
+    }
     function onVisibilityChange() {
       if (document.visibilityState === 'visible') refreshBoth();
     }
     document.addEventListener('visibilitychange', onVisibilityChange);
     return () => {
-      resumeListenerPromise?.then((listener) => listener.remove());
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, [refreshCollection, refreshWishlist]);

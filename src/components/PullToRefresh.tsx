@@ -2,6 +2,10 @@ import { useRef, useState, type CSSProperties, type ReactNode, type TouchEvent }
 
 const THRESHOLD = 70;
 const MAX_PULL = 90;
+const REFRESHING_HEIGHT = 56;
+// Matches the gap used by the collection/wishlist list containers this
+// wraps, kept here since the indicator now lives outside their flex flow.
+const LIST_GAP = 12;
 
 interface PullToRefreshProps {
   onRefresh: () => Promise<void> | void;
@@ -26,43 +30,56 @@ export default function PullToRefresh({ onRefresh, style, children }: PullToRefr
   function onTouchMove(e: TouchEvent<HTMLDivElement>) {
     if (startYRef.current === null) return;
     const delta = e.touches[0].clientY - startYRef.current;
-    if (delta > 0) {
-      setPullDistance(Math.min(delta * 0.5, MAX_PULL));
-    }
+    setPullDistance(Math.max(0, Math.min(delta * 0.5, MAX_PULL)));
+  }
+
+  function reset() {
+    startYRef.current = null;
+    setPullDistance(0);
   }
 
   async function onTouchEnd() {
     if (startYRef.current === null) return;
+    const shouldRefresh = pullDistance > THRESHOLD && !refreshing;
     startYRef.current = null;
-    if (pullDistance > THRESHOLD && !refreshing) {
-      setRefreshing(true);
-      setPullDistance(56);
-      try {
-        await onRefresh();
-      } finally {
-        setRefreshing(false);
-        setPullDistance(0);
-      }
-    } else {
+    if (!shouldRefresh) {
+      setPullDistance(0);
+      return;
+    }
+    setRefreshing(true);
+    setPullDistance(REFRESHING_HEIGHT);
+    try {
+      await onRefresh();
+    } finally {
+      setRefreshing(false);
       setPullDistance(0);
     }
   }
 
   return (
+    // position: relative so the indicator can overlay the top edge instead
+    // of sitting in the list's own flex flow (a sibling there would add a
+    // permanent gap above the first item even at pullDistance 0).
     <div
       ref={containerRef}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
-      style={style}
+      onTouchCancel={reset}
+      style={{ ...style, position: 'relative' }}
     >
       <div
         style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
           height: pullDistance,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
+          pointerEvents: 'none',
           transition: refreshing ? undefined : 'height 0.2s ease',
         }}
       >
@@ -73,7 +90,17 @@ export default function PullToRefresh({ onRefresh, style, children }: PullToRefr
           🔄
         </span>
       </div>
-      {children}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: LIST_GAP,
+          transform: `translateY(${pullDistance}px)`,
+          transition: refreshing ? undefined : 'transform 0.2s ease',
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
