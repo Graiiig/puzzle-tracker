@@ -1,5 +1,6 @@
 import ImageSlot from '../components/ImageSlot';
 import BottomNav from '../components/BottomNav';
+import PullToRefresh from '../components/PullToRefresh';
 import type { WishlistItem } from '../types';
 import { priorityStyle } from '../utils/format';
 
@@ -7,10 +8,11 @@ interface WishlistScreenProps {
   wishlist: WishlistItem[];
   onOpenItem: (id: string) => void;
   onAdd: () => void;
+  onRefresh: () => Promise<void> | void;
   onGoHome: () => void;
 }
 
-export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onGoHome }: WishlistScreenProps) {
+export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onRefresh, onGoHome }: WishlistScreenProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)', position: 'relative' }}>
       <div
@@ -46,7 +48,10 @@ export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onGoHome }
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 90px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <PullToRefresh
+        onRefresh={onRefresh}
+        style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 90px', display: 'flex', flexDirection: 'column', gap: 12 }}
+      >
         {wishlist.map((w) => (
           <button key={w.id} className="card-row wishlist-row" onClick={() => onOpenItem(w.id)}>
             <ImageSlot id={'wish-img-' + w.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder="photo" viewOnly />
@@ -76,7 +81,7 @@ export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onGoHome }
             Ta liste d'envies est vide pour l'instant 💭
           </div>
         )}
-      </div>
+      </PullToRefresh>
 
       <button
         onClick={onAdd}

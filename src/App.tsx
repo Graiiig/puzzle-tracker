@@ -27,8 +27,8 @@ const BarcodeScanner = lazy(() => import('./components/BarcodeScanner'));
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
   const [screen, setScreen] = useState<Screen>('home');
-  const { collection, addPuzzle, updatePuzzle, deletePuzzle } = usePuzzles(userId);
-  const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem } = useWishlist(userId);
+  const { collection, addPuzzle, updatePuzzle, deletePuzzle, refresh: refreshCollection } = usePuzzles(userId);
+  const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [detailSource, setDetailSource] = useState<DetailSource>('collection');
   const [search, setSearch] = useState('');
@@ -203,6 +203,32 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     };
   }, []);
 
+  // Refetch on return to foreground so stale/empty data left over from a
+  // previous session (or changes made elsewhere, e.g. the website) doesn't
+  // linger silently until the user thinks to pull-to-refresh. Native and web
+  // use a single, mutually exclusive signal each — Capacitor's WebView also
+  // fires visibilitychange on foreground, so listening to both there would
+  // double up the refresh.
+  useEffect(() => {
+    const refreshBoth = () => {
+      refreshCollection();
+      refreshWishlist();
+    };
+    if (Capacitor.isNativePlatform()) {
+      const listenerPromise = CapacitorApp.addListener('resume', refreshBoth);
+      return () => {
+        listenerPromise.then((listener) => listener.remove());
+      };
+    }
+    function onVisibilityChange() {
+      if (document.visibilityState === 'visible') refreshBoth();
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+  }, [refreshCollection, refreshWishlist]);
+
   async function submitForm() {
     if (!form.name.trim() || form.genres.length === 0) return;
 
@@ -354,6 +380,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onCycleSort={() => setSortMode(SORT_MODES[(SORT_MODES.indexOf(sortMode) + 1) % SORT_MODES.length])}
           onOpenPuzzle={openPuzzle}
           onAdd={openAddFromHome}
+          onRefresh={refreshCollection}
           onGoWishlist={() => setScreen('wishlist')}
           onSignOut={onSignOut}
           onExport={exportBackup}
@@ -367,6 +394,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           wishlist={wishlist}
           onOpenItem={openWishlistItem}
           onAdd={openAddFromWishlist}
+          onRefresh={refreshWishlist}
           onGoHome={() => setScreen('home')}
         />
       )}

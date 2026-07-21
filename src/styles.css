@@ -126,6 +126,33 @@ button {
   justify-content: center;
   cursor: pointer;
   border: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.fab:hover {
+  transform: scale(1.08);
+}
+
+.fab:active {
+  transform: scale(0.96);
+}
+
+.ptr-spinner {
+  font-size: 20px;
+  display: inline-block;
+}
+
+.ptr-spinner-active {
+  animation: ptr-spin 0.7s linear infinite;
+}
+
+@keyframes ptr-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .field-label {

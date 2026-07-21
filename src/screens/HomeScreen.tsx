@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
+import PullToRefresh from '../components/PullToRefresh';
 import type { Genre, Puzzle, SortMode } from '../types';
 import { chipStyle, formatMinutesAsHours, parseTimeToMinutes, sortList, starString, statusStyle } from '../utils/format';
 import { collectGenres } from '../utils/genres';
@@ -17,6 +18,7 @@ interface HomeScreenProps {
   onCycleSort: () => void;
   onOpenPuzzle: (id: string) => void;
   onAdd: () => void;
+  onRefresh: () => Promise<void> | void;
   onGoWishlist: () => void;
   onSignOut: () => void;
   onExport: () => void;
@@ -35,6 +37,7 @@ export default function HomeScreen({
   onCycleSort,
   onOpenPuzzle,
   onAdd,
+  onRefresh,
   onGoWishlist,
   onSignOut,
   onExport,
@@ -239,7 +242,10 @@ export default function HomeScreen({
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 20px 90px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <PullToRefresh
+        onRefresh={onRefresh}
+        style={{ flex: 1, overflowY: 'auto', padding: '8px 20px 90px', display: 'flex', flexDirection: 'column', gap: 12 }}
+      >
         {visible.map((p) => (
           <button key={p.id} className="card-row" onClick={() => onOpenPuzzle(p.id)}>
             <ImageSlot id={'puzzle-img-' + p.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder="photo" viewOnly />
@@ -272,7 +278,7 @@ export default function HomeScreen({
             Aucun puzzle trouvé 🥲
           </div>
         )}
-      </div>
+      </PullToRefresh>
 
       <button
         onClick={onAdd}
