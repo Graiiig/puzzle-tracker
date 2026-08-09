@@ -17,9 +17,9 @@ interface AddScreenProps {
   onFormChange: <K extends keyof PuzzleForm>(key: K, value: PuzzleForm[K]) => void;
   onCancel: () => void;
   onSubmit: () => void;
-  canScan: boolean;
+  canLookup: boolean;
   scanning: boolean;
-  onScan: () => void;
+  onLookupEan: (ean: string) => Promise<boolean>;
 }
 
 export default function AddScreen({
@@ -33,12 +33,26 @@ export default function AddScreen({
   onFormChange,
   onCancel,
   onSubmit,
-  canScan,
+  canLookup,
   scanning,
-  onScan,
+  onLookupEan,
 }: AddScreenProps) {
   const [addingGenre, setAddingGenre] = useState(false);
   const [newGenreName, setNewGenreName] = useState('');
+  const [eanInput, setEanInput] = useState('');
+  const [eanNotFound, setEanNotFound] = useState(false);
+
+  async function submitEan() {
+    const trimmed = eanInput.trim();
+    if (!trimmed || scanning) return;
+    setEanNotFound(false);
+    const found = await onLookupEan(trimmed);
+    if (found) {
+      setEanInput('');
+    } else {
+      setEanNotFound(true);
+    }
+  }
 
   const displayedGenres = [...genreOptions, ...form.genres.filter((g) => !genreOptions.includes(g))];
 
@@ -111,26 +125,54 @@ export default function AddScreen({
 
         <ImageSlot id={photoSlotId} shape="rounded" radius={16} style={{ width: '100%', height: 140 }} placeholder="ajouter une photo" />
 
-        {!isEditing && canScan && (
-          <div
-            onClick={scanning ? undefined : onScan}
-            style={{
-              marginTop: 12,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              padding: 12,
-              borderRadius: 14,
-              border: '1px dashed oklch(70% 0.1 320)',
-              color: 'oklch(45% 0.16 320)',
-              fontWeight: 800,
-              fontSize: 13,
-              cursor: scanning ? 'default' : 'pointer',
-              opacity: scanning ? 0.6 : 1,
-            }}
-          >
-            {scanning ? 'Recherche des infos du puzzle...' : '📷 Scanner un code-barre'}
+        {!isEditing && canLookup && (
+          <div style={{ marginTop: 12 }}>
+            <div className="field-label">Code-barre EAN</div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <div style={{ flex: 1 }}>
+                <input
+                  className="field-input"
+                  value={eanInput}
+                  onChange={(e) => {
+                    setEanInput(e.target.value);
+                    if (eanNotFound) setEanNotFound(false);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      submitEan();
+                    }
+                  }}
+                  placeholder="ex. 4005556916539"
+                  inputMode="numeric"
+                  disabled={scanning}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={submitEan}
+                disabled={scanning || !eanInput.trim()}
+                style={{
+                  flexShrink: 0,
+                  padding: '0 18px',
+                  borderRadius: 14,
+                  border: 'none',
+                  background: 'oklch(93% 0.05 300)',
+                  color: 'oklch(42% 0.16 300)',
+                  fontWeight: 800,
+                  fontSize: 13,
+                  cursor: scanning || !eanInput.trim() ? 'default' : 'pointer',
+                  opacity: scanning || !eanInput.trim() ? 0.6 : 1,
+                }}
+              >
+                {scanning ? '...' : 'Rechercher'}
+              </button>
+            </div>
+            {eanNotFound && (
+              <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: 'oklch(50% 0.18 30)' }}>
+                Puzzle introuvable pour ce code. Vérifie-le ou remplis le formulaire à la main.
+              </div>
+            )}
           </div>
         )}
 

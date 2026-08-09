@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -21,10 +21,6 @@ import AddScreen from './screens/AddScreen';
 import LoginScreen from './screens/LoginScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 
-// Lazy: @zxing/library is heavy and only needed by the small share of
-// sessions that actually open the barcode scanner.
-const BarcodeScanner = lazy(() => import('./components/BarcodeScanner'));
-
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
   const [screen, setScreen] = useState<Screen>('home');
   const { collection, addPuzzle, updatePuzzle, deletePuzzle, refresh: refreshCollection } = usePuzzles(userId);
@@ -40,7 +36,6 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [isEditingForm, setIsEditingForm] = useState(false);
   const [showImportPrompt, setShowImportPrompt] = useState(hasLegacyData);
   const [exporting, setExporting] = useState(false);
-  const [showScanner, setShowScanner] = useState(false);
   const [scanning, setScanning] = useState(false);
   const { clearImage, downloadImage, setImage } = useImageStore();
   const { isLightboxOpen, closeLightbox } = useImageLightbox();
@@ -143,8 +138,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     setScreen(addMode === 'wishlist' ? 'wishlist' : 'home');
   }
 
-  async function handleScanned(ean: string) {
-    setShowScanner(false);
+  /** Returns whether the puzzle was found, so the form can tell the user when it wasn't. */
+  async function handleEanLookup(ean: string): Promise<boolean> {
     setScanning(true);
     const scanGeneration = sessionGenerationRef.current;
     const scanPhotoSlotId = photoSlotId;
@@ -152,7 +147,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
     try {
       const result = await lookupEan(ean);
-      if (isStale() || !result.found) return;
+      if (isStale() || !result.found) return false;
 
       if (result.name) updateForm('name', result.name);
       if (result.brand) updateForm('brand', result.brand);
@@ -169,6 +164,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           }
         }
       }
+      return true;
     } finally {
       setScanning(false);
     }
@@ -423,16 +419,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onFormChange={updateForm}
           onCancel={cancelAdd}
           onSubmit={submitForm}
-          canScan={isPuzzleLookupConfigured}
+          canLookup={isPuzzleLookupConfigured}
           scanning={scanning}
-          onScan={() => setShowScanner(true)}
+          onLookupEan={handleEanLookup}
         />
-      )}
-
-      {showScanner && (
-        <Suspense fallback={null}>
-          <BarcodeScanner onDetected={handleScanned} onClose={() => setShowScanner(false)} />
-        </Suspense>
       )}
 
       {showImportPrompt && (
