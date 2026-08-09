@@ -19,7 +19,7 @@ interface AddScreenProps {
   onSubmit: () => void;
   canLookup: boolean;
   scanning: boolean;
-  onLookupEan: (ean: string) => void;
+  onLookupEan: (ean: string) => Promise<boolean>;
 }
 
 export default function AddScreen({
@@ -40,12 +40,18 @@ export default function AddScreen({
   const [addingGenre, setAddingGenre] = useState(false);
   const [newGenreName, setNewGenreName] = useState('');
   const [eanInput, setEanInput] = useState('');
+  const [eanNotFound, setEanNotFound] = useState(false);
 
-  function submitEan() {
+  async function submitEan() {
     const trimmed = eanInput.trim();
     if (!trimmed || scanning) return;
-    onLookupEan(trimmed);
-    setEanInput('');
+    setEanNotFound(false);
+    const found = await onLookupEan(trimmed);
+    if (found) {
+      setEanInput('');
+    } else {
+      setEanNotFound(true);
+    }
   }
 
   const displayedGenres = [...genreOptions, ...form.genres.filter((g) => !genreOptions.includes(g))];
@@ -127,7 +133,10 @@ export default function AddScreen({
                 <input
                   className="field-input"
                   value={eanInput}
-                  onChange={(e) => setEanInput(e.target.value)}
+                  onChange={(e) => {
+                    setEanInput(e.target.value);
+                    if (eanNotFound) setEanNotFound(false);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
@@ -159,6 +168,11 @@ export default function AddScreen({
                 {scanning ? '...' : 'Rechercher'}
               </button>
             </div>
+            {eanNotFound && (
+              <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: 'oklch(50% 0.18 30)' }}>
+                Puzzle introuvable pour ce code. Vérifie-le ou remplis le formulaire à la main.
+              </div>
+            )}
           </div>
         )}
 

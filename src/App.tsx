@@ -138,7 +138,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     setScreen(addMode === 'wishlist' ? 'wishlist' : 'home');
   }
 
-  async function handleEanLookup(ean: string) {
+  /** Returns whether the puzzle was found, so the form can tell the user when it wasn't. */
+  async function handleEanLookup(ean: string): Promise<boolean> {
     setScanning(true);
     const scanGeneration = sessionGenerationRef.current;
     const scanPhotoSlotId = photoSlotId;
@@ -146,7 +147,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
     try {
       const result = await lookupEan(ean);
-      if (isStale() || !result.found) return;
+      if (isStale() || !result.found) return false;
 
       if (result.name) updateForm('name', result.name);
       if (result.brand) updateForm('brand', result.brand);
@@ -163,6 +164,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           }
         }
       }
+      return true;
     } finally {
       setScanning(false);
     }
