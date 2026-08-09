@@ -47,7 +47,7 @@ VITE_SUPABASE_ANON_KEY=ta-clé-anon-publique
 
 La clé `anon` est prévue pour être exposée côté client — la sécurité vient des policies (RLS) définies dans `supabase/schema.sql`, pas du secret de la clé.
 
-Optionnel — scan de code-barre pour pré-remplir le formulaire (voir
+Optionnel — recherche par code-barre pour pré-remplir le formulaire (voir
 [puzzle-lookup](https://github.com/Graiiig/puzzle-lookup)) :
 
 ```
@@ -59,8 +59,8 @@ Contrairement à la clé Supabase, celle-ci n'est *pas* conçue pour être publi
 (elle sert juste à limiter l'usage du service à cette appli) — elle finit
 quand même dans le bundle JS public, comme n'importe quelle variable
 `VITE_*`. Compromis accepté ici vu l'enjeu faible (usage perso, pas de
-données sensibles derrière). Si les deux variables sont absentes, le bouton
-"Scanner un code-barre" ne s'affiche simplement pas.
+données sensibles derrière). Si les deux variables sont absentes, le champ
+"Code-barre EAN" ne s'affiche simplement pas.
 
 Pour le déploiement GitHub Actions (`.github/workflows/deploy.yml` et
 `.github/workflows/build-android.yml`), ajoute les mêmes valeurs comme
@@ -94,7 +94,7 @@ npm run preview
 - **Détail** : notation, difficulté, note personnelle, date de fin (calendrier).
 - **Ajout / modification** : formulaire unique pour ajouter ou modifier un puzzle, dans la collection ou la wishlist.
 - **Photos** : cliquez sur n'importe quel emplacement photo pour importer une image depuis votre appareil ; stockées dans Supabase Storage, synchronisées entre appareils.
-- **Scan de code-barre** (optionnel, voir configuration ci-dessus) : bouton "Scanner un code-barre" dans le formulaire d'ajout, pré-remplit nom/marque/nombre de pièces/photo si le puzzle est trouvé via [puzzle-lookup](https://github.com/Graiiig/puzzle-lookup). Nécessite la permission caméra (demandée au premier scan).
+- **Recherche par code-barre** (optionnel, voir configuration ci-dessus) : champ "Code-barre EAN" dans le formulaire d'ajout, pré-remplit nom/marque/nombre de pièces/photo si le puzzle est trouvé via [puzzle-lookup](https://github.com/Graiiig/puzzle-lookup).
 - **Import des anciennes données** : si l'appli détecte des données enregistrées localement avant la mise en place des comptes, elle propose de les importer automatiquement après la première connexion.
 - **Export / import de sauvegarde** : menu ⋮ sur l'écran d'accueil pour télécharger toute la collection + wishlist (+ photos, encodées dans le fichier) en un seul JSON — filet de sécurité indépendant de Supabase — et pour réimporter un fichier exporté (les éléments sont ajoutés à la collection actuelle, rien n'est écrasé).
 - **Installable (PWA)** : sur Android/Chrome, menu ⋮ > "Ajouter à l'écran d'accueil" (ou bannière d'installation automatique) pour avoir une icône et une appli plein écran, sans passer par le Play Store.
