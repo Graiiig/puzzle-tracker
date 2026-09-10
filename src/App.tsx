@@ -4,6 +4,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbox';
+import { LanguageProvider, useLanguage } from './hooks/useLanguage';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { EMPTY_FORM, SORT_MODES } from './data';
@@ -22,6 +23,7 @@ import LoginScreen from './screens/LoginScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
+  const { t } = useLanguage();
   const [screen, setScreen] = useState<Screen>('home');
   const { collection, addPuzzle, updatePuzzle, deletePuzzle, refresh: refreshCollection } = usePuzzles(userId);
   const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
@@ -29,7 +31,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [detailSource, setDetailSource] = useState<DetailSource>('collection');
   const [search, setSearch] = useState('');
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
-  const [sortMode, setSortMode] = useState<SortMode>('Récent');
+  const [sortMode, setSortMode] = useState<SortMode>('recent');
   const [addMode, setAddMode] = useState<'collection' | 'wishlist'>('collection');
   const [form, setForm] = useState<PuzzleForm>({ ...EMPTY_FORM });
   const [formTargetId, setFormTargetId] = useState<string>(() => crypto.randomUUID());
@@ -99,7 +101,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         genres: [...p.genres],
         pieces: String(p.pieces),
         status: p.status,
-        priority: 'Moyenne',
+        priority: 'medium',
         notes: p.notes,
         rating: p.rating,
         difficulty: p.difficulty,
@@ -116,7 +118,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         brand: w.brand,
         genres: [...w.genres],
         pieces: String(w.pieces),
-        status: 'À faire',
+        status: 'todo',
         priority: w.priority,
         notes: w.notes,
         rating: 0,
@@ -232,7 +234,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       if (addMode === 'collection') {
         await updatePuzzle(formTargetId, {
           name: form.name.trim(),
-          brand: form.brand.trim() || 'Éditeur inconnu',
+          brand: form.brand.trim() || t.common.unknownBrand,
           genres: form.genres,
           pieces: Number(form.pieces) || 0,
           status: form.status,
@@ -245,7 +247,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       } else {
         await updateWishlistItem(formTargetId, {
           name: form.name.trim(),
-          brand: form.brand.trim() || 'Éditeur inconnu',
+          brand: form.brand.trim() || t.common.unknownBrand,
           genres: form.genres,
           pieces: Number(form.pieces) || 0,
           priority: form.priority,
@@ -263,14 +265,14 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       const item: Puzzle = {
         id,
         name: form.name.trim(),
-        brand: form.brand.trim() || 'Éditeur inconnu',
+        brand: form.brand.trim() || t.common.unknownBrand,
         genres: form.genres,
         pieces: Number(form.pieces) || 0,
         status: form.status,
         rating: form.rating,
         difficulty: form.difficulty,
-        date: form.date || (form.status === 'Terminé' ? new Date().toISOString().slice(0, 10) : ''),
-        time: form.time.trim() || (form.status === 'À faire' ? '—' : 'en cours'),
+        date: form.date || (form.status === 'done' ? new Date().toISOString().slice(0, 10) : ''),
+        time: form.time.trim() || (form.status === 'todo' ? '—' : t.common.inProgressDefaultTime),
         notes: form.notes.trim() || '—',
       };
       await addPuzzle(item);
@@ -279,7 +281,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       const item: WishlistItem = {
         id,
         name: form.name.trim(),
-        brand: form.brand.trim() || 'Éditeur inconnu',
+        brand: form.brand.trim() || t.common.unknownBrand,
         genres: form.genres,
         pieces: Number(form.pieces) || 0,
         priority: form.priority,
@@ -301,7 +303,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       brand: selected.brand,
       genres: selected.genres,
       pieces: selected.pieces,
-      status: 'À faire',
+      status: 'todo',
       rating: 0,
       difficulty: 3,
       date: '',
@@ -333,20 +335,14 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   }
 
   async function importBackup(file: File) {
-    if (
-      !window.confirm(
-        "Importer ce fichier de sauvegarde ? Les puzzles et envies qu'il contient seront ajoutés à ta collection actuelle (rien n'est supprimé ni remplacé).",
-      )
-    ) {
+    if (!window.confirm(t.app.confirmImportBackup)) {
       return;
     }
     try {
       const result = await importBackupFile(file, addPuzzle, addWishlistItem, setImage);
-      window.alert(
-        `Import terminé : ${result.puzzles} puzzle(s), ${result.wishlistItems} envie(s) et ${result.photos} photo(s) ajouté(s).`,
-      );
+      window.alert(t.app.importBackupDone(result.puzzles, result.wishlistItems, result.photos));
     } catch {
-      window.alert("Impossible de lire ce fichier. Vérifie que c'est bien un export JSON de l'application.");
+      window.alert(t.app.importBackupError);
     }
   }
 
@@ -438,6 +434,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
 function AuthGate() {
   const { user, loading, signOut } = useAuth();
+  const { t } = useLanguage();
 
   if (loading) {
     return (
@@ -451,7 +448,7 @@ function AuthGate() {
           fontWeight: 700,
         }}
       >
-        Chargement...
+        {t.app.authLoading}
       </div>
     );
   }
@@ -466,7 +463,7 @@ function AuthGate() {
         <AppShell
           userId={user.id}
           onSignOut={() => {
-            if (window.confirm('Se déconnecter ?')) signOut();
+            if (window.confirm(t.app.confirmSignOut)) signOut();
           }}
         />
       </ImageLightboxProvider>
@@ -476,10 +473,12 @@ function AuthGate() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <div className="app-shell">
-        <AuthGate />
-      </div>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <div className="app-shell">
+          <AuthGate />
+        </div>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }

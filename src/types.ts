@@ -1,7 +1,7 @@
 export type Genre = string;
-export type Status = 'À faire' | 'En cours' | 'Terminé';
-export type Priority = 'Basse' | 'Moyenne' | 'Haute';
-export type SortMode = 'Récent' | 'Alphabétique' | 'Pièces' | 'Difficulté';
+export type Status = 'todo' | 'in_progress' | 'done';
+export type Priority = 'low' | 'medium' | 'high';
+export type SortMode = 'recent' | 'alphabetical' | 'pieces' | 'difficulty';
 
 export interface Puzzle {
   id: string;

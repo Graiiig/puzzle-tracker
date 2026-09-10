@@ -1,4 +1,5 @@
 import ImageSlot from '../components/ImageSlot';
+import { useLanguage } from '../hooks/useLanguage';
 import type { DetailSource, Puzzle, WishlistItem } from '../types';
 import { dotString, formatDate, priorityStyle, ratingLabel, starString, statusStyle } from '../utils/format';
 
@@ -13,12 +14,13 @@ interface DetailScreenProps {
 }
 
 export default function DetailScreen({ source, puzzle, wishlistItem, onClose, onMarkAsBought, onDelete, onEdit }: DetailScreenProps) {
+  const { t, lang } = useLanguage();
   const item = source === 'collection' ? puzzle : wishlistItem;
   if (!item) return null;
 
   function handleDelete() {
-    const label = source === 'collection' ? 'ce puzzle' : 'cette envie';
-    if (window.confirm(`Supprimer ${label} "${item!.name}" ? Cette action est définitive.`)) {
+    const label = source === 'collection' ? t.detail.thisPuzzle : t.detail.thisWish;
+    if (window.confirm(t.detail.deleteConfirm(label, item!.name))) {
       onDelete();
     }
   }
@@ -28,7 +30,7 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)' }}>
       <div style={{ position: 'relative', flexShrink: 0 }}>
-        <ImageSlot id={imgId} shape="rect" style={{ width: '100%', height: 230 }} placeholder="photo du puzzle" />
+        <ImageSlot id={imgId} shape="rect" style={{ width: '100%', height: 230 }} placeholder={t.imageSlot.puzzlePhotoPlaceholder} />
         <div
           onClick={onClose}
           style={{
@@ -115,13 +117,13 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
               borderRadius: 100,
             }}
           >
-            {item.pieces} pièces
+            {t.detail.pieces(item.pieces)}
           </span>
           {source === 'collection' && puzzle && (
-            <span style={statusStyle(puzzle.status)}>{puzzle.status}</span>
+            <span style={statusStyle(puzzle.status)}>{t.status[puzzle.status]}</span>
           )}
           {source === 'wishlist' && wishlistItem && (
-            <span style={priorityStyle(wishlistItem.priority)}>Envie {wishlistItem.priority}</span>
+            <span style={priorityStyle(wishlistItem.priority)}>{t.wishlist.priorityBadge(t.priority[wishlistItem.priority])}</span>
           )}
         </div>
 
@@ -129,27 +131,27 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
           <>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 18 }}>
               <span style={{ fontSize: 20, color: '#FFB300', letterSpacing: 2 }}>{starString(puzzle.rating)}</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>{ratingLabel(puzzle)}</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>{ratingLabel(puzzle, t)}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
               <span style={{ fontSize: 15, color: 'oklch(45% 0.16 300)', letterSpacing: 2 }}>
                 {dotString(puzzle.difficulty || 0)}
               </span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>Difficulté</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>{t.detail.difficulty}</span>
             </div>
 
             <div style={{ display: 'flex', gap: 12, marginTop: 18 }}>
               <div style={{ flex: 1, background: 'white', borderRadius: 16, padding: '12px 14px' }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                  Terminé le
+                  {t.detail.finishedOn}
                 </div>
                 <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 15, color: 'oklch(28% 0.02 340)', marginTop: 2 }}>
-                  {formatDate(puzzle.date)}
+                  {formatDate(puzzle.date, lang)}
                 </div>
               </div>
               <div style={{ flex: 1, background: 'white', borderRadius: 16, padding: '12px 14px' }}>
                 <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                  Temps passé
+                  {t.detail.timeSpent}
                 </div>
                 <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 15, color: 'oklch(28% 0.02 340)', marginTop: 2 }}>
                   {puzzle.time}
@@ -159,7 +161,7 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
 
             <div style={{ marginTop: 20 }}>
               <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
-                Note perso
+                {t.detail.personalNote}
               </div>
               <div style={{ background: 'white', borderRadius: 16, padding: 14, fontSize: 14, lineHeight: 1.5, color: 'oklch(32% 0.02 340)', fontWeight: 600 }}>
                 {puzzle.notes}
@@ -172,7 +174,7 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
           <>
             <div style={{ marginTop: 20 }}>
               <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
-                Pourquoi je le veux
+                {t.detail.whyIWantIt}
               </div>
               <div style={{ background: 'white', borderRadius: 16, padding: 14, fontSize: 14, lineHeight: 1.5, color: 'oklch(32% 0.02 340)', fontWeight: 600 }}>
                 {wishlistItem.notes}
@@ -194,7 +196,7 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
                 boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
               }}
             >
-              🛒 Marquer comme acheté
+              {t.detail.markAsBought}
             </div>
           </>
         )}
@@ -212,7 +214,7 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
             color: 'oklch(55% 0.2 25)',
           }}
         >
-          🗑️ Supprimer {source === 'collection' ? 'ce puzzle' : 'cette envie'}
+          {t.detail.deleteAction(source === 'collection' ? t.detail.thisPuzzle : t.detail.thisWish)}
         </div>
       </div>
     </div>

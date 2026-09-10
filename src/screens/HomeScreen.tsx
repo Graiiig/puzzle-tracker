@@ -3,6 +3,7 @@ import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
 import PullToRefresh from '../components/PullToRefresh';
+import { useLanguage } from '../hooks/useLanguage';
 import type { Genre, Puzzle, SortMode } from '../types';
 import { chipStyle, formatMinutesAsHours, parseTimeToMinutes, sortList, starString, statusStyle } from '../utils/format';
 import { collectGenres } from '../utils/genres';
@@ -44,12 +45,13 @@ export default function HomeScreen({
   exporting,
   onImport,
 }: HomeScreenProps) {
+  const { t, lang, toggleLang } = useLanguage();
   const importInputRef = useRef<HTMLInputElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const doneCount = collection.filter((p) => p.status === 'Terminé').length;
-  const inProgressCount = collection.filter((p) => p.status === 'En cours').length;
-  const started = collection.filter((p) => p.status !== 'À faire');
+  const doneCount = collection.filter((p) => p.status === 'done').length;
+  const inProgressCount = collection.filter((p) => p.status === 'in_progress').length;
+  const started = collection.filter((p) => p.status !== 'todo');
   const totalPieces = started.reduce((sum, p) => sum + p.pieces, 0);
   const totalMinutes = started.reduce((sum, p) => sum + parseTimeToMinutes(p.time), 0);
 
@@ -125,12 +127,13 @@ export default function HomeScreen({
                   {[
                     {
                       icon: '⬇️',
-                      label: exporting ? 'Export en cours...' : 'Exporter mes données',
+                      label: exporting ? t.home.menuExporting : t.home.menuExport,
                       onClick: onExport,
                       disabled: exporting,
                     },
-                    { icon: '⬆️', label: 'Importer une sauvegarde', onClick: () => importInputRef.current?.click(), disabled: false },
-                    { icon: '🚪', label: 'Se déconnecter', onClick: onSignOut, disabled: false },
+                    { icon: '⬆️', label: t.home.menuImport, onClick: () => importInputRef.current?.click(), disabled: false },
+                    { icon: '🌐', label: t.home.menuLanguage, onClick: toggleLang, disabled: false },
+                    { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false },
                   ].map((item) => (
                     <div
                       key={item.icon}
@@ -165,25 +168,25 @@ export default function HomeScreen({
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
               {inProgressCount}
             </div>
-            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>en cours</div>
+            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>{t.home.statInProgress}</div>
           </div>
           <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 10px' }}>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
               {doneCount}
             </div>
-            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>terminés</div>
+            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>{t.home.statDone}</div>
           </div>
           <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 10px' }}>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
-              {totalPieces.toLocaleString('fr-FR')}
+              {totalPieces.toLocaleString(lang === 'fr' ? 'fr-FR' : 'en-US')}
             </div>
-            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>pièces</div>
+            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>{t.home.statPieces}</div>
           </div>
           <div style={{ flex: 1, background: 'oklch(97% 0.02 70 / 0.18)', borderRadius: 16, padding: '10px 10px' }}>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 20, color: 'white' }}>
               {formatMinutesAsHours(totalMinutes)}
             </div>
-            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>heures</div>
+            <div style={{ fontSize: 12, color: 'oklch(97% 0.02 70 / 0.85)', fontWeight: 700 }}>{t.home.statHours}</div>
           </div>
         </div>
 
@@ -202,7 +205,7 @@ export default function HomeScreen({
           <input
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Chercher un puzzle..."
+            placeholder={t.home.searchPlaceholder}
             style={{
               border: 'none',
               outline: 'none',
@@ -219,7 +222,7 @@ export default function HomeScreen({
 
       <div style={{ display: 'flex', gap: 8, padding: '14px 20px 6px', flexShrink: 0 }}>
         <div style={{ flex: 1, display: 'flex', gap: 8, overflowX: 'auto' }}>
-          <Chip label="Tous" onClick={onClearGenres} style={chipStyle(selectedGenres.length === 0, 350)} />
+          <Chip label={t.home.filterAll} onClick={onClearGenres} style={chipStyle(selectedGenres.length === 0, 350)} />
           {genreOptions.map((g) => (
             <Chip key={g} label={g} onClick={() => onToggleGenre(g)} style={chipStyle(selectedGenres.includes(g), 350)} />
           ))}
@@ -238,7 +241,7 @@ export default function HomeScreen({
             cursor: 'pointer',
           }}
         >
-          ↕ {sortMode}
+          ↕ {t.sort[sortMode]}
         </div>
       </div>
 
@@ -248,7 +251,7 @@ export default function HomeScreen({
       >
         {visible.map((p) => (
           <button key={p.id} className="card-row" onClick={() => onOpenPuzzle(p.id)}>
-            <ImageSlot id={'puzzle-img-' + p.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder="photo" viewOnly />
+            <ImageSlot id={'puzzle-img-' + p.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder={t.imageSlot.photoPlaceholder} viewOnly />
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
               <div
                 style={{
@@ -264,10 +267,10 @@ export default function HomeScreen({
                 {p.name}
               </div>
               <div style={{ fontSize: 12, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>
-                {p.brand} · {p.pieces} pièces
+                {p.brand} · {t.home.pieces(p.pieces)}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
-                <span style={statusStyle(p.status)}>{p.status}</span>
+                <span style={statusStyle(p.status)}>{t.status[p.status]}</span>
                 <span style={{ fontSize: 12, color: '#FFB300', letterSpacing: 1 }}>{starString(p.rating)}</span>
               </div>
             </div>
@@ -275,7 +278,7 @@ export default function HomeScreen({
         ))}
         {visible.length === 0 && (
           <div style={{ textAlign: 'center', padding: '40px 20px', color: 'oklch(55% 0.03 340)', fontWeight: 700 }}>
-            Aucun puzzle trouvé 🥲
+            {t.home.empty}
           </div>
         )}
       </PullToRefresh>
