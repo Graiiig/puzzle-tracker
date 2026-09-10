@@ -115,3 +115,27 @@ Le build se fait via GitHub Actions (`.github/workflows/build-android.yml`), pas
 **Pour builder l'APK** : onglet **Actions** du repo > workflow **"Build Android APK"** > **Run workflow**. Une fois terminé, télécharge l'artifact `mes-puzzles-apk` depuis la page du run, transfère l'APK sur ton téléphone et installe-le (Android demandera d'autoriser l'installation depuis cette source la première fois).
 
 Pour rebuilder l'APK avec le contenu web à jour (nouvelles fonctionnalités), relance simplement le workflow — il reconstruit l'appli web et la re-bundle à chaque run.
+
+## AAB Android (publication sur le Play Store)
+
+Le Play Store n'accepte plus les `.apk` en upload direct : il faut un **`.aab`** (Android App Bundle), un format qui laisse Google générer lui-même les APK optimisés par appareil au moment de l'installation.
+
+**Configuration** : les mêmes secrets que pour l'APK (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`) suffisent — c'est la même clé de signature qui doit être utilisée pour toutes les publications de l'appli, AAB comme APK.
+
+**Pour builder l'AAB** : onglet **Actions** du repo > workflow **"Build Android AAB (Play Store)"** > **Run workflow**. Une fois terminé, télécharge l'artifact `mes-puzzles-aab` depuis la page du run — c'est ce fichier `.aab` qu'il faut envoyer sur le Play Store.
+
+**Avant chaque nouvelle publication**, incrémente `versionCode` dans `android/app/build.gradle` (Google refuse un AAB dont le `versionCode` n'est pas strictement supérieur à la version déjà publiée) ; `versionName` peut suivre ou non un format sémantique, c'est juste la version affichée aux utilisateurs.
+
+**Étapes côté Play Console** (une seule fois pour publier l'app la première fois) :
+
+1. Crée un compte développeur Google Play (inscription unique à 25$) sur [play.google.com/console](https://play.google.com/console).
+2. **Créer l'application** : nom, langue par défaut, type (application), gratuite/payante.
+3. **Fiche Play Store** : description courte/longue, icône (512×512), image de présentation (1024×500), captures d'écran (au moins 2, format téléphone).
+4. **Content rating** (classification du contenu) : questionnaire à remplir (l'appli n'a pas de contenu sensible, ça va vite).
+5. **Public cible et contenu** : tranche d'âge visée.
+6. **Politique de confidentialité** : une URL est obligatoire dès que l'appli utilise un compte/des données (ce qui est le cas ici avec Supabase) — une simple page hébergée (GitHub Pages, Notion, etc.) suffit.
+7. **Data safety** : déclarer quelles données sont collectées (ici : email pour l'authentification, données de collection stockées dans Supabase).
+8. **Release** : dans **Test > Closed testing** (ou **Production** directement si tu ne veux pas de phase de test), crée une release, uploade le `.aab` téléchargé depuis l'artifact GitHub Actions, ajoute les notes de version, puis envoie en review.
+9. Google review l'app (quelques heures à quelques jours en général) avant publication effective.
+
+Pour les mises à jour suivantes, il suffit de rebuilder un nouvel AAB (avec `versionCode` incrémenté) et de créer une nouvelle release dans la même piste (testing ou production) — pas besoin de repasser par toute la fiche Play Store.
