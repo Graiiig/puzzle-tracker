@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.graiiig.puzzletracker"
+    namespace = "mes.puzzles"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.graiiig.puzzletracker"
+        applicationId "mes.puzzles"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
