@@ -47,7 +47,7 @@ export default function FiltersSheet({
     <div
       onClick={onClose}
       style={{
-        position: 'absolute',
+        position: 'fixed',
         inset: 0,
         background: 'oklch(20% 0.02 340 / 0.45)',
         display: 'flex',
