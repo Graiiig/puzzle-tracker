@@ -57,7 +57,8 @@ button {
 .app-shell {
   width: 100%;
   max-width: 480px;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   background: oklch(97% 0.015 70);
   position: relative;
   display: flex;
