@@ -32,6 +32,8 @@ Si tu avais déjà exécuté `schema.sql` avant l'ajout des genres personnalisé
 
 Si tu avais déjà exécuté `schema.sql` avant le support multi-genres, exécute aussi `supabase/migrations/0003_multi_genre.sql` pour passer d'un genre unique à plusieurs genres par puzzle (les données existantes sont conservées).
 
+Si tu avais déjà exécuté `schema.sql` avant le passage de l'appli en anglais/français, exécute aussi `supabase/migrations/0004_english_status_priority.sql` pour convertir les statuts/priorités stockés (auparavant en français) vers les nouvelles clés internes en anglais (les données existantes sont conservées, seul le libellé change).
+
 ## Variables d'environnement
 
 Copie `.env.example` vers `.env.local` et renseigne les deux valeurs récupérées ci-dessus :
@@ -98,6 +100,7 @@ npm run preview
 - **Import des anciennes données** : si l'appli détecte des données enregistrées localement avant la mise en place des comptes, elle propose de les importer automatiquement après la première connexion.
 - **Export / import de sauvegarde** : menu ⋮ sur l'écran d'accueil pour télécharger toute la collection + wishlist (+ photos, encodées dans le fichier) en un seul JSON — filet de sécurité indépendant de Supabase — et pour réimporter un fichier exporté (les éléments sont ajoutés à la collection actuelle, rien n'est écrasé).
 - **Installable (PWA)** : sur Android/Chrome, menu ⋮ > "Ajouter à l'écran d'accueil" (ou bannière d'installation automatique) pour avoir une icône et une appli plein écran, sans passer par le Play Store.
+- **Français / English** : l'appli détecte la langue de l'appareil au premier lancement (français par défaut, anglais sinon), et propose un bouton pour basculer manuellement dans le menu ⋮.
 
 ## APK Android (sideload, sans Play Store)
 

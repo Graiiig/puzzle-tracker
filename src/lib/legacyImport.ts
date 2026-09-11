@@ -33,6 +33,19 @@ function num(record: Record<string, unknown>, key: string, fallback = 0): number
   return typeof v === 'number' ? v : fallback;
 }
 
+// Legacy local-storage exports predate the English internal status/priority
+// keys and stored the French display labels directly.
+const LEGACY_STATUS: Record<string, Puzzle['status']> = {
+  'À faire': 'todo',
+  'En cours': 'in_progress',
+  Terminé: 'done',
+};
+const LEGACY_PRIORITY: Record<string, WishlistItem['priority']> = {
+  Basse: 'low',
+  Moyenne: 'medium',
+  Haute: 'high',
+};
+
 export function toPuzzle(record: Record<string, unknown>, id: string): Puzzle {
   return {
     id,
@@ -40,7 +53,7 @@ export function toPuzzle(record: Record<string, unknown>, id: string): Puzzle {
     brand: str(record, 'brand'),
     genres: normalizeGenres(record),
     pieces: num(record, 'pieces'),
-    status: str(record, 'status', 'À faire') as Puzzle['status'],
+    status: LEGACY_STATUS[str(record, 'status')] ?? 'todo',
     rating: num(record, 'rating'),
     difficulty: num(record, 'difficulty', 3),
     date: str(record, 'date'),
@@ -56,7 +69,7 @@ export function toWishlistItem(record: Record<string, unknown>, id: string): Wis
     brand: str(record, 'brand'),
     genres: normalizeGenres(record),
     pieces: num(record, 'pieces'),
-    priority: str(record, 'priority', 'Moyenne') as WishlistItem['priority'],
+    priority: LEGACY_PRIORITY[str(record, 'priority')] ?? 'medium',
     notes: str(record, 'notes'),
   };
 }

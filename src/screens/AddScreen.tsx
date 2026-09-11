@@ -3,6 +3,7 @@ import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import RatingPicker from '../components/RatingPicker';
 import { PRIORITIES, STATUSES } from '../data';
+import { useLanguage } from '../hooks/useLanguage';
 import type { PuzzleForm } from '../types';
 import { chipStyle } from '../utils/format';
 
@@ -37,6 +38,7 @@ export default function AddScreen({
   scanning,
   onLookupEan,
 }: AddScreenProps) {
+  const { t } = useLanguage();
   const [addingGenre, setAddingGenre] = useState(false);
   const [newGenreName, setNewGenreName] = useState('');
   const [eanInput, setEanInput] = useState('');
@@ -99,7 +101,7 @@ export default function AddScreen({
           ←
         </div>
         <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 19, color: 'oklch(28% 0.02 340)' }}>
-          {isEditing ? 'Modifier' : 'Ajouter un puzzle'}
+          {isEditing ? t.add.editTitle : t.add.addTitle}
         </div>
       </div>
 
@@ -111,23 +113,23 @@ export default function AddScreen({
               disabled={scanning}
               style={{ flex: 1, textAlign: 'center', padding: 9, borderRadius: 100, fontWeight: 800, fontSize: 13, border: 'none', cursor: scanning ? 'default' : 'pointer', ...modeCollectionStyle }}
             >
-              🧩 Collection
+              {t.add.tabCollection}
             </button>
             <button
               onClick={onSetModeWishlist}
               disabled={scanning}
               style={{ flex: 1, textAlign: 'center', padding: 9, borderRadius: 100, fontWeight: 800, fontSize: 13, border: 'none', cursor: scanning ? 'default' : 'pointer', ...modeWishlistStyle }}
             >
-              💗 Wishlist
+              {t.add.tabWishlist}
             </button>
           </div>
         )}
 
-        <ImageSlot id={photoSlotId} shape="rounded" radius={16} style={{ width: '100%', height: 140 }} placeholder="ajouter une photo" />
+        <ImageSlot id={photoSlotId} shape="rounded" radius={16} style={{ width: '100%', height: 140 }} placeholder={t.imageSlot.addPhotoPlaceholder} />
 
         {!isEditing && canLookup && (
           <div style={{ marginTop: 12 }}>
-            <div className="field-label">Code-barre EAN</div>
+            <div className="field-label">{t.add.eanLabel}</div>
             <div style={{ display: 'flex', gap: 8 }}>
               <div style={{ flex: 1 }}>
                 <input
@@ -143,7 +145,7 @@ export default function AddScreen({
                       submitEan();
                     }
                   }}
-                  placeholder="ex. 4005556916539"
+                  placeholder={t.add.eanPlaceholder}
                   inputMode="numeric"
                   disabled={scanning}
                 />
@@ -165,52 +167,52 @@ export default function AddScreen({
                   opacity: scanning || !eanInput.trim() ? 0.6 : 1,
                 }}
               >
-                {scanning ? '...' : 'Rechercher'}
+                {scanning ? '...' : t.add.search}
               </button>
             </div>
             {eanNotFound && (
               <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: 'oklch(50% 0.18 30)' }}>
-                Puzzle introuvable pour ce code. Vérifie-le ou remplis le formulaire à la main.
+                {t.add.eanNotFound}
               </div>
             )}
           </div>
         )}
 
         <div style={{ marginTop: 16 }}>
-          <div className="field-label">Nom du puzzle</div>
+          <div className="field-label">{t.add.nameLabel}</div>
           <input
             className="field-input"
             value={form.name}
             onChange={(e) => onFormChange('name', e.target.value)}
-            placeholder="ex. Lavande en Provence"
+            placeholder={t.add.namePlaceholder}
           />
         </div>
 
         <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
           <div style={{ flex: 1 }}>
-            <div className="field-label">Éditeur</div>
+            <div className="field-label">{t.add.brandLabel}</div>
             <input
               className="field-input"
               value={form.brand}
               onChange={(e) => onFormChange('brand', e.target.value)}
-              placeholder="Ravensburger..."
+              placeholder={t.add.brandPlaceholder}
             />
           </div>
           <div style={{ width: 110 }}>
-            <div className="field-label">Pièces</div>
+            <div className="field-label">{t.add.piecesLabel}</div>
             <input
               className="field-input"
               type="number"
               value={form.pieces}
               onChange={(e) => onFormChange('pieces', e.target.value)}
-              placeholder="1000"
+              placeholder={t.add.piecesPlaceholder}
             />
           </div>
         </div>
 
         <div style={{ marginTop: 16 }}>
           <div className="field-label" style={{ marginBottom: 8 }}>
-            Genre
+            {t.add.genreLabel}
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {displayedGenres.map((g) => (
@@ -228,7 +230,7 @@ export default function AddScreen({
                     confirmNewGenre();
                   }
                 }}
-                placeholder="Nom du genre"
+                placeholder={t.add.newGenrePlaceholder}
                 style={{
                   fontWeight: 800,
                   fontSize: 13,
@@ -247,7 +249,7 @@ export default function AddScreen({
                 className="chip"
                 style={{ background: 'white', color: 'oklch(50% 0.03 340)', border: '1px dashed oklch(75% 0.03 340)' }}
               >
-                + Nouveau
+                {t.add.newGenreButton}
               </button>
             )}
           </div>
@@ -257,11 +259,11 @@ export default function AddScreen({
           <>
             <div style={{ marginTop: 16 }}>
               <div className="field-label" style={{ marginBottom: 8 }}>
-                Statut
+                {t.add.statusLabel}
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 {STATUSES.map((st) => (
-                  <Chip key={st} label={st} onClick={() => onFormChange('status', st)} style={chipStyle(st === form.status, 350)} />
+                  <Chip key={st} label={t.status[st]} onClick={() => onFormChange('status', st)} style={chipStyle(st === form.status, 350)} />
                 ))}
               </div>
             </div>
@@ -269,7 +271,7 @@ export default function AddScreen({
             <div style={{ display: 'flex', gap: 24, marginTop: 16 }}>
               <div>
                 <div className="field-label" style={{ marginBottom: 8 }}>
-                  Évaluation
+                  {t.add.ratingLabel}
                 </div>
                 <RatingPicker
                   value={form.rating}
@@ -281,7 +283,7 @@ export default function AddScreen({
               </div>
               <div>
                 <div className="field-label" style={{ marginBottom: 8 }}>
-                  Difficulté
+                  {t.detail.difficulty}
                 </div>
                 <RatingPicker
                   value={form.difficulty}
@@ -296,7 +298,7 @@ export default function AddScreen({
 
             <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
               <div style={{ flex: 1 }}>
-                <div className="field-label">Terminé le</div>
+                <div className="field-label">{t.add.finishedOnLabel}</div>
                 <input
                   className="field-input"
                   type="date"
@@ -305,12 +307,12 @@ export default function AddScreen({
                 />
               </div>
               <div style={{ flex: 1 }}>
-                <div className="field-label">Temps passé</div>
+                <div className="field-label">{t.add.timeSpentLabel}</div>
                 <input
                   className="field-input"
                   value={form.time}
                   onChange={(e) => onFormChange('time', e.target.value)}
-                  placeholder="ex. 18h30"
+                  placeholder={t.add.timeSpentPlaceholder}
                 />
               </div>
             </div>
@@ -320,23 +322,23 @@ export default function AddScreen({
         {mode === 'wishlist' && (
           <div style={{ marginTop: 16 }}>
             <div className="field-label" style={{ marginBottom: 8 }}>
-              Priorité d'envie
+              {t.add.priorityLabel}
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               {PRIORITIES.map((pr) => (
-                <Chip key={pr} label={pr} onClick={() => onFormChange('priority', pr)} style={chipStyle(pr === form.priority, 320)} />
+                <Chip key={pr} label={t.priority[pr]} onClick={() => onFormChange('priority', pr)} style={chipStyle(pr === form.priority, 320)} />
               ))}
             </div>
           </div>
         )}
 
         <div style={{ marginTop: 16 }}>
-          <div className="field-label">{mode === 'collection' ? 'Note perso' : "Pourquoi je le veux"}</div>
+          <div className="field-label">{mode === 'collection' ? t.add.notesLabelCollection : t.add.notesLabelWishlist}</div>
           <textarea
             className="field-input"
             value={form.notes}
             onChange={(e) => onFormChange('notes', e.target.value)}
-            placeholder="Un petit mot sur ce puzzle..."
+            placeholder={t.add.notesPlaceholder}
             rows={3}
             style={{ resize: 'none' }}
           />
@@ -358,7 +360,7 @@ export default function AddScreen({
             boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
           }}
         >
-          {isEditing ? 'Enregistrer les modifications' : 'Enregistrer'}
+          {isEditing ? t.add.saveEdit : t.add.save}
         </div>
       </div>
     </div>
