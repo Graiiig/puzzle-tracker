@@ -2,11 +2,14 @@ import { useRef, useState } from 'react';
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
+import FiltersSheet from '../components/FiltersSheet';
 import PullToRefresh from '../components/PullToRefresh';
+import { STATUSES, SORT_MODES } from '../data';
 import { useLanguage } from '../hooks/useLanguage';
-import type { Genre, Puzzle, SortMode } from '../types';
+import type { Genre, PieceBucket, Puzzle, SortMode, Status } from '../types';
 import { chipStyle, formatMinutesAsHours, parseTimeToMinutes, sortList, starString, statusStyle } from '../utils/format';
-import { collectGenres } from '../utils/genres';
+import { matchesFilters } from '../utils/filters';
+import { collectBrands, collectGenres } from '../utils/genres';
 
 interface HomeScreenProps {
   collection: Puzzle[];
@@ -16,7 +19,16 @@ interface HomeScreenProps {
   onToggleGenre: (g: Genre) => void;
   onClearGenres: () => void;
   sortMode: SortMode;
-  onCycleSort: () => void;
+  onSetSortMode: (m: SortMode) => void;
+  statusFilter: Set<Status>;
+  onToggleStatus: (s: Status) => void;
+  brandFilter: Set<string>;
+  onToggleBrand: (b: string) => void;
+  pieceBucketFilter: Set<PieceBucket>;
+  onTogglePieceBucket: (b: PieceBucket) => void;
+  minRating: number;
+  onSetMinRating: (n: number) => void;
+  onResetFilters: () => void;
   onOpenPuzzle: (id: string) => void;
   onAdd: () => void;
   onRefresh: () => Promise<void> | void;
@@ -35,7 +47,16 @@ export default function HomeScreen({
   onToggleGenre,
   onClearGenres,
   sortMode,
-  onCycleSort,
+  onSetSortMode,
+  statusFilter,
+  onToggleStatus,
+  brandFilter,
+  onToggleBrand,
+  pieceBucketFilter,
+  onTogglePieceBucket,
+  minRating,
+  onSetMinRating,
+  onResetFilters,
   onOpenPuzzle,
   onAdd,
   onRefresh,
@@ -48,6 +69,7 @@ export default function HomeScreen({
   const { t, lang, toggleLang } = useLanguage();
   const importInputRef = useRef<HTMLInputElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const doneCount = collection.filter((p) => p.status === 'done').length;
   const inProgressCount = collection.filter((p) => p.status === 'in_progress').length;
@@ -55,14 +77,20 @@ export default function HomeScreen({
   const totalPieces = started.reduce((sum, p) => sum + p.pieces, 0);
   const totalMinutes = started.reduce((sum, p) => sum + parseTimeToMinutes(p.time), 0);
 
-  const q = search.trim().toLowerCase();
-  const filtered = collection.filter((p) => {
-    const matchesGenre = selectedGenres.length === 0 || p.genres.some((g) => selectedGenres.includes(g));
-    const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q);
-    return matchesGenre && matchesSearch;
-  });
+  const filtered = collection.filter((p) =>
+    matchesFilters(p, {
+      genres: selectedGenres,
+      statuses: statusFilter,
+      brands: brandFilter,
+      pieceBuckets: pieceBucketFilter,
+      minRating,
+      search,
+    }),
+  );
   const visible = sortList(filtered, sortMode);
   const genreOptions: Genre[] = collectGenres(collection);
+  const brandOptions: string[] = collectBrands(collection);
+  const activeFilterCount = statusFilter.size + brandFilter.size + pieceBucketFilter.size + (minRating > 0 ? 1 : 0);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)', position: 'relative' }}>
@@ -228,22 +256,67 @@ export default function HomeScreen({
           ))}
         </div>
         <div
-          onClick={onCycleSort}
+          onClick={() => setFiltersOpen(true)}
           style={{
+            position: 'relative',
             flexShrink: 0,
-            background: 'oklch(93% 0.05 300)',
-            color: 'oklch(42% 0.16 300)',
+            background: 'white',
+            color: 'oklch(35% 0.02 340)',
             fontWeight: 800,
-            fontSize: 12,
-            padding: '8px 14px',
+            fontSize: 13,
+            padding: '9px 16px 9px 14px',
             borderRadius: 100,
             whiteSpace: 'nowrap',
             cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            boxShadow: '0 1px 4px oklch(50% 0.05 340 / 0.15)',
+            border: '1px solid oklch(90% 0.02 340)',
           }}
         >
-          ↕ {t.sort[sortMode]}
+          ⚙︎ {t.filters.button}
+          {activeFilterCount > 0 && (
+            <span
+              style={{
+                background: 'oklch(45% 0.2 350)',
+                color: 'white',
+                fontSize: 11,
+                fontWeight: 800,
+                width: 18,
+                height: 18,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {activeFilterCount}
+            </span>
+          )}
         </div>
       </div>
+
+      {filtersOpen && (
+        <FiltersSheet
+          statuses={STATUSES}
+          selectedStatuses={statusFilter}
+          onToggleStatus={onToggleStatus}
+          brands={brandOptions}
+          selectedBrands={brandFilter}
+          onToggleBrand={onToggleBrand}
+          selectedPieceBuckets={pieceBucketFilter}
+          onTogglePieceBucket={onTogglePieceBucket}
+          minRating={minRating}
+          onSetMinRating={onSetMinRating}
+          sortModes={SORT_MODES}
+          sortMode={sortMode}
+          onSetSortMode={onSetSortMode}
+          onReset={onResetFilters}
+          onClose={() => setFiltersOpen(false)}
+          resultCount={visible.length}
+        />
+      )}
 
       <PullToRefresh
         onRefresh={onRefresh}

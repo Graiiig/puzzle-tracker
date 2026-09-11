@@ -2,6 +2,7 @@ export type Genre = string;
 export type Status = 'todo' | 'in_progress' | 'done';
 export type Priority = 'low' | 'medium' | 'high';
 export type SortMode = 'recent' | 'alphabetical' | 'pieces' | 'difficulty';
+export type PieceBucket = 'lt500' | '500-999' | '1000-1999' | 'gte2000';
 
 export interface Puzzle {
   id: string;

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -7,14 +7,14 @@ import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbo
 import { LanguageProvider, useLanguage } from './hooks/useLanguage';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
-import { EMPTY_FORM, SORT_MODES } from './data';
+import { EMPTY_FORM } from './data';
 import { hasLegacyData } from './lib/legacyImport';
 import { exportDataAsJson } from './utils/export';
 import { importBackupFile } from './utils/importBackup';
 import { collectGenres } from './utils/genres';
 import { fetchLookupImage, isPuzzleLookupConfigured, lookupEan } from './lib/puzzleLookup';
 import { compressImageFile } from './utils/image';
-import type { DetailSource, Genre, Puzzle, PuzzleForm, Screen, SortMode, WishlistItem } from './types';
+import type { DetailSource, Genre, PieceBucket, Puzzle, PuzzleForm, Screen, SortMode, Status, WishlistItem } from './types';
 import HomeScreen from './screens/HomeScreen';
 import WishlistScreen from './screens/WishlistScreen';
 import DetailScreen from './screens/DetailScreen';
@@ -32,6 +32,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [search, setSearch] = useState('');
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
   const [sortMode, setSortMode] = useState<SortMode>('recent');
+  const [statusFilter, setStatusFilter] = useState<Set<Status>>(new Set());
+  const [brandFilter, setBrandFilter] = useState<Set<string>>(new Set());
+  const [pieceBucketFilter, setPieceBucketFilter] = useState<Set<PieceBucket>>(new Set());
+  const [minRating, setMinRating] = useState(0);
   const [addMode, setAddMode] = useState<'collection' | 'wishlist'>('collection');
   const [form, setForm] = useState<PuzzleForm>({ ...EMPTY_FORM });
   const [formTargetId, setFormTargetId] = useState<string>(() => crypto.randomUUID());
@@ -57,6 +61,23 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
   function toggleGenreFilter(g: Genre) {
     setSelectedGenres((current) => (current.includes(g) ? current.filter((x) => x !== g) : [...current, g]));
+  }
+
+  function toggleSetItem<T>(setter: Dispatch<SetStateAction<Set<T>>>, value: T) {
+    setter((current) => {
+      const next = new Set(current);
+      if (next.has(value)) next.delete(value);
+      else next.add(value);
+      return next;
+    });
+  }
+
+  function resetPuzzleFilters() {
+    setSelectedGenres([]);
+    setStatusFilter(new Set());
+    setBrandFilter(new Set());
+    setPieceBucketFilter(new Set());
+    setMinRating(0);
   }
 
   function openPuzzle(id: string) {
@@ -369,7 +390,16 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onToggleGenre={toggleGenreFilter}
           onClearGenres={() => setSelectedGenres([])}
           sortMode={sortMode}
-          onCycleSort={() => setSortMode(SORT_MODES[(SORT_MODES.indexOf(sortMode) + 1) % SORT_MODES.length])}
+          onSetSortMode={setSortMode}
+          statusFilter={statusFilter}
+          onToggleStatus={(s) => toggleSetItem(setStatusFilter, s)}
+          brandFilter={brandFilter}
+          onToggleBrand={(b) => toggleSetItem(setBrandFilter, b)}
+          pieceBucketFilter={pieceBucketFilter}
+          onTogglePieceBucket={(b) => toggleSetItem(setPieceBucketFilter, b)}
+          minRating={minRating}
+          onSetMinRating={setMinRating}
+          onResetFilters={resetPuzzleFilters}
           onOpenPuzzle={openPuzzle}
           onAdd={openAddFromHome}
           onRefresh={refreshCollection}

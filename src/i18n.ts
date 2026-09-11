@@ -1,4 +1,4 @@
-import type { Priority, SortMode, Status } from './types';
+import type { PieceBucket, Priority, SortMode, Status } from './types';
 
 export type Lang = 'fr' | 'en';
 
@@ -123,6 +123,18 @@ export interface Dict {
   status: Record<Status, string>;
   priority: Record<Priority, string>;
   sort: Record<SortMode, string>;
+  pieceBucket: Record<PieceBucket, string>;
+  filters: {
+    button: string;
+    reset: string;
+    statusLabel: string;
+    brandLabel: string;
+    piecesLabel: string;
+    ratingLabel: string;
+    sortLabel: string;
+    ratingAtLeast: (n: number) => string;
+    seeResults: (n: number) => string;
+  };
 }
 
 const fr: Dict = {
@@ -261,6 +273,23 @@ const fr: Dict = {
     pieces: 'Pièces',
     difficulty: 'Difficulté',
   },
+  pieceBucket: {
+    lt500: '< 500',
+    '500-999': '500-999',
+    '1000-1999': '1000-1999',
+    gte2000: '2000+',
+  },
+  filters: {
+    button: 'Filtres',
+    reset: 'Réinitialiser',
+    statusLabel: 'Statut',
+    brandLabel: 'Marque',
+    piecesLabel: 'Pièces',
+    ratingLabel: 'Note minimum',
+    sortLabel: 'Trier par',
+    ratingAtLeast: (n) => (n >= 5 ? '★ 5' : `★ ${n}+`),
+    seeResults: (n) => `Voir ${n} puzzle${n === 1 ? '' : 's'}`,
+  },
 };
 
 const en: Dict = {
@@ -397,6 +426,23 @@ const en: Dict = {
     alphabetical: 'Alphabetical',
     pieces: 'Pieces',
     difficulty: 'Difficulty',
+  },
+  pieceBucket: {
+    lt500: '< 500',
+    '500-999': '500-999',
+    '1000-1999': '1000-1999',
+    gte2000: '2000+',
+  },
+  filters: {
+    button: 'Filters',
+    reset: 'Reset',
+    statusLabel: 'Status',
+    brandLabel: 'Brand',
+    piecesLabel: 'Pieces',
+    ratingLabel: 'Minimum rating',
+    sortLabel: 'Sort by',
+    ratingAtLeast: (n) => (n >= 5 ? '★ 5' : `★ ${n}+`),
+    seeResults: (n) => `See ${n} puzzle${n === 1 ? '' : 's'}`,
   },
 };
 
