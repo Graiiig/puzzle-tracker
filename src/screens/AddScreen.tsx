@@ -210,6 +210,16 @@ export default function AddScreen({
           </div>
         </div>
 
+        <div style={{ marginTop: 12 }}>
+          <div className="field-label">{t.add.artistLabel}</div>
+          <input
+            className="field-input"
+            value={form.artist}
+            onChange={(e) => onFormChange('artist', e.target.value)}
+            placeholder={t.add.artistPlaceholder}
+          />
+        </div>
+
         <div style={{ marginTop: 16 }}>
           <div className="field-label" style={{ marginBottom: 8 }}>
             {t.add.genreLabel}

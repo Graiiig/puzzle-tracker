@@ -8,6 +8,7 @@ export const PRIORITIES: Priority[] = ['low', 'medium', 'high'];
 export const EMPTY_FORM: PuzzleForm = {
   name: '',
   brand: '',
+  artist: '',
   genres: [],
   pieces: '',
   status: 'todo',

@@ -119,6 +119,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       setForm({
         name: p.name,
         brand: p.brand,
+        artist: p.artist,
         genres: [...p.genres],
         pieces: String(p.pieces),
         status: p.status,
@@ -137,6 +138,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       setForm({
         name: w.name,
         brand: w.brand,
+        artist: w.artist,
         genres: [...w.genres],
         pieces: String(w.pieces),
         status: 'todo',
@@ -256,6 +258,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         await updatePuzzle(formTargetId, {
           name: form.name.trim(),
           brand: form.brand.trim() || t.common.unknownBrand,
+          artist: form.artist.trim(),
           genres: form.genres,
           pieces: Number(form.pieces) || 0,
           status: form.status,
@@ -269,6 +272,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         await updateWishlistItem(formTargetId, {
           name: form.name.trim(),
           brand: form.brand.trim() || t.common.unknownBrand,
+          artist: form.artist.trim(),
           genres: form.genres,
           pieces: Number(form.pieces) || 0,
           priority: form.priority,
@@ -287,6 +291,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         id,
         name: form.name.trim(),
         brand: form.brand.trim() || t.common.unknownBrand,
+        artist: form.artist.trim(),
         genres: form.genres,
         pieces: Number(form.pieces) || 0,
         status: form.status,
@@ -303,6 +308,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         id,
         name: form.name.trim(),
         brand: form.brand.trim() || t.common.unknownBrand,
+        artist: form.artist.trim(),
         genres: form.genres,
         pieces: Number(form.pieces) || 0,
         priority: form.priority,
@@ -322,6 +328,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       id: selected.id,
       name: selected.name,
       brand: selected.brand,
+      artist: selected.artist,
       genres: selected.genres,
       pieces: selected.pieces,
       status: 'todo',

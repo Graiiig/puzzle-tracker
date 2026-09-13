@@ -90,6 +90,11 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
           {item.name}
         </div>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)', marginTop: 2 }}>{item.brand}</div>
+        {item.artist && (
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'oklch(60% 0.03 340)', marginTop: 2 }}>
+            {t.detail.illustratedBy(item.artist)}
+          </div>
+        )}
 
         <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
           {item.genres.map((g) => (

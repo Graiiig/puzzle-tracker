@@ -8,6 +8,7 @@ export interface Puzzle {
   id: string;
   name: string;
   brand: string;
+  artist: string;
   genres: Genre[];
   pieces: number;
   status: Status;
@@ -22,6 +23,7 @@ export interface WishlistItem {
   id: string;
   name: string;
   brand: string;
+  artist: string;
   genres: Genre[];
   pieces: number;
   priority: Priority;
@@ -31,6 +33,7 @@ export interface WishlistItem {
 export interface PuzzleForm {
   name: string;
   brand: string;
+  artist: string;
   genres: Genre[];
   pieces: string;
   status: Status;

@@ -64,6 +64,7 @@ export interface Dict {
     deleteAction: (label: string) => string;
     notRatedYet: string;
     pieces: (n: number) => string;
+    illustratedBy: (artist: string) => string;
   };
   add: {
     editTitle: string;
@@ -78,6 +79,8 @@ export interface Dict {
     namePlaceholder: string;
     brandLabel: string;
     brandPlaceholder: string;
+    artistLabel: string;
+    artistPlaceholder: string;
     piecesLabel: string;
     piecesPlaceholder: string;
     genreLabel: string;
@@ -199,6 +202,7 @@ const fr: Dict = {
     deleteAction: (label) => `🗑️ Supprimer ${label}`,
     notRatedYet: 'Pas encore noté',
     pieces: (n) => `${n} pièces`,
+    illustratedBy: (artist) => `Illustration de ${artist}`,
   },
   add: {
     editTitle: 'Modifier',
@@ -213,6 +217,8 @@ const fr: Dict = {
     namePlaceholder: 'ex. Lavande en Provence',
     brandLabel: 'Éditeur',
     brandPlaceholder: 'Ravensburger...',
+    artistLabel: 'Artiste (optionnel)',
+    artistPlaceholder: 'ex. Thomas Kinkade',
     piecesLabel: 'Pièces',
     piecesPlaceholder: '1000',
     genreLabel: 'Genre',
@@ -354,6 +360,7 @@ const en: Dict = {
     deleteAction: (label) => `🗑️ Delete ${label}`,
     notRatedYet: 'Not rated yet',
     pieces: (n) => `${n} pieces`,
+    illustratedBy: (artist) => `Illustrated by ${artist}`,
   },
   add: {
     editTitle: 'Edit',
@@ -368,6 +375,8 @@ const en: Dict = {
     namePlaceholder: 'e.g. Lavender Fields',
     brandLabel: 'Publisher',
     brandPlaceholder: 'Ravensburger...',
+    artistLabel: 'Artist (optional)',
+    artistPlaceholder: 'e.g. Thomas Kinkade',
     piecesLabel: 'Pieces',
     piecesPlaceholder: '1000',
     genreLabel: 'Genre',

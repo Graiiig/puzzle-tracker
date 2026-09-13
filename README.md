@@ -34,6 +34,8 @@ Si tu avais déjà exécuté `schema.sql` avant le support multi-genres, exécut
 
 Si tu avais déjà exécuté `schema.sql` avant le passage de l'appli en anglais/français, exécute aussi `supabase/migrations/0004_english_status_priority.sql` pour convertir les statuts/priorités stockés (auparavant en français) vers les nouvelles clés internes en anglais (les données existantes sont conservées, seul le libellé change).
 
+Si tu avais déjà exécuté `schema.sql` avant l'ajout du champ artiste, exécute aussi `supabase/migrations/0005_artist_field.sql` pour ajouter la colonne (vide par défaut, les données existantes sont conservées).
+
 ## Variables d'environnement
 
 Copie `.env.example` vers `.env.local` et renseigne les deux valeurs récupérées ci-dessus :
