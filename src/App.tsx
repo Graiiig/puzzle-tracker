@@ -392,8 +392,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     <>
       {readyToInstall && (
         <div className="update-banner">
-          <span>Mise à jour téléchargée</span>
-          <button onClick={applyUpdate}>Redémarrer</button>
+          <span>{t.app.updateDownloaded}</span>
+          <button onClick={applyUpdate}>{t.app.updateRestart}</button>
         </div>
       )}
 
