@@ -6,6 +6,7 @@ import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbox';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
+import { useAppUpdate } from './hooks/useAppUpdate';
 import { EMPTY_FORM, SORT_MODES } from './data';
 import { hasLegacyData } from './lib/legacyImport';
 import { exportDataAsJson } from './utils/export';
@@ -39,6 +40,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [scanning, setScanning] = useState(false);
   const { clearImage, downloadImage, setImage } = useImageStore();
   const { isLightboxOpen, closeLightbox } = useImageLightbox();
+  const { readyToInstall, applyUpdate } = useAppUpdate();
   const photoSlotId = (addMode === 'wishlist' ? 'wish-img-' : 'puzzle-img-') + formTargetId;
   // Lets an in-flight scan (lookup + image fetch can take several seconds)
   // detect that the user has since moved on to a different add/edit session,
@@ -364,6 +366,13 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
   return (
     <>
+      {readyToInstall && (
+        <div className="update-banner">
+          <span>Mise à jour téléchargée</span>
+          <button onClick={applyUpdate}>Redémarrer</button>
+        </div>
+      )}
+
       {screen === 'home' && (
         <HomeScreen
           collection={collection}
