@@ -1,20 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbox';
+import { LanguageProvider, useLanguage } from './hooks/useLanguage';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { useAppUpdate } from './hooks/useAppUpdate';
-import { EMPTY_FORM, SORT_MODES } from './data';
+import { EMPTY_FORM } from './data';
 import { hasLegacyData } from './lib/legacyImport';
 import { exportDataAsJson } from './utils/export';
 import { importBackupFile } from './utils/importBackup';
 import { collectGenres } from './utils/genres';
 import { fetchLookupImage, isPuzzleLookupConfigured, lookupEan } from './lib/puzzleLookup';
 import { compressImageFile } from './utils/image';
-import type { DetailSource, Genre, Puzzle, PuzzleForm, Screen, SortMode, WishlistItem } from './types';
+import type { DetailSource, Genre, PieceBucket, Puzzle, PuzzleForm, Screen, SortMode, Status, WishlistItem } from './types';
 import HomeScreen from './screens/HomeScreen';
 import WishlistScreen from './screens/WishlistScreen';
 import DetailScreen from './screens/DetailScreen';
@@ -23,6 +24,7 @@ import LoginScreen from './screens/LoginScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
+  const { t } = useLanguage();
   const [screen, setScreen] = useState<Screen>('home');
   const { collection, addPuzzle, updatePuzzle, deletePuzzle, refresh: refreshCollection } = usePuzzles(userId);
   const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
@@ -30,7 +32,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [detailSource, setDetailSource] = useState<DetailSource>('collection');
   const [search, setSearch] = useState('');
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
-  const [sortMode, setSortMode] = useState<SortMode>('Récent');
+  const [sortMode, setSortMode] = useState<SortMode>('recent');
+  const [statusFilter, setStatusFilter] = useState<Set<Status>>(new Set());
+  const [brandFilter, setBrandFilter] = useState<Set<string>>(new Set());
+  const [pieceBucketFilter, setPieceBucketFilter] = useState<Set<PieceBucket>>(new Set());
+  const [minRating, setMinRating] = useState(0);
   const [addMode, setAddMode] = useState<'collection' | 'wishlist'>('collection');
   const [form, setForm] = useState<PuzzleForm>({ ...EMPTY_FORM });
   const [formTargetId, setFormTargetId] = useState<string>(() => crypto.randomUUID());
@@ -57,6 +63,23 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
   function toggleGenreFilter(g: Genre) {
     setSelectedGenres((current) => (current.includes(g) ? current.filter((x) => x !== g) : [...current, g]));
+  }
+
+  function toggleSetItem<T>(setter: Dispatch<SetStateAction<Set<T>>>, value: T) {
+    setter((current) => {
+      const next = new Set(current);
+      if (next.has(value)) next.delete(value);
+      else next.add(value);
+      return next;
+    });
+  }
+
+  function resetPuzzleFilters() {
+    setSelectedGenres([]);
+    setStatusFilter(new Set());
+    setBrandFilter(new Set());
+    setPieceBucketFilter(new Set());
+    setMinRating(0);
   }
 
   function openPuzzle(id: string) {
@@ -98,10 +121,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       setForm({
         name: p.name,
         brand: p.brand,
+        artist: p.artist,
         genres: [...p.genres],
         pieces: String(p.pieces),
         status: p.status,
-        priority: 'Moyenne',
+        priority: 'medium',
         notes: p.notes,
         rating: p.rating,
         difficulty: p.difficulty,
@@ -116,9 +140,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       setForm({
         name: w.name,
         brand: w.brand,
+        artist: w.artist,
         genres: [...w.genres],
         pieces: String(w.pieces),
-        status: 'À faire',
+        status: 'todo',
         priority: w.priority,
         notes: w.notes,
         rating: 0,
@@ -234,7 +259,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       if (addMode === 'collection') {
         await updatePuzzle(formTargetId, {
           name: form.name.trim(),
-          brand: form.brand.trim() || 'Éditeur inconnu',
+          brand: form.brand.trim() || t.common.unknownBrand,
+          artist: form.artist.trim(),
           genres: form.genres,
           pieces: Number(form.pieces) || 0,
           status: form.status,
@@ -247,7 +273,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       } else {
         await updateWishlistItem(formTargetId, {
           name: form.name.trim(),
-          brand: form.brand.trim() || 'Éditeur inconnu',
+          brand: form.brand.trim() || t.common.unknownBrand,
+          artist: form.artist.trim(),
           genres: form.genres,
           pieces: Number(form.pieces) || 0,
           priority: form.priority,
@@ -265,14 +292,15 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       const item: Puzzle = {
         id,
         name: form.name.trim(),
-        brand: form.brand.trim() || 'Éditeur inconnu',
+        brand: form.brand.trim() || t.common.unknownBrand,
+        artist: form.artist.trim(),
         genres: form.genres,
         pieces: Number(form.pieces) || 0,
         status: form.status,
         rating: form.rating,
         difficulty: form.difficulty,
-        date: form.date || (form.status === 'Terminé' ? new Date().toISOString().slice(0, 10) : ''),
-        time: form.time.trim() || (form.status === 'À faire' ? '—' : 'en cours'),
+        date: form.date || (form.status === 'done' ? new Date().toISOString().slice(0, 10) : ''),
+        time: form.time.trim() || (form.status === 'todo' ? '—' : t.common.inProgressDefaultTime),
         notes: form.notes.trim() || '—',
       };
       await addPuzzle(item);
@@ -281,7 +309,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       const item: WishlistItem = {
         id,
         name: form.name.trim(),
-        brand: form.brand.trim() || 'Éditeur inconnu',
+        brand: form.brand.trim() || t.common.unknownBrand,
+        artist: form.artist.trim(),
         genres: form.genres,
         pieces: Number(form.pieces) || 0,
         priority: form.priority,
@@ -301,9 +330,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       id: selected.id,
       name: selected.name,
       brand: selected.brand,
+      artist: selected.artist,
       genres: selected.genres,
       pieces: selected.pieces,
-      status: 'À faire',
+      status: 'todo',
       rating: 0,
       difficulty: 3,
       date: '',
@@ -335,20 +365,14 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   }
 
   async function importBackup(file: File) {
-    if (
-      !window.confirm(
-        "Importer ce fichier de sauvegarde ? Les puzzles et envies qu'il contient seront ajoutés à ta collection actuelle (rien n'est supprimé ni remplacé).",
-      )
-    ) {
+    if (!window.confirm(t.app.confirmImportBackup)) {
       return;
     }
     try {
       const result = await importBackupFile(file, addPuzzle, addWishlistItem, setImage);
-      window.alert(
-        `Import terminé : ${result.puzzles} puzzle(s), ${result.wishlistItems} envie(s) et ${result.photos} photo(s) ajouté(s).`,
-      );
+      window.alert(t.app.importBackupDone(result.puzzles, result.wishlistItems, result.photos));
     } catch {
-      window.alert("Impossible de lire ce fichier. Vérifie que c'est bien un export JSON de l'application.");
+      window.alert(t.app.importBackupError);
     }
   }
 
@@ -382,7 +406,16 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onToggleGenre={toggleGenreFilter}
           onClearGenres={() => setSelectedGenres([])}
           sortMode={sortMode}
-          onCycleSort={() => setSortMode(SORT_MODES[(SORT_MODES.indexOf(sortMode) + 1) % SORT_MODES.length])}
+          onSetSortMode={setSortMode}
+          statusFilter={statusFilter}
+          onToggleStatus={(s) => toggleSetItem(setStatusFilter, s)}
+          brandFilter={brandFilter}
+          onToggleBrand={(b) => toggleSetItem(setBrandFilter, b)}
+          pieceBucketFilter={pieceBucketFilter}
+          onTogglePieceBucket={(b) => toggleSetItem(setPieceBucketFilter, b)}
+          minRating={minRating}
+          onSetMinRating={setMinRating}
+          onResetFilters={resetPuzzleFilters}
           onOpenPuzzle={openPuzzle}
           onAdd={openAddFromHome}
           onRefresh={refreshCollection}
@@ -447,6 +480,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
 function AuthGate() {
   const { user, loading, signOut } = useAuth();
+  const { t } = useLanguage();
 
   if (loading) {
     return (
@@ -460,7 +494,7 @@ function AuthGate() {
           fontWeight: 700,
         }}
       >
-        Chargement...
+        {t.app.authLoading}
       </div>
     );
   }
@@ -475,7 +509,7 @@ function AuthGate() {
         <AppShell
           userId={user.id}
           onSignOut={() => {
-            if (window.confirm('Se déconnecter ?')) signOut();
+            if (window.confirm(t.app.confirmSignOut)) signOut();
           }}
         />
       </ImageLightboxProvider>
@@ -485,10 +519,12 @@ function AuthGate() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <div className="app-shell">
-        <AuthGate />
-      </div>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <div className="app-shell">
+          <AuthGate />
+        </div>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }

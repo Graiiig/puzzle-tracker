@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../hooks/useLanguage';
 
 export default function LoginScreen() {
   const { signInWithEmail, verifyCode } = useAuth();
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'verifying' | 'error'>('idle');
@@ -50,7 +52,7 @@ export default function LoginScreen() {
           Mes Puzzles
         </div>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'oklch(97% 0.02 70 / 0.9)', marginTop: 6 }}>
-          Ta collection, synchronisée partout
+          {t.login.tagline}
         </div>
       </div>
 
@@ -60,13 +62,14 @@ export default function LoginScreen() {
             <div style={{ textAlign: 'center', marginBottom: 20 }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>📬</div>
               <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 18, color: 'oklch(28% 0.02 340)' }}>
-                Vérifie ta boîte mail
+                {t.login.checkEmailTitle}
               </div>
               <div style={{ fontSize: 14, color: 'oklch(50% 0.03 340)', marginTop: 8, lineHeight: 1.5 }}>
-                On a envoyé un code à <strong>{email}</strong>.
+                {t.login.codeSentToPrefix}
+                <strong>{email}</strong>.
               </div>
             </div>
-            <div className="field-label">Code de connexion</div>
+            <div className="field-label">{t.login.codeLabel}</div>
             <input
               className="field-input"
               type="text"
@@ -77,7 +80,7 @@ export default function LoginScreen() {
               maxLength={10}
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-              placeholder="Code reçu par email"
+              placeholder={t.login.codePlaceholder}
               style={{ textAlign: 'center', letterSpacing: 4, fontSize: 20, fontWeight: 700 }}
             />
             {error ? (
@@ -103,7 +106,7 @@ export default function LoginScreen() {
                 boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
               }}
             >
-              {status === 'verifying' ? 'Vérification...' : 'Se connecter'}
+              {status === 'verifying' ? t.login.verifying : t.login.signIn}
             </button>
             <div style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 800 }}>
               <span
@@ -114,19 +117,19 @@ export default function LoginScreen() {
                 }}
                 style={{ color: 'oklch(55% 0.03 340)', cursor: 'pointer' }}
               >
-                Modifier l'adresse email
+                {t.login.changeEmail}
               </span>
               <span
                 onClick={(e) => handleSendCode(e as unknown as React.FormEvent)}
                 style={{ color: 'oklch(55% 0.2 350)', cursor: 'pointer' }}
               >
-                Renvoyer le code
+                {t.login.resendCode}
               </span>
             </div>
           </form>
         ) : (
           <form onSubmit={handleSendCode}>
-            <div className="field-label">Ton adresse email</div>
+            <div className="field-label">{t.login.emailLabel}</div>
             <input
               className="field-input"
               type="email"
@@ -134,7 +137,7 @@ export default function LoginScreen() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="toi@exemple.com"
+              placeholder={t.login.emailPlaceholder}
             />
             {status === 'error' && (
               <div style={{ marginTop: 8, fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.2 25)' }}>{error}</div>
@@ -159,10 +162,10 @@ export default function LoginScreen() {
                 boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
               }}
             >
-              {status === 'sending' ? 'Envoi...' : 'Recevoir le code'}
+              {status === 'sending' ? t.login.sending : t.login.receiveCode}
             </button>
             <div style={{ marginTop: 14, fontSize: 12, color: 'oklch(55% 0.03 340)', textAlign: 'center', lineHeight: 1.5 }}>
-              Pas de mot de passe : tu reçois un code par email pour te connecter.
+              {t.login.noPassword}
             </div>
           </form>
         )}

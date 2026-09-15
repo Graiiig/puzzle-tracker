@@ -1,3 +1,4 @@
+import { useLanguage } from '../hooks/useLanguage';
 import type { Screen } from '../types';
 
 interface BottomNavProps {
@@ -7,6 +8,7 @@ interface BottomNavProps {
 }
 
 export default function BottomNav({ active, onGoHome, onGoWishlist }: BottomNavProps) {
+  const { t } = useLanguage();
   return (
     <div style={{ display: 'flex', flexShrink: 0, borderTop: '1px solid oklch(92% 0.01 340)', background: 'white' }}>
       <button
@@ -22,7 +24,7 @@ export default function BottomNav({ active, onGoHome, onGoWishlist }: BottomNavP
           fontSize: 12,
         }}
       >
-        <div style={{ fontSize: 19 }}>🧩</div>Collection
+        <div style={{ fontSize: 19 }}>🧩</div>{t.nav.collection}
       </button>
       <button
         onClick={onGoWishlist}
@@ -37,7 +39,7 @@ export default function BottomNav({ active, onGoHome, onGoWishlist }: BottomNavP
           fontSize: 12,
         }}
       >
-        <div style={{ fontSize: 19 }}>💗</div>Envies
+        <div style={{ fontSize: 19 }}>💗</div>{t.nav.wishlist}
       </button>
     </div>
   );

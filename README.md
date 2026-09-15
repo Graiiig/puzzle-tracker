@@ -32,6 +32,10 @@ Si tu avais déjà exécuté `schema.sql` avant l'ajout des genres personnalisé
 
 Si tu avais déjà exécuté `schema.sql` avant le support multi-genres, exécute aussi `supabase/migrations/0003_multi_genre.sql` pour passer d'un genre unique à plusieurs genres par puzzle (les données existantes sont conservées).
 
+Si tu avais déjà exécuté `schema.sql` avant le passage de l'appli en anglais/français, exécute aussi `supabase/migrations/0004_english_status_priority.sql` pour convertir les statuts/priorités stockés (auparavant en français) vers les nouvelles clés internes en anglais (les données existantes sont conservées, seul le libellé change).
+
+Si tu avais déjà exécuté `schema.sql` avant l'ajout du champ artiste, exécute aussi `supabase/migrations/0005_artist_field.sql` pour ajouter la colonne (vide par défaut, les données existantes sont conservées).
+
 ## Variables d'environnement
 
 Copie `.env.example` vers `.env.local` et renseigne les deux valeurs récupérées ci-dessus :
@@ -98,6 +102,7 @@ npm run preview
 - **Import des anciennes données** : si l'appli détecte des données enregistrées localement avant la mise en place des comptes, elle propose de les importer automatiquement après la première connexion.
 - **Export / import de sauvegarde** : menu ⋮ sur l'écran d'accueil pour télécharger toute la collection + wishlist (+ photos, encodées dans le fichier) en un seul JSON — filet de sécurité indépendant de Supabase — et pour réimporter un fichier exporté (les éléments sont ajoutés à la collection actuelle, rien n'est écrasé).
 - **Installable (PWA)** : sur Android/Chrome, menu ⋮ > "Ajouter à l'écran d'accueil" (ou bannière d'installation automatique) pour avoir une icône et une appli plein écran, sans passer par le Play Store.
+- **Français / English** : l'appli détecte la langue de l'appareil au premier lancement (français par défaut, anglais sinon), et propose un bouton pour basculer manuellement dans le menu ⋮.
 
 ## APK Android (sideload, sans Play Store)
 
@@ -115,3 +120,27 @@ Le build se fait via GitHub Actions (`.github/workflows/build-android.yml`), pas
 **Pour builder l'APK** : onglet **Actions** du repo > workflow **"Build Android APK"** > **Run workflow**. Une fois terminé, télécharge l'artifact `mes-puzzles-apk` depuis la page du run, transfère l'APK sur ton téléphone et installe-le (Android demandera d'autoriser l'installation depuis cette source la première fois).
 
 Pour rebuilder l'APK avec le contenu web à jour (nouvelles fonctionnalités), relance simplement le workflow — il reconstruit l'appli web et la re-bundle à chaque run.
+
+## AAB Android (publication sur le Play Store)
+
+Le Play Store n'accepte plus les `.apk` en upload direct : il faut un **`.aab`** (Android App Bundle), un format qui laisse Google générer lui-même les APK optimisés par appareil au moment de l'installation.
+
+**Configuration** : les mêmes secrets que pour l'APK (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`) suffisent — c'est la même clé de signature qui doit être utilisée pour toutes les publications de l'appli, AAB comme APK.
+
+**Pour builder l'AAB** : onglet **Actions** du repo > workflow **"Build Android AAB (Play Store)"** > **Run workflow**. Une fois terminé, télécharge l'artifact `mes-puzzles-aab` depuis la page du run — c'est ce fichier `.aab` qu'il faut envoyer sur le Play Store.
+
+**Avant chaque nouvelle publication**, incrémente `versionCode` dans `android/app/build.gradle` (Google refuse un AAB dont le `versionCode` n'est pas strictement supérieur à la version déjà publiée) ; `versionName` peut suivre ou non un format sémantique, c'est juste la version affichée aux utilisateurs.
+
+**Étapes côté Play Console** (une seule fois pour publier l'app la première fois) :
+
+1. Crée un compte développeur Google Play (inscription unique à 25$) sur [play.google.com/console](https://play.google.com/console).
+2. **Créer l'application** : nom, langue par défaut, type (application), gratuite/payante.
+3. **Fiche Play Store** : description courte/longue, icône (512×512), image de présentation (1024×500), captures d'écran (au moins 2, format téléphone).
+4. **Content rating** (classification du contenu) : questionnaire à remplir (l'appli n'a pas de contenu sensible, ça va vite).
+5. **Public cible et contenu** : tranche d'âge visée.
+6. **Politique de confidentialité** : une URL est obligatoire dès que l'appli utilise un compte/des données (ce qui est le cas ici avec Supabase) — une simple page hébergée (GitHub Pages, Notion, etc.) suffit.
+7. **Data safety** : déclarer quelles données sont collectées (ici : email pour l'authentification, données de collection stockées dans Supabase).
+8. **Release** : dans **Test > Closed testing** (ou **Production** directement si tu ne veux pas de phase de test), crée une release, uploade le `.aab` téléchargé depuis l'artifact GitHub Actions, ajoute les notes de version, puis envoie en review.
+9. Google review l'app (quelques heures à quelques jours en général) avant publication effective.
+
+Pour les mises à jour suivantes, il suffit de rebuilder un nouvel AAB (avec `versionCode` incrémenté) et de créer une nouvelle release dans la même piste (testing ou production) — pas besoin de repasser par toute la fiche Play Store.

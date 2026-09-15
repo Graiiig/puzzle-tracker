@@ -9,9 +9,10 @@ create table if not exists public.puzzles (
   user_id uuid not null references auth.users(id) on delete cascade,
   name text not null,
   brand text not null default '',
+  artist text not null default '',
   genres text[] not null default '{}',
   pieces integer not null default 0,
-  status text not null check (status in ('À faire', 'En cours', 'Terminé')),
+  status text not null check (status in ('todo', 'in_progress', 'done')),
   rating integer not null default 0 check (rating between 0 and 5),
   difficulty integer not null default 3 check (difficulty between 1 and 5),
   date text not null default '',
@@ -25,9 +26,10 @@ create table if not exists public.wishlist_items (
   user_id uuid not null references auth.users(id) on delete cascade,
   name text not null,
   brand text not null default '',
+  artist text not null default '',
   genres text[] not null default '{}',
   pieces integer not null default 0,
-  priority text not null check (priority in ('Basse', 'Moyenne', 'Haute')),
+  priority text not null check (priority in ('low', 'medium', 'high')),
   notes text not null default '',
   created_at timestamptz not null default now()
 );

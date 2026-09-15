@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useImageStore } from '../hooks/ImageStore';
 import { useImageLightbox } from '../hooks/useImageLightbox';
+import { useLanguage } from '../hooks/useLanguage';
 import { compressImageFile } from '../utils/image';
 
 interface ImageSlotProps {
@@ -16,6 +17,7 @@ interface ImageSlotProps {
 export default function ImageSlot({ id, shape = 'rounded', radius = 14, placeholder, style, viewOnly = false }: ImageSlotProps) {
   const { getImage, setImage, ensureLoaded } = useImageStore();
   const { openLightbox } = useImageLightbox();
+  const { t } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const src = getImage(id);
@@ -33,10 +35,10 @@ export default function ImageSlot({ id, shape = 'rounded', radius = 14, placehol
       const dataUrl = await compressImageFile(file);
       const saved = await setImage(id, dataUrl);
       if (!saved) {
-        window.alert("Impossible d'enregistrer cette photo : le stockage de l'appareil est plein.");
+        window.alert(t.imageSlot.saveError);
       }
     } catch {
-      window.alert("Impossible de lire cette photo.");
+      window.alert(t.imageSlot.readError);
     } finally {
       setBusy(false);
     }
@@ -69,7 +71,7 @@ export default function ImageSlot({ id, shape = 'rounded', radius = 14, placehol
       }}
     >
       {busy ? (
-        <span style={{ fontSize: 11, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>Chargement...</span>
+        <span style={{ fontSize: 11, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>{t.imageSlot.loading}</span>
       ) : src ? (
         <img src={src} alt={placeholder} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (

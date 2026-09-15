@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">Mes Puzzles</string>
     <string name="title_activity_main">Mes Puzzles</string>
-    <string name="package_name">com.graiiig.puzzletracker</string>
-    <string name="custom_url_scheme">com.graiiig.puzzletracker</string>
+    <string name="package_name">mes.puzzles</string>
+    <string name="custom_url_scheme">mes.puzzles</string>
 </resources>

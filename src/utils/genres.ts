@@ -16,3 +16,13 @@ export function collectGenres(...itemLists: Array<Array<{ genres: Genre[] }>>): 
   }
   return [...DEFAULT_GENRES, ...extra];
 }
+
+export function collectBrands(...itemLists: Array<Array<{ brand: string }>>): string[] {
+  const seen = new Set<string>();
+  for (const items of itemLists) {
+    for (const item of items) {
+      if (item.brand) seen.add(item.brand);
+    }
+  }
+  return [...seen].sort((a, b) => a.localeCompare(b));
+}

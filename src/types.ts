@@ -1,12 +1,14 @@
 export type Genre = string;
-export type Status = 'À faire' | 'En cours' | 'Terminé';
-export type Priority = 'Basse' | 'Moyenne' | 'Haute';
-export type SortMode = 'Récent' | 'Alphabétique' | 'Pièces' | 'Difficulté';
+export type Status = 'todo' | 'in_progress' | 'done';
+export type Priority = 'low' | 'medium' | 'high';
+export type SortMode = 'recent' | 'alphabetical' | 'pieces' | 'difficulty';
+export type PieceBucket = 'lt500' | '500-999' | '1000-1999' | 'gte2000';
 
 export interface Puzzle {
   id: string;
   name: string;
   brand: string;
+  artist: string;
   genres: Genre[];
   pieces: number;
   status: Status;
@@ -21,6 +23,7 @@ export interface WishlistItem {
   id: string;
   name: string;
   brand: string;
+  artist: string;
   genres: Genre[];
   pieces: number;
   priority: Priority;
@@ -30,6 +33,7 @@ export interface WishlistItem {
 export interface PuzzleForm {
   name: string;
   brand: string;
+  artist: string;
   genres: Genre[];
   pieces: string;
   status: Status;

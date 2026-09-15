@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { useLanguage } from './useLanguage';
 
 interface LightboxValue {
   openLightbox: (src: string) => void;
@@ -10,6 +11,7 @@ const LightboxContext = createContext<LightboxValue | null>(null);
 
 export function ImageLightboxProvider({ children }: { children: ReactNode }) {
   const [src, setSrc] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (!src) return;
@@ -44,7 +46,7 @@ export function ImageLightboxProvider({ children }: { children: ReactNode }) {
           />
           <button
             onClick={() => setSrc(null)}
-            aria-label="Fermer"
+            aria-label={t.common.close}
             style={{
               position: 'absolute',
               top: 20,

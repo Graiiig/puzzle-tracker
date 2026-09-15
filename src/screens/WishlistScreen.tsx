@@ -1,6 +1,7 @@
 import ImageSlot from '../components/ImageSlot';
 import BottomNav from '../components/BottomNav';
 import PullToRefresh from '../components/PullToRefresh';
+import { useLanguage } from '../hooks/useLanguage';
 import type { WishlistItem } from '../types';
 import { priorityStyle } from '../utils/format';
 
@@ -13,6 +14,7 @@ interface WishlistScreenProps {
 }
 
 export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onRefresh, onGoHome }: WishlistScreenProps) {
+  const { t } = useLanguage();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)', position: 'relative' }}>
       <div
@@ -26,7 +28,7 @@ export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onRefresh,
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 26, color: 'white' }}>
-            Ma Wishlist 💗
+            {t.wishlist.title}
           </div>
           <div
             style={{
@@ -44,7 +46,7 @@ export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onRefresh,
           </div>
         </div>
         <div style={{ marginTop: 14, fontSize: 13, fontWeight: 700, color: 'oklch(97% 0.02 70 / 0.9)' }}>
-          {wishlist.length} puzzle(s) à s'offrir
+          {t.wishlist.count(wishlist.length)}
         </div>
       </div>
 
@@ -54,7 +56,7 @@ export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onRefresh,
       >
         {wishlist.map((w) => (
           <button key={w.id} className="card-row wishlist-row" onClick={() => onOpenItem(w.id)}>
-            <ImageSlot id={'wish-img-' + w.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder="photo" viewOnly />
+            <ImageSlot id={'wish-img-' + w.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder={t.imageSlot.photoPlaceholder} viewOnly />
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
               <div
                 style={{
@@ -70,15 +72,15 @@ export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onRefresh,
                 {w.name}
               </div>
               <div style={{ fontSize: 12, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>
-                {w.brand} · {w.pieces} pièces
+                {w.brand} · {t.wishlist.pieces(w.pieces)}
               </div>
-              <span style={priorityStyle(w.priority)}>Envie {w.priority}</span>
+              <span style={priorityStyle(w.priority)}>{t.wishlist.priorityBadge(t.priority[w.priority])}</span>
             </div>
           </button>
         ))}
         {wishlist.length === 0 && (
           <div style={{ textAlign: 'center', padding: '40px 20px', color: 'oklch(55% 0.03 340)', fontWeight: 700 }}>
-            Ta liste d'envies est vide pour l'instant 💭
+            {t.wishlist.empty}
           </div>
         )}
       </PullToRefresh>

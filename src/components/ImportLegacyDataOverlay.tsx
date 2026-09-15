@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useImageStore } from '../hooks/ImageStore';
+import { useLanguage } from '../hooks/useLanguage';
 import { dismissLegacyImport, importLegacyData, type LegacyImportResult } from '../lib/legacyImport';
 import type { Puzzle, WishlistItem } from '../types';
 
@@ -11,6 +12,7 @@ interface ImportLegacyDataOverlayProps {
 
 export default function ImportLegacyDataOverlay({ addPuzzle, addWishlistItem, onDone }: ImportLegacyDataOverlayProps) {
   const { setImage } = useImageStore();
+  const { t } = useLanguage();
   const [state, setState] = useState<'prompt' | 'importing' | 'done'>('prompt');
   const [result, setResult] = useState<LegacyImportResult | null>(null);
 
@@ -45,10 +47,10 @@ export default function ImportLegacyDataOverlay({ addPuzzle, addWishlistItem, on
           <>
             <div style={{ fontSize: 32 }}>📦</div>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 17, color: 'oklch(28% 0.02 340)', marginTop: 8 }}>
-              Données trouvées sur cet appareil
+              {t.legacyImport.foundTitle}
             </div>
             <div style={{ fontSize: 13, color: 'oklch(50% 0.03 340)', marginTop: 8, lineHeight: 1.5 }}>
-              On a trouvé des puzzles enregistrés localement avant la synchronisation. Tu veux les importer dans ton compte ?
+              {t.legacyImport.foundBody}
             </div>
             <div
               onClick={handleImport}
@@ -64,20 +66,20 @@ export default function ImportLegacyDataOverlay({ addPuzzle, addWishlistItem, on
                 cursor: 'pointer',
               }}
             >
-              Importer mes données
+              {t.legacyImport.importButton}
             </div>
             <div
               onClick={handleSkip}
               style={{ marginTop: 12, fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)', cursor: 'pointer' }}
             >
-              Ignorer
+              {t.legacyImport.skip}
             </div>
           </>
         )}
 
         {state === 'importing' && (
           <div style={{ fontSize: 14, fontWeight: 700, color: 'oklch(50% 0.03 340)', padding: '20px 0' }}>
-            Import en cours...
+            {t.legacyImport.importing}
           </div>
         )}
 
@@ -85,10 +87,10 @@ export default function ImportLegacyDataOverlay({ addPuzzle, addWishlistItem, on
           <>
             <div style={{ fontSize: 32 }}>✅</div>
             <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 17, color: 'oklch(28% 0.02 340)', marginTop: 8 }}>
-              Import terminé
+              {t.legacyImport.doneTitle}
             </div>
             <div style={{ fontSize: 13, color: 'oklch(50% 0.03 340)', marginTop: 8, lineHeight: 1.5 }}>
-              {result.puzzles} puzzle(s), {result.wishlistItems} envie(s) et {result.photos} photo(s) importés.
+              {t.legacyImport.doneBody(result.puzzles, result.wishlistItems, result.photos)}
             </div>
             <div
               onClick={onDone}
@@ -104,7 +106,7 @@ export default function ImportLegacyDataOverlay({ addPuzzle, addWishlistItem, on
                 cursor: 'pointer',
               }}
             >
-              Continuer
+              {t.legacyImport.continue}
             </div>
           </>
         )}

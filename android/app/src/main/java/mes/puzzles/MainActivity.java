@@ -1,4 +1,4 @@
-package com.graiiig.puzzletracker;
+package mes.puzzles;
 
 import com.getcapacitor.BridgeActivity;
 

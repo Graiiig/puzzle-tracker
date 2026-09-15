@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import type { Dict, Lang } from '../i18n';
 import type { Priority, Puzzle, SortMode, Status } from '../types';
 
 export function starString(n: number): string {
@@ -10,13 +11,13 @@ export function dotString(n: number): string {
 }
 
 const STATUS_COLORS: Record<Status, { background: string; color: string }> = {
-  Terminé: { background: 'oklch(90% 0.09 150)', color: 'oklch(38% 0.13 150)' },
-  'En cours': { background: 'oklch(93% 0.08 350)', color: 'oklch(45% 0.2 350)' },
-  'À faire': { background: 'oklch(92% 0.02 340)', color: 'oklch(50% 0.02 340)' },
+  done: { background: 'oklch(90% 0.09 150)', color: 'oklch(38% 0.13 150)' },
+  in_progress: { background: 'oklch(93% 0.08 350)', color: 'oklch(45% 0.2 350)' },
+  todo: { background: 'oklch(92% 0.02 340)', color: 'oklch(50% 0.02 340)' },
 };
 
 export function statusStyle(status: Status): CSSProperties {
-  const colors = STATUS_COLORS[status] ?? STATUS_COLORS['À faire'];
+  const colors = STATUS_COLORS[status] ?? STATUS_COLORS.todo;
   return {
     ...colors,
     fontWeight: 800,
@@ -27,13 +28,13 @@ export function statusStyle(status: Status): CSSProperties {
 }
 
 const PRIORITY_COLORS: Record<Priority, { background: string; color: string }> = {
-  Haute: { background: 'oklch(93% 0.08 350)', color: 'oklch(45% 0.2 350)' },
-  Moyenne: { background: 'oklch(92% 0.05 300)', color: 'oklch(45% 0.16 300)' },
-  Basse: { background: 'oklch(92% 0.02 340)', color: 'oklch(50% 0.02 340)' },
+  high: { background: 'oklch(93% 0.08 350)', color: 'oklch(45% 0.2 350)' },
+  medium: { background: 'oklch(92% 0.05 300)', color: 'oklch(45% 0.16 300)' },
+  low: { background: 'oklch(92% 0.02 340)', color: 'oklch(50% 0.02 340)' },
 };
 
 export function priorityStyle(p: Priority): CSSProperties {
-  const colors = PRIORITY_COLORS[p] ?? PRIORITY_COLORS.Moyenne;
+  const colors = PRIORITY_COLORS[p] ?? PRIORITY_COLORS.medium;
   return {
     ...colors,
     fontWeight: 800,
@@ -60,26 +61,28 @@ export function sortList<T extends { name: string; pieces: number; difficulty?: 
   mode: SortMode,
 ): T[] {
   const arr = [...list];
-  if (mode === 'Alphabétique') arr.sort((a, b) => a.name.localeCompare(b.name));
-  else if (mode === 'Pièces') arr.sort((a, b) => b.pieces - a.pieces);
-  else if (mode === 'Difficulté') arr.sort((a, b) => (b.difficulty ?? 0) - (a.difficulty ?? 0));
-  // 'Récent': the list already arrives most-recent-first (fetched with
+  if (mode === 'alphabetical') arr.sort((a, b) => a.name.localeCompare(b.name));
+  else if (mode === 'pieces') arr.sort((a, b) => b.pieces - a.pieces);
+  else if (mode === 'difficulty') arr.sort((a, b) => (b.difficulty ?? 0) - (a.difficulty ?? 0));
+  // 'recent': the list already arrives most-recent-first (fetched with
   // created_at descending), so no reordering is needed here.
   return arr;
 }
 
-export function ratingLabel(puzzle: Pick<Puzzle, 'rating'>): string {
-  return puzzle.rating > 0 ? `${puzzle.rating}/5` : 'Pas encore noté';
+export function ratingLabel(puzzle: Pick<Puzzle, 'rating'>, t: Dict): string {
+  return puzzle.rating > 0 ? `${puzzle.rating}/5` : t.detail.notRatedYet;
 }
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
-const dateFormatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+const DATE_LOCALE: Record<Lang, string> = { fr: 'fr-FR', en: 'en-US' };
 
-export function formatDate(value: string): string {
+export function formatDate(value: string, lang: Lang): string {
   if (!value) return '—';
   if (ISO_DATE.test(value)) {
     const [y, m, d] = value.split('-').map(Number);
-    return dateFormatter.format(new Date(y, m - 1, d));
+    return new Intl.DateTimeFormat(DATE_LOCALE[lang], { day: 'numeric', month: 'long', year: 'numeric' }).format(
+      new Date(y, m - 1, d),
+    );
   }
   return value;
 }
