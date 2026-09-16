@@ -6,6 +6,7 @@ import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbox';
 import { LanguageProvider, useLanguage } from './hooks/useLanguage';
 import { ThemeProvider, useTheme } from './hooks/useTheme';
+import { PremiumProvider, usePremium } from './hooks/usePremium';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { useAppUpdate } from './hooks/useAppUpdate';
@@ -67,6 +68,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const { clearImage, downloadImage, downloadImageFrom, setImage } = useImageStore();
   const { isLightboxOpen, closeLightbox } = useImageLightbox();
   const { readyToInstall, applyUpdate } = useAppUpdate();
+  const { refresh: refreshPremium } = usePremium();
   const photoSlotId = (addMode === 'wishlist' ? 'wish-img-' : 'puzzle-img-') + formTargetId;
   // Lets an in-flight scan (lookup + image fetch can take several seconds)
   // detect that the user has since moved on to a different add/edit session,
@@ -260,6 +262,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       refreshCollection();
       refreshWishlist();
       refreshShares();
+      refreshPremium();
     };
     if (Capacitor.isNativePlatform()) {
       const listenerPromise = CapacitorApp.addListener('resume', refreshBoth);
@@ -274,7 +277,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     return () => {
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
-  }, [refreshCollection, refreshWishlist, refreshShares]);
+  }, [refreshCollection, refreshWishlist, refreshShares, refreshPremium]);
 
   async function submitForm() {
     if (!form.name.trim() || form.genres.length === 0) return;
@@ -605,12 +608,14 @@ function AuthGate() {
   return (
     <ImageStoreProvider userId={user.id}>
       <ImageLightboxProvider>
-        <AppShell
-          userId={user.id}
-          onSignOut={() => {
-            if (window.confirm(t.app.confirmSignOut)) signOut();
-          }}
-        />
+        <PremiumProvider userId={user.id}>
+          <AppShell
+            userId={user.id}
+            onSignOut={() => {
+              if (window.confirm(t.app.confirmSignOut)) signOut();
+            }}
+          />
+        </PremiumProvider>
       </ImageLightboxProvider>
     </ImageStoreProvider>
   );
