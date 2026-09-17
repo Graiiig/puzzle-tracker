@@ -6,13 +6,18 @@ import FiltersSheet from '../components/FiltersSheet';
 import PullToRefresh from '../components/PullToRefresh';
 import { STATUSES, SORT_MODES } from '../data';
 import { useLanguage } from '../hooks/useLanguage';
-import type { Genre, PieceBucket, Puzzle, SortMode, Status } from '../types';
+import type { Genre, PieceBucket, Puzzle, SharedOwner, SortMode, Status } from '../types';
 import { chipStyle, formatMinutesAsHours, parseTimeToMinutes, sortList, starString, statusStyle } from '../utils/format';
 import { matchesFilters } from '../utils/filters';
 import { collectBrands, collectGenres } from '../utils/genres';
 
 interface HomeScreenProps {
   collection: Puzzle[];
+  myUserId: string;
+  sharedOwners: SharedOwner[];
+  ownerFilter: string;
+  onSetOwnerFilter: (ownerId: string) => void;
+  onGoShare: () => void;
   search: string;
   onSearchChange: (value: string) => void;
   selectedGenres: Genre[];
@@ -41,6 +46,11 @@ interface HomeScreenProps {
 
 export default function HomeScreen({
   collection,
+  myUserId,
+  sharedOwners,
+  ownerFilter,
+  onSetOwnerFilter,
+  onGoShare,
   search,
   onSearchChange,
   selectedGenres,
@@ -71,13 +81,14 @@ export default function HomeScreen({
   const [menuOpen, setMenuOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const doneCount = collection.filter((p) => p.status === 'done').length;
-  const inProgressCount = collection.filter((p) => p.status === 'in_progress').length;
-  const started = collection.filter((p) => p.status !== 'todo');
+  const owned = collection.filter((p) => p.ownerId === ownerFilter);
+  const doneCount = owned.filter((p) => p.status === 'done').length;
+  const inProgressCount = owned.filter((p) => p.status === 'in_progress').length;
+  const started = owned.filter((p) => p.status !== 'todo');
   const totalPieces = started.reduce((sum, p) => sum + p.pieces, 0);
   const totalMinutes = started.reduce((sum, p) => sum + parseTimeToMinutes(p.time), 0);
 
-  const filtered = collection.filter((p) =>
+  const filtered = owned.filter((p) =>
     matchesFilters(p, {
       genres: selectedGenres,
       statuses: statusFilter,
@@ -88,8 +99,8 @@ export default function HomeScreen({
     }),
   );
   const visible = sortList(filtered, sortMode);
-  const genreOptions: Genre[] = collectGenres(collection);
-  const brandOptions: string[] = collectBrands(collection);
+  const genreOptions: Genre[] = collectGenres(owned);
+  const brandOptions: string[] = collectBrands(owned);
   const activeFilterCount = statusFilter.size + brandFilter.size + pieceBucketFilter.size + (minRating > 0 ? 1 : 0);
 
   return (
@@ -160,6 +171,7 @@ export default function HomeScreen({
                       disabled: exporting,
                     },
                     { icon: '⬆️', label: t.home.menuImport, onClick: () => importInputRef.current?.click(), disabled: false },
+                    { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false },
                     { icon: '🌐', label: t.home.menuLanguage, onClick: toggleLang, disabled: false },
                     { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false },
                   ].map((item) => (
@@ -247,6 +259,24 @@ export default function HomeScreen({
           />
         </div>
       </div>
+
+      {sharedOwners.length > 0 && (
+        <div style={{ display: 'flex', gap: 8, padding: '14px 20px 0', flexShrink: 0, overflowX: 'auto' }}>
+          <Chip
+            label={t.home.ownerFilterMine}
+            onClick={() => onSetOwnerFilter(myUserId)}
+            style={chipStyle(ownerFilter === myUserId, 320)}
+          />
+          {sharedOwners.map((owner) => (
+            <Chip
+              key={owner.userId}
+              label={t.home.ownerFilterOf(owner.pseudo)}
+              onClick={() => onSetOwnerFilter(owner.userId)}
+              style={chipStyle(ownerFilter === owner.userId, 320)}
+            />
+          ))}
+        </div>
+      )}
 
       <div style={{ display: 'flex', gap: 8, padding: '14px 20px 6px', flexShrink: 0 }}>
         <div style={{ flex: 1, display: 'flex', gap: 8, overflowX: 'auto' }}>

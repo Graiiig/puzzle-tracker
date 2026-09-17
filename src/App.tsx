@@ -8,6 +8,7 @@ import { LanguageProvider, useLanguage } from './hooks/useLanguage';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { useAppUpdate } from './hooks/useAppUpdate';
+import { useShares } from './hooks/useShares';
 import { EMPTY_FORM } from './data';
 import { hasLegacyData } from './lib/legacyImport';
 import { exportDataAsJson } from './utils/export';
@@ -21,6 +22,7 @@ import WishlistScreen from './screens/WishlistScreen';
 import DetailScreen from './screens/DetailScreen';
 import AddScreen from './screens/AddScreen';
 import LoginScreen from './screens/LoginScreen';
+import ShareScreen from './screens/ShareScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
@@ -28,7 +30,9 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [screen, setScreen] = useState<Screen>('home');
   const { collection, addPuzzle, updatePuzzle, deletePuzzle, refresh: refreshCollection } = usePuzzles(userId);
   const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
+  const { pseudo, savePseudo, myShares, addShare, removeShare, sharedWithMe, refresh: refreshShares } = useShares(userId);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [ownerFilter, setOwnerFilter] = useState(userId);
   const [detailSource, setDetailSource] = useState<DetailSource>('collection');
   const [search, setSearch] = useState('');
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
@@ -202,7 +206,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       cancelAdd();
     } else if (screen === 'detail') {
       setScreen(detailSource === 'wishlist' ? 'wishlist' : 'home');
-    } else if (screen === 'wishlist') {
+    } else if (screen === 'wishlist' || screen === 'share') {
       setScreen('home');
     }
   }
@@ -236,6 +240,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     const refreshBoth = () => {
       refreshCollection();
       refreshWishlist();
+      refreshShares();
     };
     if (Capacitor.isNativePlatform()) {
       const listenerPromise = CapacitorApp.addListener('resume', refreshBoth);
@@ -250,7 +255,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     return () => {
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
-  }, [refreshCollection, refreshWishlist]);
+  }, [refreshCollection, refreshWishlist, refreshShares]);
 
   async function submitForm() {
     if (!form.name.trim() || form.genres.length === 0) return;
@@ -289,7 +294,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
     const id = formTargetId;
     if (addMode === 'collection') {
-      const item: Puzzle = {
+      const item: Omit<Puzzle, 'ownerId'> = {
         id,
         name: form.name.trim(),
         brand: form.brand.trim() || t.common.unknownBrand,
@@ -326,7 +331,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     if (detailSource !== 'wishlist') return;
     const selected = wishlist.find((w) => w.id === selectedId);
     if (!selected) return;
-    const item: Puzzle = {
+    const item: Omit<Puzzle, 'ownerId'> = {
       id: selected.id,
       name: selected.name,
       brand: selected.brand,
@@ -400,6 +405,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       {screen === 'home' && (
         <HomeScreen
           collection={collection}
+          myUserId={userId}
+          sharedOwners={sharedWithMe}
+          ownerFilter={ownerFilter}
+          onSetOwnerFilter={setOwnerFilter}
+          onGoShare={() => setScreen('share')}
           search={search}
           onSearchChange={setSearch}
           selectedGenres={selectedGenres}
@@ -442,10 +452,23 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           source={detailSource}
           puzzle={detailSource === 'collection' ? selectedPuzzle : undefined}
           wishlistItem={detailSource === 'wishlist' ? selectedWishlistItem : undefined}
+          isOwner={detailSource === 'wishlist' || selectedPuzzle?.ownerId === userId}
           onClose={() => setScreen(detailSource === 'wishlist' ? 'wishlist' : 'home')}
           onMarkAsBought={markAsBought}
           onDelete={deleteSelected}
           onEdit={openEditSelected}
+        />
+      )}
+
+      {screen === 'share' && (
+        <ShareScreen
+          pseudo={pseudo}
+          onSavePseudo={savePseudo}
+          myShares={myShares}
+          onAddShare={addShare}
+          onRemoveShare={removeShare}
+          sharedWithMe={sharedWithMe}
+          onClose={() => setScreen('home')}
         />
       )}
 

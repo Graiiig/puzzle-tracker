@@ -7,13 +7,14 @@ interface DetailScreenProps {
   source: DetailSource;
   puzzle?: Puzzle;
   wishlistItem?: WishlistItem;
+  isOwner: boolean;
   onClose: () => void;
   onMarkAsBought: () => void;
   onDelete: () => void;
   onEdit: () => void;
 }
 
-export default function DetailScreen({ source, puzzle, wishlistItem, onClose, onMarkAsBought, onDelete, onEdit }: DetailScreenProps) {
+export default function DetailScreen({ source, puzzle, wishlistItem, isOwner, onClose, onMarkAsBought, onDelete, onEdit }: DetailScreenProps) {
   const { t, lang } = useLanguage();
   const item = source === 'collection' ? puzzle : wishlistItem;
   if (!item) return null;
@@ -52,27 +53,29 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
         >
           ←
         </div>
-        <div
-          onClick={onEdit}
-          style={{
-            position: 'absolute',
-            top: 14,
-            right: 14,
-            width: 38,
-            height: 38,
-            borderRadius: '50%',
-            background: 'oklch(20% 0.02 340 / 0.5)',
-            backdropFilter: 'blur(4px)',
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 16,
-            cursor: 'pointer',
-          }}
-        >
-          ✏️
-        </div>
+        {isOwner && (
+          <div
+            onClick={onEdit}
+            style={{
+              position: 'absolute',
+              top: 14,
+              right: 14,
+              width: 38,
+              height: 38,
+              borderRadius: '50%',
+              background: 'oklch(20% 0.02 340 / 0.5)',
+              backdropFilter: 'blur(4px)',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 16,
+              cursor: 'pointer',
+            }}
+          >
+            ✏️
+          </div>
+        )}
       </div>
 
       <div
@@ -206,21 +209,23 @@ export default function DetailScreen({ source, puzzle, wishlistItem, onClose, on
           </>
         )}
 
-        <div
-          onClick={handleDelete}
-          style={{
-            marginTop: 14,
-            textAlign: 'center',
-            padding: 12,
-            borderRadius: 16,
-            cursor: 'pointer',
-            fontSize: 13,
-            fontWeight: 800,
-            color: 'oklch(55% 0.2 25)',
-          }}
-        >
-          {t.detail.deleteAction(source === 'collection' ? t.detail.thisPuzzle : t.detail.thisWish)}
-        </div>
+        {isOwner && (
+          <div
+            onClick={handleDelete}
+            style={{
+              marginTop: 14,
+              textAlign: 'center',
+              padding: 12,
+              borderRadius: 16,
+              cursor: 'pointer',
+              fontSize: 13,
+              fontWeight: 800,
+              color: 'oklch(55% 0.2 25)',
+            }}
+          >
+            {t.detail.deleteAction(source === 'collection' ? t.detail.thisPuzzle : t.detail.thisWish)}
+          </div>
+        )}
       </div>
     </div>
   );

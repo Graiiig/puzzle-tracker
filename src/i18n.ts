@@ -33,6 +33,7 @@ export interface Dict {
     menuExporting: string;
     menuExport: string;
     menuImport: string;
+    menuShare: string;
     menuSignOut: string;
     menuLanguage: string;
     statInProgress: string;
@@ -43,6 +44,8 @@ export interface Dict {
     filterAll: string;
     empty: string;
     pieces: (n: number) => string;
+    ownerFilterMine: string;
+    ownerFilterOf: (pseudo: string) => string;
   };
   wishlist: {
     title: string;
@@ -143,6 +146,24 @@ export interface Dict {
     ratingAtLeast: (n: number) => string;
     seeResults: (n: number) => string;
   };
+  share: {
+    title: string;
+    pseudoLabel: string;
+    pseudoPlaceholder: string;
+    pseudoSave: string;
+    pseudoSaved: string;
+    pseudoRequiredHint: string;
+    inviteTitle: string;
+    inviteEmailPlaceholder: string;
+    inviteButton: string;
+    inviteError: string;
+    invitedListTitle: string;
+    invitedEmpty: string;
+    removeConfirm: (email: string) => string;
+    sharedWithMeTitle: string;
+    sharedWithMeEmpty: string;
+    sharedWithMeHint: string;
+  };
 }
 
 const fr: Dict = {
@@ -176,6 +197,7 @@ const fr: Dict = {
     menuExporting: 'Export en cours...',
     menuExport: 'Exporter mes données',
     menuImport: 'Importer une sauvegarde',
+    menuShare: 'Partager ma collection',
     menuSignOut: 'Se déconnecter',
     menuLanguage: '🌐 English',
     statInProgress: 'en cours',
@@ -186,6 +208,8 @@ const fr: Dict = {
     filterAll: 'Tous',
     empty: 'Aucun puzzle trouvé 🥲',
     pieces: (n) => `${n} pièces`,
+    ownerFilterMine: 'Mes puzzles',
+    ownerFilterOf: (pseudo) => `Puzzles de ${pseudo}`,
   },
   wishlist: {
     title: 'Ma Wishlist 💗',
@@ -306,6 +330,24 @@ const fr: Dict = {
     ratingAtLeast: (n) => (n >= 5 ? '★ 5' : `★ ${n}+`),
     seeResults: (n) => `Voir ${n} puzzle${n === 1 ? '' : 's'}`,
   },
+  share: {
+    title: 'Partage',
+    pseudoLabel: 'Ton pseudo',
+    pseudoPlaceholder: 'Comment les autres te verront',
+    pseudoSave: 'Enregistrer',
+    pseudoSaved: 'Pseudo enregistré.',
+    pseudoRequiredHint: "Choisis d'abord un pseudo pour pouvoir inviter quelqu'un.",
+    inviteTitle: "Inviter quelqu'un (lecture seule)",
+    inviteEmailPlaceholder: 'email@exemple.com',
+    inviteButton: 'Inviter',
+    inviteError: "Impossible d'inviter cette adresse (déjà invitée ?).",
+    invitedListTitle: 'Personnes invitées',
+    invitedEmpty: "Tu n'as invité personne pour l'instant.",
+    removeConfirm: (email) => `Retirer l'accès de ${email} ?`,
+    sharedWithMeTitle: 'Partagé avec moi',
+    sharedWithMeEmpty: "Personne n'a encore partagé sa collection avec toi.",
+    sharedWithMeHint: 'Utilise le filtre en haut de ta collection pour voir les puzzles de quelqu\'un.',
+  },
 };
 
 const en: Dict = {
@@ -339,6 +381,7 @@ const en: Dict = {
     menuExporting: 'Exporting...',
     menuExport: 'Export my data',
     menuImport: 'Import a backup',
+    menuShare: 'Share my collection',
     menuSignOut: 'Sign out',
     menuLanguage: '🌐 Français',
     statInProgress: 'in progress',
@@ -349,6 +392,8 @@ const en: Dict = {
     filterAll: 'All',
     empty: 'No puzzle found 🥲',
     pieces: (n) => `${n} pieces`,
+    ownerFilterMine: 'My puzzles',
+    ownerFilterOf: (pseudo) => `${pseudo}'s puzzles`,
   },
   wishlist: {
     title: 'My Wishlist 💗',
@@ -467,6 +512,24 @@ const en: Dict = {
     sortLabel: 'Sort by',
     ratingAtLeast: (n) => (n >= 5 ? '★ 5' : `★ ${n}+`),
     seeResults: (n) => `See ${n} puzzle${n === 1 ? '' : 's'}`,
+  },
+  share: {
+    title: 'Share',
+    pseudoLabel: 'Your nickname',
+    pseudoPlaceholder: 'How others will see you',
+    pseudoSave: 'Save',
+    pseudoSaved: 'Nickname saved.',
+    pseudoRequiredHint: 'Pick a nickname first so you can invite someone.',
+    inviteTitle: 'Invite someone (read-only)',
+    inviteEmailPlaceholder: 'email@example.com',
+    inviteButton: 'Invite',
+    inviteError: 'Could not invite this address (already invited?).',
+    invitedListTitle: 'Invited people',
+    invitedEmpty: "You haven't invited anyone yet.",
+    removeConfirm: (email) => `Remove access for ${email}?`,
+    sharedWithMeTitle: 'Shared with me',
+    sharedWithMeEmpty: "No one has shared their collection with you yet.",
+    sharedWithMeHint: "Use the filter at the top of your collection to see someone's puzzles.",
   },
 };
 

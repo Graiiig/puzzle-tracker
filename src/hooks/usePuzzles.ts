@@ -3,7 +3,12 @@ import { supabase } from '../lib/supabaseClient';
 import type { Puzzle } from '../types';
 import { withRetry } from '../utils/retry';
 
-const COLUMNS = 'id, name, brand, artist, genres, pieces, status, rating, difficulty, date, time, notes';
+const COLUMNS = 'id, user_id, name, brand, artist, genres, pieces, status, rating, difficulty, date, time, notes';
+
+function mapRow(row: Record<string, unknown>): Puzzle {
+  const { user_id, ...rest } = row;
+  return { ...rest, ownerId: user_id } as Puzzle;
+}
 
 export function usePuzzles(userId: string | null) {
   const [collection, setCollection] = useState<Puzzle[]>([]);
@@ -19,7 +24,7 @@ export function usePuzzles(userId: string | null) {
     const { data, error } = await withRetry(() =>
       supabase.from('puzzles').select(COLUMNS).order('created_at', { ascending: false }),
     );
-    if (!error && data) setCollection(data as unknown as Puzzle[]);
+    if (!error && data) setCollection((data as Record<string, unknown>[]).map(mapRow));
     setLoading(false);
   }, [userId]);
 
@@ -27,18 +32,18 @@ export function usePuzzles(userId: string | null) {
     refresh();
   }, [refresh]);
 
-  async function addPuzzle(item: Puzzle): Promise<boolean> {
+  async function addPuzzle(item: Omit<Puzzle, 'ownerId'>): Promise<boolean> {
     if (!userId) return false;
     const { error } = await supabase.from('puzzles').insert({ ...item, user_id: userId });
     if (error) return false;
-    setCollection((c) => [item, ...c]);
+    setCollection((c) => [{ ...item, ownerId: userId }, ...c]);
     return true;
   }
 
-  async function updatePuzzle(id: string, patch: Omit<Puzzle, 'id'>): Promise<boolean> {
+  async function updatePuzzle(id: string, patch: Omit<Puzzle, 'id' | 'ownerId'>): Promise<boolean> {
     const { error } = await supabase.from('puzzles').update(patch).eq('id', id);
     if (error) return false;
-    setCollection((c) => c.map((p) => (p.id === id ? { id, ...patch } : p)));
+    setCollection((c) => c.map((p) => (p.id === id ? { ...p, ...patch } : p)));
     return true;
   }
 

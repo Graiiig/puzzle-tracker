@@ -9,7 +9,7 @@ export interface ImportBackupResult {
 
 export async function importBackupFile(
   file: File,
-  addPuzzle: (item: Puzzle) => Promise<boolean>,
+  addPuzzle: (item: Omit<Puzzle, 'ownerId'>) => Promise<boolean>,
   addWishlistItem: (item: WishlistItem) => Promise<boolean>,
   setImage: (id: string, dataUrl: string) => Promise<boolean>,
 ): Promise<ImportBackupResult> {
