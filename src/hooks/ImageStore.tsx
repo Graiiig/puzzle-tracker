@@ -7,7 +7,7 @@ const NOT_FOUND = '';
 
 interface ImageStoreValue {
   getImage: (id: string) => string | undefined;
-  ensureLoaded: (id: string) => void;
+  ensureLoaded: (id: string, ownerId?: string) => void;
   setImage: (id: string, dataUrl: string) => Promise<boolean>;
   clearImage: (id: string) => void;
   downloadImage: (id: string) => Promise<string | null>;
@@ -37,8 +37,8 @@ export function ImageStoreProvider({ userId, children }: { userId: string | null
   const [urls, setUrls] = useState<Urls>({});
   const inFlight = useRef<Set<string>>(new Set());
 
-  function path(id: string) {
-    return `${userId}/${id}.jpg`;
+  function path(id: string, ownerId: string) {
+    return `${ownerId}/${id}.jpg`;
   }
 
   const value = useMemo<ImageStoreValue>(
@@ -47,12 +47,15 @@ export function ImageStoreProvider({ userId, children }: { userId: string | null
         const v = urls[id];
         return v === NOT_FOUND ? undefined : v;
       },
-      ensureLoaded: (id) => {
-        if (!userId || id in urls || inFlight.current.has(id)) return;
+      // ownerId defaults to the current user — only shared (read-only)
+      // puzzles from another owner need to pass theirs explicitly, since
+      // that's where the photo actually lives in storage.
+      ensureLoaded: (id, ownerId = userId ?? undefined) => {
+        if (!ownerId || id in urls || inFlight.current.has(id)) return;
         inFlight.current.add(id);
         supabase.storage
           .from('photos')
-          .download(path(id))
+          .download(path(id, ownerId))
           .then(({ data, error }) => {
             inFlight.current.delete(id);
             if (error || !data) {
@@ -67,7 +70,7 @@ export function ImageStoreProvider({ userId, children }: { userId: string | null
         const blob = dataUrlToBlob(dataUrl);
         const { error } = await supabase.storage
           .from('photos')
-          .upload(path(id), blob, { upsert: true, contentType: 'image/jpeg' });
+          .upload(path(id, userId), blob, { upsert: true, contentType: 'image/jpeg' });
         if (error) return false;
         setUrls((u) => ({ ...u, [id]: URL.createObjectURL(blob) }));
         return true;
@@ -78,11 +81,11 @@ export function ImageStoreProvider({ userId, children }: { userId: string | null
           delete next[id];
           return next;
         });
-        if (userId) supabase.storage.from('photos').remove([path(id)]).catch(() => {});
+        if (userId) supabase.storage.from('photos').remove([path(id, userId)]).catch(() => {});
       },
       downloadImage: async (id) => {
         if (!userId) return null;
-        const { data, error } = await supabase.storage.from('photos').download(path(id));
+        const { data, error } = await supabase.storage.from('photos').download(path(id, userId));
         if (error || !data) return null;
         return blobToDataUrl(data);
       },

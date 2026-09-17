@@ -354,7 +354,7 @@ export default function HomeScreen({
       >
         {visible.map((p) => (
           <button key={p.id} className="card-row" onClick={() => onOpenPuzzle(p.id)}>
-            <ImageSlot id={'puzzle-img-' + p.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder={t.imageSlot.photoPlaceholder} viewOnly />
+            <ImageSlot id={'puzzle-img-' + p.id} ownerId={p.ownerId} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder={t.imageSlot.photoPlaceholder} viewOnly />
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
               <div
                 style={{
