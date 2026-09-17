@@ -182,9 +182,10 @@ export default function AddScreen({
                 }}
               >
                 {scanning ? (
-                  <span className="ptr-spinner ptr-spinner-active" style={{ fontSize: 15 }}>
-                    🔄
-                  </span>
+                  <span
+                    className="spinner spinner-active"
+                    style={{ width: 15, height: 15, borderWidth: 2, borderTopColor: 'oklch(42% 0.16 300)' }}
+                  />
                 ) : (
                   t.add.search
                 )}

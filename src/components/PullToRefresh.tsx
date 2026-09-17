@@ -84,11 +84,9 @@ export default function PullToRefresh({ onRefresh, style, children }: PullToRefr
         }}
       >
         <span
-          className={refreshing ? 'ptr-spinner ptr-spinner-active' : 'ptr-spinner'}
+          className={refreshing ? 'spinner spinner-active' : 'spinner'}
           style={{ transform: refreshing ? undefined : `rotate(${pullDistance * 3}deg)` }}
-        >
-          🔄
-        </span>
+        />
       </div>
       <div
         style={{
