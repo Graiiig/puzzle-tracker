@@ -106,6 +106,8 @@ create table if not exists public.collection_shares (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid not null references auth.users(id) on delete cascade,
   invited_email text not null,
+  share_collection boolean not null default true,
+  share_wishlist boolean not null default false,
   created_at timestamptz not null default now(),
   unique (owner_id, invited_email)
 );
@@ -145,6 +147,20 @@ create policy "Shared puzzles are readable by invited users"
     exists (
       select 1 from public.collection_shares cs
       where cs.owner_id = puzzles.user_id
+        and cs.share_collection
+        and lower(cs.invited_email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+    )
+  );
+
+drop policy if exists "Shared wishlists are readable by invited users" on public.wishlist_items;
+create policy "Shared wishlists are readable by invited users"
+  on public.wishlist_items
+  for select
+  using (
+    exists (
+      select 1 from public.collection_shares cs
+      where cs.owner_id = wishlist_items.user_id
+        and cs.share_wishlist
         and lower(cs.invited_email) = lower(coalesce(auth.jwt() ->> 'email', ''))
     )
   );
@@ -159,5 +175,9 @@ create policy "Shared photos are readable by invited users"
       select 1 from public.collection_shares cs
       where cs.owner_id::text = (storage.foldername(name))[1]
         and lower(cs.invited_email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+        and (
+          (cs.share_collection and split_part(name, '/', 2) like 'puzzle-img-%')
+          or (cs.share_wishlist and split_part(name, '/', 2) like 'wish-img-%')
+        )
     )
   );

@@ -63,7 +63,7 @@ export function toPuzzle(record: Record<string, unknown>, id: string): Omit<Puzz
   };
 }
 
-export function toWishlistItem(record: Record<string, unknown>, id: string): WishlistItem {
+export function toWishlistItem(record: Record<string, unknown>, id: string): Omit<WishlistItem, 'ownerId'> {
   return {
     id,
     name: str(record, 'name'),
@@ -128,7 +128,7 @@ export interface LegacyImportResult {
 
 export async function importLegacyData(options: {
   addPuzzle: (item: Omit<Puzzle, 'ownerId'>) => Promise<boolean>;
-  addWishlistItem: (item: WishlistItem) => Promise<boolean>;
+  addWishlistItem: (item: Omit<WishlistItem, 'ownerId'>) => Promise<boolean>;
   setImage: (id: string, dataUrl: string) => Promise<boolean>;
 }): Promise<LegacyImportResult> {
   const result: LegacyImportResult = { puzzles: 0, wishlistItems: 0, photos: 0 };

@@ -6,7 +6,7 @@ import type { Puzzle, WishlistItem } from '../types';
 
 interface ImportLegacyDataOverlayProps {
   addPuzzle: (item: Omit<Puzzle, 'ownerId'>) => Promise<boolean>;
-  addWishlistItem: (item: WishlistItem) => Promise<boolean>;
+  addWishlistItem: (item: Omit<WishlistItem, 'ownerId'>) => Promise<boolean>;
   onDone: () => void;
 }
 

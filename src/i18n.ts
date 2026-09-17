@@ -53,6 +53,8 @@ export interface Dict {
     priorityBadge: (label: string) => string;
     empty: string;
     pieces: (n: number) => string;
+    ownerFilterMine: string;
+    ownerFilterOf: (pseudo: string) => string;
   };
   detail: {
     deleteConfirm: (label: string, name: string) => string;
@@ -155,6 +157,9 @@ export interface Dict {
     pseudoRequiredHint: string;
     inviteTitle: string;
     inviteEmailPlaceholder: string;
+    shareCollectionLabel: string;
+    shareWishlistLabel: string;
+    atLeastOneRequiredHint: string;
     inviteButton: string;
     inviteError: string;
     invitedListTitle: string;
@@ -217,6 +222,8 @@ const fr: Dict = {
     priorityBadge: (label) => `Envie ${label}`,
     empty: "Ta liste d'envies est vide pour l'instant 💭",
     pieces: (n) => `${n} pièces`,
+    ownerFilterMine: 'Mes envies',
+    ownerFilterOf: (pseudo) => `Envies de ${pseudo}`,
   },
   detail: {
     deleteConfirm: (label, name) => `Supprimer ${label} "${name}" ? Cette action est définitive.`,
@@ -339,14 +346,17 @@ const fr: Dict = {
     pseudoRequiredHint: "Choisis d'abord un pseudo pour pouvoir inviter quelqu'un.",
     inviteTitle: "Inviter quelqu'un (lecture seule)",
     inviteEmailPlaceholder: 'email@exemple.com',
+    shareCollectionLabel: 'Ma collection',
+    shareWishlistLabel: 'Ma wishlist',
+    atLeastOneRequiredHint: 'Coche au moins une des deux.',
     inviteButton: 'Inviter',
     inviteError: "Impossible d'inviter cette adresse (déjà invitée ?).",
     invitedListTitle: 'Personnes invitées',
     invitedEmpty: "Tu n'as invité personne pour l'instant.",
     removeConfirm: (email) => `Retirer l'accès de ${email} ?`,
     sharedWithMeTitle: 'Partagé avec moi',
-    sharedWithMeEmpty: "Personne n'a encore partagé sa collection avec toi.",
-    sharedWithMeHint: 'Utilise le filtre en haut de ta collection pour voir les puzzles de quelqu\'un.',
+    sharedWithMeEmpty: "Personne n'a encore partagé sa collection ou sa wishlist avec toi.",
+    sharedWithMeHint: "Utilise le filtre en haut de ta collection ou de ta wishlist pour voir ce que quelqu'un a partagé.",
   },
 };
 
@@ -401,6 +411,8 @@ const en: Dict = {
     priorityBadge: (label) => `${label} priority`,
     empty: 'Your wishlist is empty for now 💭',
     pieces: (n) => `${n} pieces`,
+    ownerFilterMine: 'My wishlist',
+    ownerFilterOf: (pseudo) => `${pseudo}'s wishlist`,
   },
   detail: {
     deleteConfirm: (label, name) => `Delete ${label} "${name}"? This action is permanent.`,
@@ -522,14 +534,17 @@ const en: Dict = {
     pseudoRequiredHint: 'Pick a nickname first so you can invite someone.',
     inviteTitle: 'Invite someone (read-only)',
     inviteEmailPlaceholder: 'email@example.com',
+    shareCollectionLabel: 'My collection',
+    shareWishlistLabel: 'My wishlist',
+    atLeastOneRequiredHint: 'Check at least one of the two.',
     inviteButton: 'Invite',
     inviteError: 'Could not invite this address (already invited?).',
     invitedListTitle: 'Invited people',
     invitedEmpty: "You haven't invited anyone yet.",
     removeConfirm: (email) => `Remove access for ${email}?`,
     sharedWithMeTitle: 'Shared with me',
-    sharedWithMeEmpty: "No one has shared their collection with you yet.",
-    sharedWithMeHint: "Use the filter at the top of your collection to see someone's puzzles.",
+    sharedWithMeEmpty: "No one has shared their collection or wishlist with you yet.",
+    sharedWithMeHint: "Use the filter at the top of your collection or wishlist to see what someone has shared.",
   },
 };
 

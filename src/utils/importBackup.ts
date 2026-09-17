@@ -10,7 +10,7 @@ export interface ImportBackupResult {
 export async function importBackupFile(
   file: File,
   addPuzzle: (item: Omit<Puzzle, 'ownerId'>) => Promise<boolean>,
-  addWishlistItem: (item: WishlistItem) => Promise<boolean>,
+  addWishlistItem: (item: Omit<WishlistItem, 'ownerId'>) => Promise<boolean>,
   setImage: (id: string, dataUrl: string) => Promise<boolean>,
 ): Promise<ImportBackupResult> {
   const parsed = JSON.parse(await file.text());
