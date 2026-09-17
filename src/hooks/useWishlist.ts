@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import type { WishlistItem } from '../types';
+import { withRetry } from '../utils/retry';
 
 const COLUMNS = 'id, name, brand, artist, genres, pieces, priority, notes';
 
@@ -15,10 +16,9 @@ export function useWishlist(userId: string | null) {
       return;
     }
     setLoading(true);
-    const { data, error } = await supabase
-      .from('wishlist_items')
-      .select(COLUMNS)
-      .order('created_at', { ascending: false });
+    const { data, error } = await withRetry(() =>
+      supabase.from('wishlist_items').select(COLUMNS).order('created_at', { ascending: false }),
+    );
     if (!error && data) setWishlist(data as unknown as WishlistItem[]);
     setLoading(false);
   }, [userId]);

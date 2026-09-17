@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import type { Puzzle } from '../types';
+import { withRetry } from '../utils/retry';
 
 const COLUMNS = 'id, name, brand, artist, genres, pieces, status, rating, difficulty, date, time, notes';
 
@@ -15,10 +16,9 @@ export function usePuzzles(userId: string | null) {
       return;
     }
     setLoading(true);
-    const { data, error } = await supabase
-      .from('puzzles')
-      .select(COLUMNS)
-      .order('created_at', { ascending: false });
+    const { data, error } = await withRetry(() =>
+      supabase.from('puzzles').select(COLUMNS).order('created_at', { ascending: false }),
+    );
     if (!error && data) setCollection(data as unknown as Puzzle[]);
     setLoading(false);
   }, [userId]);
