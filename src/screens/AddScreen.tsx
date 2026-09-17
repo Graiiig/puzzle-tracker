@@ -43,6 +43,9 @@ export default function AddScreen({
   const [newGenreName, setNewGenreName] = useState('');
   const [eanInput, setEanInput] = useState('');
   const [eanNotFound, setEanNotFound] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+  const nameMissing = showErrors && !form.name.trim();
+  const genresMissing = showErrors && form.genres.length === 0;
 
   async function submitEan() {
     const trimmed = eanInput.trim();
@@ -68,6 +71,14 @@ export default function AddScreen({
     if (trimmed && !form.genres.includes(trimmed)) onFormChange('genres', [...form.genres, trimmed]);
     setNewGenreName('');
     setAddingGenre(false);
+  }
+
+  function handleSubmit() {
+    if (!form.name.trim() || form.genres.length === 0) {
+      setShowErrors(true);
+      return;
+    }
+    onSubmit();
   }
 
   const modeCollectionStyle =
@@ -163,13 +174,27 @@ export default function AddScreen({
                   color: 'oklch(42% 0.16 300)',
                   fontWeight: 800,
                   fontSize: 13,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   cursor: scanning || !eanInput.trim() ? 'default' : 'pointer',
                   opacity: scanning || !eanInput.trim() ? 0.6 : 1,
                 }}
               >
-                {scanning ? '...' : t.add.search}
+                {scanning ? (
+                  <span className="ptr-spinner ptr-spinner-active" style={{ fontSize: 15 }}>
+                    🔄
+                  </span>
+                ) : (
+                  t.add.search
+                )}
               </button>
             </div>
+            {scanning && (
+              <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>
+                {t.add.searching}
+              </div>
+            )}
             {eanNotFound && (
               <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: 'oklch(50% 0.18 30)' }}>
                 {t.add.eanNotFound}
@@ -185,7 +210,13 @@ export default function AddScreen({
             value={form.name}
             onChange={(e) => onFormChange('name', e.target.value)}
             placeholder={t.add.namePlaceholder}
+            style={nameMissing ? { border: '2px solid oklch(60% 0.2 30)', padding: '11px 12px' } : undefined}
           />
+          {nameMissing && (
+            <div style={{ marginTop: 4, fontSize: 12, fontWeight: 700, color: 'oklch(50% 0.18 30)' }}>
+              {t.add.nameRequired}
+            </div>
+          )}
         </div>
 
         <div style={{ display: 'flex', gap: 10, marginTop: 12 }}>
@@ -263,6 +294,11 @@ export default function AddScreen({
               </button>
             )}
           </div>
+          {genresMissing && (
+            <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: 'oklch(50% 0.18 30)' }}>
+              {t.add.genreRequired}
+            </div>
+          )}
         </div>
 
         {mode === 'collection' && (
@@ -355,7 +391,7 @@ export default function AddScreen({
         </div>
 
         <div
-          onClick={onSubmit}
+          onClick={handleSubmit}
           style={{
             marginTop: 22,
             background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',

@@ -74,8 +74,10 @@ export interface Dict {
     eanLabel: string;
     eanPlaceholder: string;
     search: string;
+    searching: string;
     eanNotFound: string;
     nameLabel: string;
+    nameRequired: string;
     namePlaceholder: string;
     brandLabel: string;
     brandPlaceholder: string;
@@ -84,6 +86,7 @@ export interface Dict {
     piecesLabel: string;
     piecesPlaceholder: string;
     genreLabel: string;
+    genreRequired: string;
     newGenrePlaceholder: string;
     newGenreButton: string;
     statusLabel: string;
@@ -214,8 +217,10 @@ const fr: Dict = {
     eanLabel: 'Code-barre EAN',
     eanPlaceholder: 'ex. 4005556916539',
     search: 'Rechercher',
+    searching: 'Recherche en cours...',
     eanNotFound: 'Puzzle introuvable pour ce code. Vérifie-le ou remplis le formulaire à la main.',
     nameLabel: 'Nom du puzzle',
+    nameRequired: 'Le nom est requis.',
     namePlaceholder: 'ex. Lavande en Provence',
     brandLabel: 'Éditeur',
     brandPlaceholder: 'Ravensburger...',
@@ -224,6 +229,7 @@ const fr: Dict = {
     piecesLabel: 'Pièces',
     piecesPlaceholder: '1000',
     genreLabel: 'Genre',
+    genreRequired: 'Sélectionne au moins un genre.',
     newGenrePlaceholder: 'Nom du genre',
     newGenreButton: '+ Nouveau',
     statusLabel: 'Statut',
@@ -374,8 +380,10 @@ const en: Dict = {
     eanLabel: 'EAN barcode',
     eanPlaceholder: 'e.g. 4005556916539',
     search: 'Search',
+    searching: 'Searching...',
     eanNotFound: "No puzzle found for this code. Double-check it or fill in the form manually.",
     nameLabel: 'Puzzle name',
+    nameRequired: 'Name is required.',
     namePlaceholder: 'e.g. Lavender Fields',
     brandLabel: 'Publisher',
     brandPlaceholder: 'Ravensburger...',
@@ -384,6 +392,7 @@ const en: Dict = {
     piecesLabel: 'Pieces',
     piecesPlaceholder: '1000',
     genreLabel: 'Genre',
+    genreRequired: 'Select at least one genre.',
     newGenrePlaceholder: 'Genre name',
     newGenreButton: '+ New',
     statusLabel: 'Status',
