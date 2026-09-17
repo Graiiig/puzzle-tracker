@@ -6,6 +6,7 @@ export type PieceBucket = 'lt500' | '500-999' | '1000-1999' | 'gte2000';
 
 export interface Puzzle {
   id: string;
+  ownerId: string;
   name: string;
   brand: string;
   artist: string;
@@ -45,5 +46,15 @@ export interface PuzzleForm {
   time: string;
 }
 
-export type Screen = 'home' | 'wishlist' | 'detail' | 'add';
+export type Screen = 'home' | 'wishlist' | 'detail' | 'add' | 'share';
 export type DetailSource = 'collection' | 'wishlist';
+
+export interface ShareInvite {
+  id: string;
+  invitedEmail: string;
+}
+
+export interface SharedOwner {
+  userId: string;
+  pseudo: string;
+}

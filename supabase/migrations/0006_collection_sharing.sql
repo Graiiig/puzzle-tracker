@@ -1,69 +1,8 @@
--- Run this once in the Supabase SQL editor (Project > SQL Editor > New query)
--- for a fresh project. Safe to re-run: uses IF NOT EXISTS / ON CONFLICT guards
--- where practical.
+begin;
 
-create extension if not exists "pgcrypto";
-
-create table if not exists public.puzzles (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  name text not null,
-  brand text not null default '',
-  artist text not null default '',
-  genres text[] not null default '{}',
-  pieces integer not null default 0,
-  status text not null check (status in ('todo', 'in_progress', 'done')),
-  rating integer not null default 0 check (rating between 0 and 5),
-  difficulty integer not null default 3 check (difficulty between 1 and 5),
-  date text not null default '',
-  time text not null default '',
-  notes text not null default '',
-  created_at timestamptz not null default now()
-);
-
-create table if not exists public.wishlist_items (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  name text not null,
-  brand text not null default '',
-  artist text not null default '',
-  genres text[] not null default '{}',
-  pieces integer not null default 0,
-  priority text not null check (priority in ('low', 'medium', 'high')),
-  notes text not null default '',
-  created_at timestamptz not null default now()
-);
-
-alter table public.puzzles enable row level security;
-alter table public.wishlist_items enable row level security;
-
-drop policy if exists "Users manage their own puzzles" on public.puzzles;
-create policy "Users manage their own puzzles"
-  on public.puzzles
-  for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-
-drop policy if exists "Users manage their own wishlist items" on public.wishlist_items;
-create policy "Users manage their own wishlist items"
-  on public.wishlist_items
-  for all
-  using (auth.uid() = user_id)
-  with check (auth.uid() = user_id);
-
--- Photo storage: one private bucket, objects namespaced as {user_id}/{image_id}.jpg
-insert into storage.buckets (id, name, public)
-values ('photos', 'photos', false)
-on conflict (id) do nothing;
-
-drop policy if exists "Users manage their own photos" on storage.objects;
-create policy "Users manage their own photos"
-  on storage.objects
-  for all
-  using (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text)
-  with check (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
-
--- One row per user (pseudo shown to people a collection is shared with).
+-- One row per user. Not "create table ... (col ...)" only, since another
+-- pending feature may create this same table first with different columns —
+-- add columns defensively so this migration works regardless of order.
 create table if not exists public.profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
   created_at timestamptz not null default now()
@@ -125,6 +64,8 @@ create policy "Invited users see shares addressed to them"
   for select
   using (lower(invited_email) = lower(coalesce(auth.jwt() ->> 'email', '')));
 
+-- Lets an invited user look up the pseudo of someone who shared with them —
+-- the owner's own "manage their own profile" policy doesn't cover this.
 drop policy if exists "Invited users read the sharer's profile" on public.profiles;
 create policy "Invited users read the sharer's profile"
   on public.profiles
@@ -137,6 +78,10 @@ create policy "Invited users read the sharer's profile"
     )
   );
 
+-- Grants invited users read-only access to the owner's puzzles, on top of
+-- (not instead of) the existing owner-only "for all" policy — Postgres OR's
+-- permissive policies together, so this only ever adds visibility, never
+-- write access.
 drop policy if exists "Shared puzzles are readable by invited users" on public.puzzles;
 create policy "Shared puzzles are readable by invited users"
   on public.puzzles
@@ -148,3 +93,5 @@ create policy "Shared puzzles are readable by invited users"
         and lower(cs.invited_email) = lower(coalesce(auth.jwt() ->> 'email', ''))
     )
   );
+
+commit;

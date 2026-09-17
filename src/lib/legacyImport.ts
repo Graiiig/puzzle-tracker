@@ -46,7 +46,7 @@ const LEGACY_PRIORITY: Record<string, WishlistItem['priority']> = {
   Haute: 'high',
 };
 
-export function toPuzzle(record: Record<string, unknown>, id: string): Puzzle {
+export function toPuzzle(record: Record<string, unknown>, id: string): Omit<Puzzle, 'ownerId'> {
   return {
     id,
     name: str(record, 'name'),
@@ -127,7 +127,7 @@ export interface LegacyImportResult {
 }
 
 export async function importLegacyData(options: {
-  addPuzzle: (item: Puzzle) => Promise<boolean>;
+  addPuzzle: (item: Omit<Puzzle, 'ownerId'>) => Promise<boolean>;
   addWishlistItem: (item: WishlistItem) => Promise<boolean>;
   setImage: (id: string, dataUrl: string) => Promise<boolean>;
 }): Promise<LegacyImportResult> {

@@ -16,11 +16,13 @@ export interface PuzzleFilters {
   pieceBuckets: Set<PieceBucket>;
   minRating: number;
   search: string;
+  ownerId?: string | null;
 }
 
 export function matchesFilters(p: Puzzle, f: PuzzleFilters): boolean {
   const q = f.search.trim().toLowerCase();
   return (
+    (!f.ownerId || p.ownerId === f.ownerId) &&
     (f.genres.length === 0 || p.genres.some((g) => f.genres.includes(g))) &&
     (!q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)) &&
     (f.statuses.size === 0 || f.statuses.has(p.status)) &&
