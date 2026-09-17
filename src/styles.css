@@ -138,9 +138,13 @@ button {
   transform: scale(0.96);
 }
 
-.ptr-spinner {
-  font-size: 20px;
+.spinner {
   display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid oklch(88% 0.03 340);
+  border-top-color: oklch(60% 0.22 350);
 }
 
 .update-banner {
@@ -173,11 +177,11 @@ button {
   font-size: 13px;
 }
 
-.ptr-spinner-active {
-  animation: ptr-spin 0.7s linear infinite;
+.spinner-active {
+  animation: spin 0.7s linear infinite;
 }
 
-@keyframes ptr-spin {
+@keyframes spin {
   from {
     transform: rotate(0deg);
   }
