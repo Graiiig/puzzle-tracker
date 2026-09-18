@@ -6,6 +6,8 @@ import { compressImageFile } from '../utils/image';
 
 interface ImageSlotProps {
   id: string;
+  /** Owner of the photo, if not the current user (e.g. viewing a shared puzzle) — the photo is stored under their id, not the viewer's. */
+  ownerId?: string;
   shape?: 'rounded' | 'rect';
   radius?: number;
   placeholder: string;
@@ -14,7 +16,7 @@ interface ImageSlotProps {
   viewOnly?: boolean;
 }
 
-export default function ImageSlot({ id, shape = 'rounded', radius = 14, placeholder, style, viewOnly = false }: ImageSlotProps) {
+export default function ImageSlot({ id, ownerId, shape = 'rounded', radius = 14, placeholder, style, viewOnly = false }: ImageSlotProps) {
   const { getImage, setImage, ensureLoaded } = useImageStore();
   const { openLightbox } = useImageLightbox();
   const { t } = useLanguage();
@@ -23,8 +25,8 @@ export default function ImageSlot({ id, shape = 'rounded', radius = 14, placehol
   const src = getImage(id);
 
   useEffect(() => {
-    ensureLoaded(id);
-  }, [id, ensureLoaded]);
+    ensureLoaded(id, ownerId);
+  }, [id, ownerId, ensureLoaded]);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];

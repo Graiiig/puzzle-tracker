@@ -31,7 +31,13 @@ export default function DetailScreen({ source, puzzle, wishlistItem, isOwner, on
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)' }}>
       <div style={{ position: 'relative', flexShrink: 0 }}>
-        <ImageSlot id={imgId} shape="rect" style={{ width: '100%', height: 230 }} placeholder={t.imageSlot.puzzlePhotoPlaceholder} />
+        <ImageSlot
+          id={imgId}
+          ownerId={source === 'collection' ? puzzle?.ownerId : undefined}
+          shape="rect"
+          style={{ width: '100%', height: 230 }}
+          placeholder={t.imageSlot.puzzlePhotoPlaceholder}
+        />
         <div
           onClick={onClose}
           style={{
