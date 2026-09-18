@@ -6,9 +6,11 @@ interface ShareScreenProps {
   pseudo: string;
   onSavePseudo: (value: string) => Promise<boolean>;
   myShares: ShareInvite[];
-  onAddShare: (email: string) => Promise<boolean>;
+  onAddShare: (email: string, options: { shareCollection: boolean; shareWishlist: boolean }) => Promise<boolean>;
+  onUpdateShare: (id: string, patch: { shareCollection?: boolean; shareWishlist?: boolean }) => void;
   onRemoveShare: (id: string) => void;
-  sharedWithMe: SharedOwner[];
+  sharedCollectionOwners: SharedOwner[];
+  sharedWishlistOwners: SharedOwner[];
   onClose: () => void;
 }
 
@@ -17,8 +19,10 @@ export default function ShareScreen({
   onSavePseudo,
   myShares,
   onAddShare,
+  onUpdateShare,
   onRemoveShare,
-  sharedWithMe,
+  sharedCollectionOwners,
+  sharedWishlistOwners,
   onClose,
 }: ShareScreenProps) {
   const { t } = useLanguage();
@@ -26,6 +30,8 @@ export default function ShareScreen({
   const [pseudoSaved, setPseudoSaved] = useState(false);
   const [savingPseudo, setSavingPseudo] = useState(false);
   const [email, setEmail] = useState('');
+  const [shareCollection, setShareCollection] = useState(true);
+  const [shareWishlist, setShareWishlist] = useState(false);
   const [inviting, setInviting] = useState(false);
   const [inviteError, setInviteError] = useState(false);
 
@@ -40,10 +46,10 @@ export default function ShareScreen({
 
   async function handleInvite() {
     const trimmed = email.trim();
-    if (!trimmed || inviting) return;
+    if (!trimmed || inviting || (!shareCollection && !shareWishlist)) return;
     setInviting(true);
     setInviteError(false);
-    const ok = await onAddShare(trimmed);
+    const ok = await onAddShare(trimmed, { shareCollection, shareWishlist });
     setInviting(false);
     if (ok) {
       setEmail('');
@@ -58,7 +64,29 @@ export default function ShareScreen({
     }
   }
 
+  function toggleShareFlag(share: ShareInvite, flag: 'shareCollection' | 'shareWishlist') {
+    const next = !share[flag];
+    const other = flag === 'shareCollection' ? share.shareWishlist : share.shareCollection;
+    if (!next && !other) return; // keep at least one enabled
+    onUpdateShare(share.id, { [flag]: next });
+  }
+
   const canInvite = pseudo.trim().length > 0;
+
+  const sharedWithMeMap = new Map<string, { userId: string; pseudo: string; collection: boolean; wishlist: boolean }>();
+  for (const o of sharedCollectionOwners) {
+    sharedWithMeMap.set(o.userId, { userId: o.userId, pseudo: o.pseudo, collection: true, wishlist: false });
+  }
+  for (const o of sharedWishlistOwners) {
+    const existing = sharedWithMeMap.get(o.userId);
+    sharedWithMeMap.set(o.userId, {
+      userId: o.userId,
+      pseudo: o.pseudo,
+      collection: existing?.collection ?? false,
+      wishlist: true,
+    });
+  }
+  const sharedWithMe = [...sharedWithMeMap.values()];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)' }}>
@@ -134,39 +162,63 @@ export default function ShareScreen({
               {t.share.pseudoRequiredHint}
             </div>
           )}
-          <div style={{ display: 'flex', gap: 8 }}>
-            <input
-              className="field-input"
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setInviteError(false);
-              }}
-              placeholder={t.share.inviteEmailPlaceholder}
-              disabled={!canInvite}
-              style={{ flex: 1 }}
-            />
-            <button
-              type="button"
-              onClick={handleInvite}
-              disabled={!canInvite || inviting || !email.trim()}
-              style={{
-                flexShrink: 0,
-                padding: '0 18px',
-                borderRadius: 14,
-                border: 'none',
-                background: 'oklch(93% 0.05 300)',
-                color: 'oklch(42% 0.16 300)',
-                fontWeight: 800,
-                fontSize: 13,
-                cursor: !canInvite || inviting || !email.trim() ? 'default' : 'pointer',
-                opacity: !canInvite || inviting || !email.trim() ? 0.6 : 1,
-              }}
-            >
-              {t.share.inviteButton}
-            </button>
+          <input
+            className="field-input"
+            type="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setInviteError(false);
+            }}
+            placeholder={t.share.inviteEmailPlaceholder}
+            disabled={!canInvite}
+          />
+          <div style={{ display: 'flex', gap: 16, marginTop: 10 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'oklch(35% 0.02 340)' }}>
+              <input
+                type="checkbox"
+                checked={shareCollection}
+                onChange={(e) => setShareCollection(e.target.checked)}
+                disabled={!canInvite}
+              />
+              {t.share.shareCollectionLabel}
+            </label>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'oklch(35% 0.02 340)' }}>
+              <input
+                type="checkbox"
+                checked={shareWishlist}
+                onChange={(e) => setShareWishlist(e.target.checked)}
+                disabled={!canInvite}
+              />
+              {t.share.shareWishlistLabel}
+            </label>
           </div>
+          {!shareCollection && !shareWishlist && (
+            <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: 'oklch(50% 0.18 30)' }}>
+              {t.share.atLeastOneRequiredHint}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={handleInvite}
+            disabled={!canInvite || inviting || !email.trim() || (!shareCollection && !shareWishlist)}
+            style={{
+              width: '100%',
+              marginTop: 10,
+              padding: '11px 18px',
+              borderRadius: 14,
+              border: 'none',
+              background: 'oklch(93% 0.05 300)',
+              color: 'oklch(42% 0.16 300)',
+              fontWeight: 800,
+              fontSize: 13,
+              cursor:
+                !canInvite || inviting || !email.trim() || (!shareCollection && !shareWishlist) ? 'default' : 'pointer',
+              opacity: !canInvite || inviting || !email.trim() || (!shareCollection && !shareWishlist) ? 0.6 : 1,
+            }}
+          >
+            {t.share.inviteButton}
+          </button>
           {inviteError && (
             <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: 'oklch(50% 0.18 30)' }}>
               {t.share.inviteError}
@@ -185,19 +237,36 @@ export default function ShareScreen({
             <div
               key={share.id}
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
                 background: 'white',
                 borderRadius: 14,
                 padding: '11px 14px',
                 marginBottom: 8,
               }}
             >
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(30% 0.02 340)' }}>{share.invitedEmail}</span>
-              <span onClick={() => handleRemove(share)} style={{ cursor: 'pointer', fontSize: 16, color: 'oklch(55% 0.03 340)' }}>
-                ✕
-              </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(30% 0.02 340)' }}>{share.invitedEmail}</span>
+                <span onClick={() => handleRemove(share)} style={{ cursor: 'pointer', fontSize: 16, color: 'oklch(55% 0.03 340)' }}>
+                  ✕
+                </span>
+              </div>
+              <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'oklch(45% 0.03 340)' }}>
+                  <input
+                    type="checkbox"
+                    checked={share.shareCollection}
+                    onChange={() => toggleShareFlag(share, 'shareCollection')}
+                  />
+                  {t.share.shareCollectionLabel}
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'oklch(45% 0.03 340)' }}>
+                  <input
+                    type="checkbox"
+                    checked={share.shareWishlist}
+                    onChange={() => toggleShareFlag(share, 'shareWishlist')}
+                  />
+                  {t.share.shareWishlistLabel}
+                </label>
+              </div>
             </div>
           ))}
         </div>
@@ -217,16 +286,46 @@ export default function ShareScreen({
                 <div
                   key={owner.userId}
                   style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
                     background: 'white',
                     borderRadius: 14,
                     padding: '11px 14px',
                     marginBottom: 8,
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: 'oklch(30% 0.02 340)',
                   }}
                 >
-                  {owner.pseudo}
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(30% 0.02 340)' }}>{owner.pseudo}</span>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    {owner.collection && (
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 800,
+                          padding: '4px 10px',
+                          borderRadius: 100,
+                          background: 'oklch(92% 0.05 300)',
+                          color: 'oklch(42% 0.16 300)',
+                        }}
+                      >
+                        {t.share.shareCollectionLabel}
+                      </span>
+                    )}
+                    {owner.wishlist && (
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 800,
+                          padding: '4px 10px',
+                          borderRadius: 100,
+                          background: 'oklch(93% 0.06 350)',
+                          color: 'oklch(45% 0.2 350)',
+                        }}
+                      >
+                        {t.share.shareWishlistLabel}
+                      </span>
+                    )}
+                  </div>
                 </div>
               ))}
               <div style={{ fontSize: 12, fontWeight: 600, color: 'oklch(55% 0.03 340)', marginTop: 4 }}>

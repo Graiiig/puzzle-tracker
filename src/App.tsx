@@ -30,9 +30,20 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [screen, setScreen] = useState<Screen>('home');
   const { collection, addPuzzle, updatePuzzle, deletePuzzle, refresh: refreshCollection } = usePuzzles(userId);
   const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
-  const { pseudo, savePseudo, myShares, addShare, removeShare, sharedWithMe, refresh: refreshShares } = useShares(userId);
+  const {
+    pseudo,
+    savePseudo,
+    myShares,
+    addShare,
+    updateShare,
+    removeShare,
+    sharedCollectionOwners,
+    sharedWishlistOwners,
+    refresh: refreshShares,
+  } = useShares(userId);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [ownerFilter, setOwnerFilter] = useState(userId);
+  const [collectionOwnerFilter, setCollectionOwnerFilter] = useState(userId);
+  const [wishlistOwnerFilter, setWishlistOwnerFilter] = useState(userId);
   const [detailSource, setDetailSource] = useState<DetailSource>('collection');
   const [search, setSearch] = useState('');
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
@@ -311,7 +322,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       await addPuzzle(item);
       setScreen('home');
     } else {
-      const item: WishlistItem = {
+      const item: Omit<WishlistItem, 'ownerId'> = {
         id,
         name: form.name.trim(),
         brand: form.brand.trim() || t.common.unknownBrand,
@@ -406,9 +417,9 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         <HomeScreen
           collection={collection}
           myUserId={userId}
-          sharedOwners={sharedWithMe}
-          ownerFilter={ownerFilter}
-          onSetOwnerFilter={setOwnerFilter}
+          sharedOwners={sharedCollectionOwners}
+          ownerFilter={collectionOwnerFilter}
+          onSetOwnerFilter={setCollectionOwnerFilter}
           onGoShare={() => setScreen('share')}
           search={search}
           onSearchChange={setSearch}
@@ -440,6 +451,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       {screen === 'wishlist' && (
         <WishlistScreen
           wishlist={wishlist}
+          myUserId={userId}
+          sharedOwners={sharedWishlistOwners}
+          ownerFilter={wishlistOwnerFilter}
+          onSetOwnerFilter={setWishlistOwnerFilter}
           onOpenItem={openWishlistItem}
           onAdd={openAddFromWishlist}
           onRefresh={refreshWishlist}
@@ -452,7 +467,9 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           source={detailSource}
           puzzle={detailSource === 'collection' ? selectedPuzzle : undefined}
           wishlistItem={detailSource === 'wishlist' ? selectedWishlistItem : undefined}
-          isOwner={detailSource === 'wishlist' || selectedPuzzle?.ownerId === userId}
+          isOwner={
+            detailSource === 'collection' ? selectedPuzzle?.ownerId === userId : selectedWishlistItem?.ownerId === userId
+          }
           onClose={() => setScreen(detailSource === 'wishlist' ? 'wishlist' : 'home')}
           onMarkAsBought={markAsBought}
           onDelete={deleteSelected}
@@ -466,8 +483,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onSavePseudo={savePseudo}
           myShares={myShares}
           onAddShare={addShare}
+          onUpdateShare={updateShare}
           onRemoveShare={removeShare}
-          sharedWithMe={sharedWithMe}
+          sharedCollectionOwners={sharedCollectionOwners}
+          sharedWishlistOwners={sharedWishlistOwners}
           onClose={() => setScreen('home')}
         />
       )}

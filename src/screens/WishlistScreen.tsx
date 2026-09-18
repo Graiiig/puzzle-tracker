@@ -1,20 +1,36 @@
 import ImageSlot from '../components/ImageSlot';
+import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
 import PullToRefresh from '../components/PullToRefresh';
 import { useLanguage } from '../hooks/useLanguage';
-import type { WishlistItem } from '../types';
-import { priorityStyle } from '../utils/format';
+import type { SharedOwner, WishlistItem } from '../types';
+import { chipStyle, priorityStyle } from '../utils/format';
 
 interface WishlistScreenProps {
   wishlist: WishlistItem[];
+  myUserId: string;
+  sharedOwners: SharedOwner[];
+  ownerFilter: string;
+  onSetOwnerFilter: (ownerId: string) => void;
   onOpenItem: (id: string) => void;
   onAdd: () => void;
   onRefresh: () => Promise<void> | void;
   onGoHome: () => void;
 }
 
-export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onRefresh, onGoHome }: WishlistScreenProps) {
+export default function WishlistScreen({
+  wishlist,
+  myUserId,
+  sharedOwners,
+  ownerFilter,
+  onSetOwnerFilter,
+  onOpenItem,
+  onAdd,
+  onRefresh,
+  onGoHome,
+}: WishlistScreenProps) {
   const { t } = useLanguage();
+  const visible = wishlist.filter((w) => w.ownerId === ownerFilter);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)', position: 'relative' }}>
       <div
@@ -46,17 +62,35 @@ export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onRefresh,
           </div>
         </div>
         <div style={{ marginTop: 14, fontSize: 13, fontWeight: 700, color: 'oklch(97% 0.02 70 / 0.9)' }}>
-          {t.wishlist.count(wishlist.length)}
+          {t.wishlist.count(visible.length)}
         </div>
       </div>
+
+      {sharedOwners.length > 0 && (
+        <div style={{ display: 'flex', gap: 8, padding: '14px 20px 0', flexShrink: 0, overflowX: 'auto' }}>
+          <Chip
+            label={t.wishlist.ownerFilterMine}
+            onClick={() => onSetOwnerFilter(myUserId)}
+            style={chipStyle(ownerFilter === myUserId, 320)}
+          />
+          {sharedOwners.map((owner) => (
+            <Chip
+              key={owner.userId}
+              label={t.wishlist.ownerFilterOf(owner.pseudo)}
+              onClick={() => onSetOwnerFilter(owner.userId)}
+              style={chipStyle(ownerFilter === owner.userId, 320)}
+            />
+          ))}
+        </div>
+      )}
 
       <PullToRefresh
         onRefresh={onRefresh}
         style={{ flex: 1, overflowY: 'auto', padding: '16px 20px 90px', display: 'flex', flexDirection: 'column', gap: 12 }}
       >
-        {wishlist.map((w) => (
+        {visible.map((w) => (
           <button key={w.id} className="card-row wishlist-row" onClick={() => onOpenItem(w.id)}>
-            <ImageSlot id={'wish-img-' + w.id} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder={t.imageSlot.photoPlaceholder} viewOnly />
+            <ImageSlot id={'wish-img-' + w.id} ownerId={w.ownerId} shape="rounded" radius={14} style={{ width: 72, height: 72, flexShrink: 0 }} placeholder={t.imageSlot.photoPlaceholder} viewOnly />
             <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
               <div
                 style={{
@@ -78,7 +112,7 @@ export default function WishlistScreen({ wishlist, onOpenItem, onAdd, onRefresh,
             </div>
           </button>
         ))}
-        {wishlist.length === 0 && (
+        {visible.length === 0 && (
           <div style={{ textAlign: 'center', padding: '40px 20px', color: 'oklch(55% 0.03 340)', fontWeight: 700 }}>
             {t.wishlist.empty}
           </div>

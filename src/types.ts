@@ -22,6 +22,7 @@ export interface Puzzle {
 
 export interface WishlistItem {
   id: string;
+  ownerId: string;
   name: string;
   brand: string;
   artist: string;
@@ -52,6 +53,8 @@ export type DetailSource = 'collection' | 'wishlist';
 export interface ShareInvite {
   id: string;
   invitedEmail: string;
+  shareCollection: boolean;
+  shareWishlist: boolean;
 }
 
 export interface SharedOwner {

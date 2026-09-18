@@ -33,7 +33,7 @@ export default function DetailScreen({ source, puzzle, wishlistItem, isOwner, on
       <div style={{ position: 'relative', flexShrink: 0 }}>
         <ImageSlot
           id={imgId}
-          ownerId={source === 'collection' ? puzzle?.ownerId : undefined}
+          ownerId={source === 'collection' ? puzzle?.ownerId : wishlistItem?.ownerId}
           shape="rect"
           style={{ width: '100%', height: 230 }}
           placeholder={t.imageSlot.puzzlePhotoPlaceholder}
@@ -194,24 +194,26 @@ export default function DetailScreen({ source, puzzle, wishlistItem, isOwner, on
                 {wishlistItem.notes}
               </div>
             </div>
-            <div
-              onClick={onMarkAsBought}
-              style={{
-                marginTop: 22,
-                background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',
-                color: 'white',
-                fontFamily: "'Baloo 2',sans-serif",
-                fontWeight: 700,
-                fontSize: 15,
-                textAlign: 'center',
-                padding: 14,
-                borderRadius: 16,
-                cursor: 'pointer',
-                boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
-              }}
-            >
-              {t.detail.markAsBought}
-            </div>
+            {isOwner && (
+              <div
+                onClick={onMarkAsBought}
+                style={{
+                  marginTop: 22,
+                  background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',
+                  color: 'white',
+                  fontFamily: "'Baloo 2',sans-serif",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  textAlign: 'center',
+                  padding: 14,
+                  borderRadius: 16,
+                  cursor: 'pointer',
+                  boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
+                }}
+              >
+                {t.detail.markAsBought}
+              </div>
+            )}
           </>
         )}
 
