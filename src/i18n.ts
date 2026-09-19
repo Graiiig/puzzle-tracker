@@ -66,6 +66,7 @@ export interface Dict {
     personalNote: string;
     whyIWantIt: string;
     markAsBought: string;
+    addToMyWishlist: string;
     deleteAction: (label: string) => string;
     notRatedYet: string;
     pieces: (n: number) => string;
@@ -236,6 +237,7 @@ const fr: Dict = {
     personalNote: 'Note perso',
     whyIWantIt: 'Pourquoi je le veux',
     markAsBought: '🛒 Marquer comme acheté',
+    addToMyWishlist: '💌 Ajouter à ma liste d\'envies',
     deleteAction: (label) => `🗑️ Supprimer ${label}`,
     notRatedYet: 'Pas encore noté',
     pieces: (n) => `${n} pièces`,
@@ -426,6 +428,7 @@ const en: Dict = {
     personalNote: 'Personal note',
     whyIWantIt: 'Why I want it',
     markAsBought: '🛒 Mark as bought',
+    addToMyWishlist: '💌 Add to my wishlist',
     deleteAction: (label) => `🗑️ Delete ${label}`,
     notRatedYet: 'Not rated yet',
     pieces: (n) => `${n} pieces`,
