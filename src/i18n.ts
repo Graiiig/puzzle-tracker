@@ -76,7 +76,9 @@ export interface Dict {
   stats: {
     title: string;
     empty: string;
-    yearRecapTitle: string;
+    recapTitle: string;
+    scopeYear: string;
+    scopeAll: string;
     finished: string;
     pieces: string;
     hours: string;
@@ -260,7 +262,9 @@ const fr: Dict = {
   stats: {
     title: 'Statistiques',
     empty: 'Ajoute des puzzles à ta collection pour voir tes statistiques.',
-    yearRecapTitle: 'Cette année',
+    recapTitle: 'Récapitulatif',
+    scopeYear: 'Cette année',
+    scopeAll: 'Tout',
     finished: 'terminés',
     pieces: 'pièces',
     hours: 'heures',
@@ -464,7 +468,9 @@ const en: Dict = {
   stats: {
     title: 'Statistics',
     empty: 'Add puzzles to your collection to see your statistics.',
-    yearRecapTitle: 'This year',
+    recapTitle: 'Recap',
+    scopeYear: 'This year',
+    scopeAll: 'All time',
     finished: 'finished',
     pieces: 'pieces',
     hours: 'hours',

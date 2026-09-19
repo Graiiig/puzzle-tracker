@@ -60,14 +60,15 @@ export function computeDifficultyCounts(puzzles: Puzzle[]): number[] {
   return buckets;
 }
 
-export interface YearRecap {
+export interface Recap {
   finishedCount: number;
   totalPieces: number;
   totalMinutes: number;
 }
 
-export function computeYearRecap(puzzles: Puzzle[], year: number): YearRecap {
-  const finished = puzzles.filter((p) => p.status === 'done' && p.date.startsWith(`${year}-`));
+/** `year: null` covers every finished puzzle regardless of when. */
+export function computeRecap(puzzles: Puzzle[], year: number | null): Recap {
+  const finished = puzzles.filter((p) => p.status === 'done' && (year === null || p.date.startsWith(`${year}-`)));
   return {
     finishedCount: finished.length,
     totalPieces: finished.reduce((sum, p) => sum + p.pieces, 0),
