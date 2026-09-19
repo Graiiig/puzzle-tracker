@@ -20,13 +20,13 @@ const API_KEY = import.meta.env.VITE_PUZZLE_LOOKUP_API_KEY as string | undefined
 /** Scan-to-prefill is an optional feature: unset env vars just disable it. */
 export const isPuzzleLookupConfigured = Boolean(BASE_URL && API_KEY);
 
-// puzzle-lookup tries up to two sources sequentially, each with its own
+// puzzle-lookup tries up to three sources sequentially, each with its own
 // SOURCE_TIMEOUT_MS budget (40s by default) before falling back/giving up —
-// a "not found" that requires trying both can take close to twice that
-// (80s), plus browser/context startup and network round-trip on top. This
+// a "not found" that requires trying all three can take close to 3x that
+// (120s), plus browser/context startup and network round-trip on top. This
 // must stay comfortably above the backend's real worst case, or the backend
 // timeout budget it's meant to accommodate is unreachable from this client.
-const LOOKUP_TIMEOUT_MS = 105000;
+const LOOKUP_TIMEOUT_MS = 150000;
 const IMAGE_TIMEOUT_MS = 15000;
 
 /** Never throws — any failure (network, timeout, bad response) degrades to "not found". */
