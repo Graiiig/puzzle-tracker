@@ -1,8 +1,9 @@
-import { useMemo, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
+import Chip from '../components/Chip';
 import { useLanguage } from '../hooks/useLanguage';
 import type { Puzzle } from '../types';
-import { dotString, formatMinutesAsHours } from '../utils/format';
-import { computeBrandCounts, computeDifficultyCounts, computeMonthlyFinished, computeYearRecap } from '../utils/stats';
+import { chipStyle, dotString, formatMinutesAsHours } from '../utils/format';
+import { computeBrandCounts, computeDifficultyCounts, computeMonthlyFinished, computeRecap } from '../utils/stats';
 
 interface StatsScreenProps {
   collection: Puzzle[];
@@ -66,11 +67,15 @@ function RankedBar({ label, count, max, color }: { label: ReactNode; count: numb
 
 export default function StatsScreen({ collection, onClose }: StatsScreenProps) {
   const { t, lang } = useLanguage();
+  const [recapScope, setRecapScope] = useState<'year' | 'all'>('year');
 
   const monthly = useMemo(() => computeMonthlyFinished(collection, lang), [collection, lang]);
   const brands = useMemo(() => computeBrandCounts(collection, 6, t.stats.otherBrand), [collection, t.stats.otherBrand]);
   const difficulty = useMemo(() => computeDifficultyCounts(collection), [collection]);
-  const recap = useMemo(() => computeYearRecap(collection, new Date().getFullYear()), [collection]);
+  const recap = useMemo(
+    () => computeRecap(collection, recapScope === 'year' ? new Date().getFullYear() : null),
+    [collection, recapScope],
+  );
 
   const monthlyMax = Math.max(1, ...monthly.map((m) => m.count));
   const brandMax = Math.max(1, ...brands.map((b) => b.count));
@@ -110,7 +115,21 @@ export default function StatsScreen({ collection, onClose }: StatsScreenProps) {
         ) : (
           <>
             <div>
-              <SectionTitle>{t.stats.yearRecapTitle}</SectionTitle>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <SectionTitle>{t.stats.recapTitle}</SectionTitle>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <Chip
+                    label={t.stats.scopeYear}
+                    onClick={() => setRecapScope('year')}
+                    style={{ ...chipStyle(recapScope === 'year', 350), padding: '6px 12px', fontSize: 11 }}
+                  />
+                  <Chip
+                    label={t.stats.scopeAll}
+                    onClick={() => setRecapScope('all')}
+                    style={{ ...chipStyle(recapScope === 'all', 350), padding: '6px 12px', fontSize: 11 }}
+                  />
+                </div>
+              </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
                 <StatTile value={recap.finishedCount} label={t.stats.finished} />
                 <StatTile value={recap.totalPieces.toLocaleString(lang === 'fr' ? 'fr-FR' : 'en-US')} label={t.stats.pieces} />
