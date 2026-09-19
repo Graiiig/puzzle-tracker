@@ -80,6 +80,7 @@ export interface Dict {
     eanPlaceholder: string;
     search: string;
     searching: string;
+    scanButton: string;
     eanNotFound: string;
     nameLabel: string;
     nameRequired: string;
@@ -249,6 +250,7 @@ const fr: Dict = {
     eanPlaceholder: 'ex. 4005556916539',
     search: 'Rechercher',
     searching: 'Recherche en cours...',
+    scanButton: 'Scanner le code-barre',
     eanNotFound: 'Puzzle introuvable pour ce code. Vérifie-le ou remplis le formulaire à la main.',
     nameLabel: 'Nom du puzzle',
     nameRequired: 'Le nom est requis.',
@@ -438,6 +440,7 @@ const en: Dict = {
     eanPlaceholder: 'e.g. 4005556916539',
     search: 'Search',
     searching: 'Searching...',
+    scanButton: 'Scan barcode',
     eanNotFound: "No puzzle found for this code. Double-check it or fill in the form manually.",
     nameLabel: 'Puzzle name',
     nameRequired: 'Name is required.',
