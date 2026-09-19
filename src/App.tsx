@@ -23,6 +23,7 @@ import DetailScreen from './screens/DetailScreen';
 import AddScreen from './screens/AddScreen';
 import LoginScreen from './screens/LoginScreen';
 import ShareScreen from './screens/ShareScreen';
+import StatsScreen from './screens/StatsScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
@@ -217,7 +218,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       cancelAdd();
     } else if (screen === 'detail') {
       setScreen(detailSource === 'wishlist' ? 'wishlist' : 'home');
-    } else if (screen === 'wishlist' || screen === 'share') {
+    } else if (screen === 'wishlist' || screen === 'share' || screen === 'stats') {
       setScreen('home');
     }
   }
@@ -443,6 +444,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           ownerFilter={collectionOwnerFilter}
           onSetOwnerFilter={setCollectionOwnerFilter}
           onGoShare={() => setScreen('share')}
+          onGoStats={() => setScreen('stats')}
           search={search}
           onSearchChange={setSearch}
           selectedGenres={selectedGenres}
@@ -512,6 +514,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           sharedWishlistOwners={sharedWishlistOwners}
           onClose={() => setScreen('home')}
         />
+      )}
+
+      {screen === 'stats' && (
+        <StatsScreen collection={collection.filter((p) => p.ownerId === userId)} onClose={() => setScreen('home')} />
       )}
 
       {screen === 'add' && (

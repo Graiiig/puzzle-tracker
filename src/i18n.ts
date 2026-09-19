@@ -34,6 +34,7 @@ export interface Dict {
     menuExport: string;
     menuImport: string;
     menuShare: string;
+    menuStats: string;
     menuSignOut: string;
     menuLanguage: string;
     statInProgress: string;
@@ -71,6 +72,18 @@ export interface Dict {
     notRatedYet: string;
     pieces: (n: number) => string;
     illustratedBy: (artist: string) => string;
+  };
+  stats: {
+    title: string;
+    empty: string;
+    yearRecapTitle: string;
+    finished: string;
+    pieces: string;
+    hours: string;
+    trendTitle: string;
+    byBrandTitle: string;
+    byDifficultyTitle: string;
+    otherBrand: string;
   };
   add: {
     editTitle: string;
@@ -205,6 +218,7 @@ const fr: Dict = {
     menuExport: 'Exporter mes données',
     menuImport: 'Importer une sauvegarde',
     menuShare: 'Partager ma collection',
+    menuStats: 'Statistiques',
     menuSignOut: 'Se déconnecter',
     menuLanguage: '🌐 English',
     statInProgress: 'en cours',
@@ -242,6 +256,18 @@ const fr: Dict = {
     notRatedYet: 'Pas encore noté',
     pieces: (n) => `${n} pièces`,
     illustratedBy: (artist) => `Illustration de ${artist}`,
+  },
+  stats: {
+    title: 'Statistiques',
+    empty: 'Ajoute des puzzles à ta collection pour voir tes statistiques.',
+    yearRecapTitle: 'Cette année',
+    finished: 'terminés',
+    pieces: 'pièces',
+    hours: 'heures',
+    trendTitle: 'Puzzles terminés par mois',
+    byBrandTitle: 'Par marque',
+    byDifficultyTitle: 'Par difficulté',
+    otherBrand: 'Autres',
   },
   add: {
     editTitle: 'Modifier',
@@ -396,6 +422,7 @@ const en: Dict = {
     menuExport: 'Export my data',
     menuImport: 'Import a backup',
     menuShare: 'Share my collection',
+    menuStats: 'Statistics',
     menuSignOut: 'Sign out',
     menuLanguage: '🌐 Français',
     statInProgress: 'in progress',
@@ -433,6 +460,18 @@ const en: Dict = {
     notRatedYet: 'Not rated yet',
     pieces: (n) => `${n} pieces`,
     illustratedBy: (artist) => `Illustrated by ${artist}`,
+  },
+  stats: {
+    title: 'Statistics',
+    empty: 'Add puzzles to your collection to see your statistics.',
+    yearRecapTitle: 'This year',
+    finished: 'finished',
+    pieces: 'pieces',
+    hours: 'hours',
+    trendTitle: 'Puzzles finished per month',
+    byBrandTitle: 'By brand',
+    byDifficultyTitle: 'By difficulty',
+    otherBrand: 'Other',
   },
   add: {
     editTitle: 'Edit',

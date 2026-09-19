@@ -18,6 +18,7 @@ interface HomeScreenProps {
   ownerFilter: string;
   onSetOwnerFilter: (ownerId: string) => void;
   onGoShare: () => void;
+  onGoStats: () => void;
   search: string;
   onSearchChange: (value: string) => void;
   selectedGenres: Genre[];
@@ -51,6 +52,7 @@ export default function HomeScreen({
   ownerFilter,
   onSetOwnerFilter,
   onGoShare,
+  onGoStats,
   search,
   onSearchChange,
   selectedGenres,
@@ -172,6 +174,7 @@ export default function HomeScreen({
                     },
                     { icon: '⬆️', label: t.home.menuImport, onClick: () => importInputRef.current?.click(), disabled: false },
                     { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false },
+                    { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false },
                     { icon: '🌐', label: t.home.menuLanguage, onClick: toggleLang, disabled: false },
                     { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false },
                   ].map((item) => (
