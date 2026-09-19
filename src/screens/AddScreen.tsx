@@ -4,6 +4,7 @@ import Chip from '../components/Chip';
 import RatingPicker from '../components/RatingPicker';
 import { PRIORITIES, STATUSES } from '../data';
 import { useLanguage } from '../hooks/useLanguage';
+import { canScanBarcode, scanBarcode } from '../lib/barcodeScanner';
 import type { PuzzleForm } from '../types';
 import { chipStyle } from '../utils/format';
 
@@ -47,8 +48,8 @@ export default function AddScreen({
   const nameMissing = showErrors && !form.name.trim();
   const genresMissing = showErrors && form.genres.length === 0;
 
-  async function submitEan() {
-    const trimmed = eanInput.trim();
+  async function submitEan(code?: string) {
+    const trimmed = (code ?? eanInput).trim();
     if (!trimmed || scanning) return;
     setEanNotFound(false);
     const found = await onLookupEan(trimmed);
@@ -57,6 +58,14 @@ export default function AddScreen({
     } else {
       setEanNotFound(true);
     }
+  }
+
+  async function handleScanPress() {
+    if (scanning) return;
+    const code = await scanBarcode();
+    if (!code) return;
+    setEanInput(code);
+    await submitEan(code);
   }
 
   const displayedGenres = [...genreOptions, ...form.genres.filter((g) => !genreOptions.includes(g))];
@@ -161,9 +170,33 @@ export default function AddScreen({
                   disabled={scanning}
                 />
               </div>
+              {canScanBarcode && (
+                <button
+                  type="button"
+                  onClick={handleScanPress}
+                  disabled={scanning}
+                  title={t.add.scanButton}
+                  style={{
+                    flexShrink: 0,
+                    width: 44,
+                    borderRadius: 14,
+                    border: 'none',
+                    background: 'oklch(93% 0.05 300)',
+                    color: 'oklch(42% 0.16 300)',
+                    fontSize: 17,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: scanning ? 'default' : 'pointer',
+                    opacity: scanning ? 0.6 : 1,
+                  }}
+                >
+                  📷
+                </button>
+              )}
               <button
                 type="button"
-                onClick={submitEan}
+                onClick={() => submitEan()}
                 disabled={scanning || !eanInput.trim()}
                 style={{
                   flexShrink: 0,
