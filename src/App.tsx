@@ -525,7 +525,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           mode={addMode}
           isEditing={isEditingForm}
           photoSlotId={photoSlotId}
-          genreOptions={collectGenres(collection, wishlist)}
+          genreOptions={collectGenres(
+            collection.filter((p) => p.ownerId === userId),
+            wishlist.filter((w) => w.ownerId === userId),
+          )}
           onSetModeCollection={() => setAddMode('collection')}
           onSetModeWishlist={() => setAddMode('wishlist')}
           form={form}
