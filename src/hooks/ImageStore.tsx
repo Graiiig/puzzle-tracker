@@ -11,6 +11,8 @@ interface ImageStoreValue {
   setImage: (id: string, dataUrl: string) => Promise<boolean>;
   clearImage: (id: string) => void;
   downloadImage: (id: string) => Promise<string | null>;
+  /** Like downloadImage, but for a photo owned by someone else (e.g. copying a shared puzzle's photo into your own wishlist). */
+  downloadImageFrom: (id: string, ownerId: string) => Promise<string | null>;
 }
 
 const ImageStoreContext = createContext<ImageStoreValue | null>(null);
@@ -86,6 +88,11 @@ export function ImageStoreProvider({ userId, children }: { userId: string | null
       downloadImage: async (id) => {
         if (!userId) return null;
         const { data, error } = await supabase.storage.from('photos').download(path(id, userId));
+        if (error || !data) return null;
+        return blobToDataUrl(data);
+      },
+      downloadImageFrom: async (id, ownerId) => {
+        const { data, error } = await supabase.storage.from('photos').download(path(id, ownerId));
         if (error || !data) return null;
         return blobToDataUrl(data);
       },

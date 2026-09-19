@@ -10,11 +10,22 @@ interface DetailScreenProps {
   isOwner: boolean;
   onClose: () => void;
   onMarkAsBought: () => void;
+  onImportToWishlist: () => void;
   onDelete: () => void;
   onEdit: () => void;
 }
 
-export default function DetailScreen({ source, puzzle, wishlistItem, isOwner, onClose, onMarkAsBought, onDelete, onEdit }: DetailScreenProps) {
+export default function DetailScreen({
+  source,
+  puzzle,
+  wishlistItem,
+  isOwner,
+  onClose,
+  onMarkAsBought,
+  onImportToWishlist,
+  onDelete,
+  onEdit,
+}: DetailScreenProps) {
   const { t, lang } = useLanguage();
   const item = source === 'collection' ? puzzle : wishlistItem;
   if (!item) return null;
@@ -37,6 +48,7 @@ export default function DetailScreen({ source, puzzle, wishlistItem, isOwner, on
           shape="rect"
           style={{ width: '100%', height: 230 }}
           placeholder={t.imageSlot.puzzlePhotoPlaceholder}
+          viewOnly={!isOwner}
         />
         <div
           onClick={onClose}
@@ -181,6 +193,27 @@ export default function DetailScreen({ source, puzzle, wishlistItem, isOwner, on
                 {puzzle.notes}
               </div>
             </div>
+
+            {!isOwner && (
+              <div
+                onClick={onImportToWishlist}
+                style={{
+                  marginTop: 22,
+                  background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',
+                  color: 'white',
+                  fontFamily: "'Baloo 2',sans-serif",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  textAlign: 'center',
+                  padding: 14,
+                  borderRadius: 16,
+                  cursor: 'pointer',
+                  boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
+                }}
+              >
+                {t.detail.addToMyWishlist}
+              </div>
+            )}
           </>
         )}
 

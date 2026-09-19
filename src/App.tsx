@@ -59,7 +59,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [showImportPrompt, setShowImportPrompt] = useState(hasLegacyData);
   const [exporting, setExporting] = useState(false);
   const [scanning, setScanning] = useState(false);
-  const { clearImage, downloadImage, setImage } = useImageStore();
+  const { clearImage, downloadImage, downloadImageFrom, setImage } = useImageStore();
   const { isLightboxOpen, closeLightbox } = useImageLightbox();
   const { readyToInstall, applyUpdate } = useAppUpdate();
   const photoSlotId = (addMode === 'wishlist' ? 'wish-img-' : 'puzzle-img-') + formTargetId;
@@ -363,6 +363,28 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     setScreen('detail');
   }
 
+  async function importToMyWishlist() {
+    const selected = selectedPuzzle;
+    if (!selected || selected.ownerId === userId) return;
+    const newId = crypto.randomUUID();
+    const item: Omit<WishlistItem, 'ownerId'> = {
+      id: newId,
+      name: selected.name,
+      brand: selected.brand,
+      artist: selected.artist,
+      genres: selected.genres,
+      pieces: selected.pieces,
+      priority: 'medium',
+      notes: '—',
+    };
+    await addWishlistItem(item);
+    const photoDataUrl = await downloadImageFrom('puzzle-img-' + selected.id, selected.ownerId);
+    if (photoDataUrl) await setImage('wish-img-' + newId, photoDataUrl);
+    setDetailSource('wishlist');
+    setSelectedId(newId);
+    setScreen('detail');
+  }
+
   async function deleteSelected() {
     if (detailSource === 'collection') {
       const id = selectedPuzzle?.id;
@@ -472,6 +494,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           }
           onClose={() => setScreen(detailSource === 'wishlist' ? 'wishlist' : 'home')}
           onMarkAsBought={markAsBought}
+          onImportToWishlist={importToMyWishlist}
           onDelete={deleteSelected}
           onEdit={openEditSelected}
         />
