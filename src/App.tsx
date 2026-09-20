@@ -361,7 +361,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       notes: selected.notes,
     };
     await addPuzzle(item);
+    const photoDataUrl = await downloadImage('wish-img-' + selected.id);
+    if (photoDataUrl) await setImage('puzzle-img-' + item.id, photoDataUrl);
     await deleteWishlistItem(selected.id);
+    clearImage('wish-img-' + selected.id);
     setDetailSource('collection');
     setDetailReturnScreen('home');
     setSelectedId(item.id);
@@ -369,7 +372,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   }
 
   async function importToMyWishlist() {
-    const selected = selectedPuzzle;
+    const selected = detailSource === 'collection' ? selectedPuzzle : selectedWishlistItem;
     if (!selected || selected.ownerId === userId) return;
     const newId = crypto.randomUUID();
     const item: Omit<WishlistItem, 'ownerId'> = {
@@ -383,7 +386,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       notes: '—',
     };
     await addWishlistItem(item);
-    const photoDataUrl = await downloadImageFrom('puzzle-img-' + selected.id, selected.ownerId);
+    const sourcePhotoId = (detailSource === 'collection' ? 'puzzle-img-' : 'wish-img-') + selected.id;
+    const photoDataUrl = await downloadImageFrom(sourcePhotoId, selected.ownerId);
     if (photoDataUrl) await setImage('wish-img-' + newId, photoDataUrl);
     setDetailSource('wishlist');
     setDetailReturnScreen('wishlist');
