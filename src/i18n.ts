@@ -87,6 +87,9 @@ export interface Dict {
     byBrandTitle: string;
     byDifficultyTitle: string;
     otherBrand: string;
+    paceTitle: string;
+    averageTimePerPuzzle: string;
+    averageTimeByPieces: string;
   };
   add: {
     editTitle: string;
@@ -274,6 +277,9 @@ const fr: Dict = {
     byBrandTitle: 'Par marque',
     byDifficultyTitle: 'Par difficulté',
     otherBrand: 'Autres',
+    paceTitle: 'Rythme',
+    averageTimePerPuzzle: 'Temps moyen par puzzle',
+    averageTimeByPieces: 'Temps moyen par nombre de pièces',
   },
   add: {
     editTitle: 'Modifier',
@@ -481,6 +487,9 @@ const en: Dict = {
     byBrandTitle: 'By brand',
     byDifficultyTitle: 'By difficulty',
     otherBrand: 'Other',
+    paceTitle: 'Pace',
+    averageTimePerPuzzle: 'Average time per puzzle',
+    averageTimeByPieces: 'Average time by piece count',
   },
   add: {
     editTitle: 'Edit',
