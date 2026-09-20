@@ -1,5 +1,6 @@
 import type { Lang } from '../i18n';
-import type { Puzzle } from '../types';
+import type { PieceBucket, Puzzle } from '../types';
+import { PIECE_BUCKETS, pieceBucketOf } from './filters';
 import { parseTimeToMinutes } from './format';
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
@@ -67,6 +68,38 @@ export function computeDifficultyCounts(puzzles: Puzzle[]): number[] {
     if (d >= 1 && d <= 5) buckets[d - 1]++;
   }
   return buckets;
+}
+
+/** Average minutes spent per finished puzzle, across those with a recorded time (0 if none). */
+export function computeAverageMinutesPerPuzzle(puzzles: Puzzle[]): number {
+  const timed = puzzles.filter((p) => p.status === 'done' && parseTimeToMinutes(p.time) > 0);
+  if (timed.length === 0) return 0;
+  return timed.reduce((sum, p) => sum + parseTimeToMinutes(p.time), 0) / timed.length;
+}
+
+export interface PieceBucketPace {
+  bucket: PieceBucket;
+  averageMinutes: number;
+  count: number;
+}
+
+/** Average time spent per finished puzzle, broken down by the same piece-count buckets used in filters. */
+export function computeAverageMinutesByPieceBucket(puzzles: Puzzle[]): PieceBucketPace[] {
+  const sums = new Map<PieceBucket, { totalMinutes: number; count: number }>(
+    PIECE_BUCKETS.map((b) => [b, { totalMinutes: 0, count: 0 }]),
+  );
+  for (const p of puzzles) {
+    if (p.status !== 'done') continue;
+    const minutes = parseTimeToMinutes(p.time);
+    if (minutes <= 0) continue;
+    const entry = sums.get(pieceBucketOf(p.pieces))!;
+    entry.totalMinutes += minutes;
+    entry.count += 1;
+  }
+  return PIECE_BUCKETS.map((bucket) => {
+    const { totalMinutes, count } = sums.get(bucket)!;
+    return { bucket, averageMinutes: count > 0 ? totalMinutes / count : 0, count };
+  });
 }
 
 export interface Recap {

@@ -4,6 +4,8 @@ import { useLanguage } from '../hooks/useLanguage';
 import type { Puzzle } from '../types';
 import { chipStyle, dotString, formatMinutesAsHours } from '../utils/format';
 import {
+  computeAverageMinutesByPieceBucket,
+  computeAverageMinutesPerPuzzle,
   computeBrandCounts,
   computeDifficultyCounts,
   computeMonthlyFinished,
@@ -48,7 +50,19 @@ function StatTile({ value, label }: { value: string | number; label: string }) {
   );
 }
 
-function RankedBar({ label, count, max, color }: { label: ReactNode; count: number; max: number; color: string }) {
+function RankedBar({
+  label,
+  value,
+  valueLabel,
+  max,
+  color,
+}: {
+  label: ReactNode;
+  value: number;
+  valueLabel?: ReactNode;
+  max: number;
+  color: string;
+}) {
   return (
     <div>
       <div
@@ -63,10 +77,10 @@ function RankedBar({ label, count, max, color }: { label: ReactNode; count: numb
         }}
       >
         <span>{label}</span>
-        <span>{count}</span>
+        <span>{valueLabel ?? value}</span>
       </div>
       <div style={{ height: 8, borderRadius: 4, background: BAR_TRACK, overflow: 'hidden' }}>
-        <div style={{ height: '100%', width: `${(count / max) * 100}%`, background: color, borderRadius: 4 }} />
+        <div style={{ height: '100%', width: `${(value / max) * 100}%`, background: color, borderRadius: 4 }} />
       </div>
     </div>
   );
@@ -84,10 +98,13 @@ export default function StatsScreen({ collection, onClose, onOpenPuzzle }: Stats
     () => computeRecap(collection, recapScope === 'year' ? new Date().getFullYear() : null),
     [collection, recapScope],
   );
+  const averageMinutesPerPuzzle = useMemo(() => computeAverageMinutesPerPuzzle(collection), [collection]);
+  const paceByPieces = useMemo(() => computeAverageMinutesByPieceBucket(collection), [collection]);
 
   const monthlyMax = Math.max(1, ...monthly.map((m) => m.count));
   const brandMax = Math.max(1, ...brands.map((b) => b.count));
   const difficultyMax = Math.max(1, ...difficulty);
+  const paceMax = Math.max(1, ...paceByPieces.map((p) => p.averageMinutes));
 
   const selectedMonth = selectedMonthIndex !== null ? monthly[selectedMonthIndex] : null;
   const selectedMonthPuzzles = useMemo(
@@ -256,7 +273,7 @@ export default function StatsScreen({ collection, onClose, onOpenPuzzle }: Stats
               <SectionTitle>{t.stats.byBrandTitle}</SectionTitle>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
                 {brands.map((b) => (
-                  <RankedBar key={b.brand} label={b.brand} count={b.count} max={brandMax} color={BAR_COLOR} />
+                  <RankedBar key={b.brand} label={b.brand} value={b.count} max={brandMax} color={BAR_COLOR} />
                 ))}
               </div>
             </div>
@@ -268,9 +285,31 @@ export default function StatsScreen({ collection, onClose, onOpenPuzzle }: Stats
                   <RankedBar
                     key={i}
                     label={<span style={{ color: DIFFICULTY_RAMP[i], letterSpacing: 1 }}>{dotString(i + 1)}</span>}
-                    count={count}
+                    value={count}
                     max={difficultyMax}
                     color={DIFFICULTY_RAMP[i]}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <SectionTitle>{t.stats.paceTitle}</SectionTitle>
+              <div style={{ display: 'flex', marginTop: 10 }}>
+                <StatTile value={formatMinutesAsHours(Math.round(averageMinutesPerPuzzle))} label={t.stats.averageTimePerPuzzle} />
+              </div>
+              <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 16, marginBottom: 10 }}>
+                {t.stats.averageTimeByPieces}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {paceByPieces.map((p) => (
+                  <RankedBar
+                    key={p.bucket}
+                    label={t.pieceBucket[p.bucket]}
+                    value={p.averageMinutes}
+                    valueLabel={p.count > 0 ? formatMinutesAsHours(Math.round(p.averageMinutes)) : '—'}
+                    max={paceMax}
+                    color={BAR_COLOR}
                   />
                 ))}
               </div>
