@@ -29,6 +29,15 @@ export function computeMonthlyFinished(puzzles: Puzzle[], lang: Lang, months = 1
   return buckets;
 }
 
+/** The puzzles finished in a given year/month (`month` is 0-11, matching `MonthlyCount`). */
+export function puzzlesFinishedInMonth(puzzles: Puzzle[], year: number, month: number): Puzzle[] {
+  return puzzles.filter((p) => {
+    if (p.status !== 'done' || !ISO_DATE.test(p.date)) return false;
+    const [y, m] = p.date.split('-').map(Number);
+    return y === year && m - 1 === month;
+  });
+}
+
 export interface BrandCount {
   brand: string;
   count: number;

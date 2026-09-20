@@ -83,6 +83,7 @@ export interface Dict {
     pieces: string;
     hours: string;
     trendTitle: string;
+    monthDetailTitle: (month: string) => string;
     byBrandTitle: string;
     byDifficultyTitle: string;
     otherBrand: string;
@@ -269,6 +270,7 @@ const fr: Dict = {
     pieces: 'pièces',
     hours: 'heures',
     trendTitle: 'Puzzles terminés par mois',
+    monthDetailTitle: (month) => `Terminés en ${month}`,
     byBrandTitle: 'Par marque',
     byDifficultyTitle: 'Par difficulté',
     otherBrand: 'Autres',
@@ -475,6 +477,7 @@ const en: Dict = {
     pieces: 'pieces',
     hours: 'hours',
     trendTitle: 'Puzzles finished per month',
+    monthDetailTitle: (month) => `Finished in ${month}`,
     byBrandTitle: 'By brand',
     byDifficultyTitle: 'By difficulty',
     otherBrand: 'Other',

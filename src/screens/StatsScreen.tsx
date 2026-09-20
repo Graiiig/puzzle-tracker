@@ -3,11 +3,18 @@ import Chip from '../components/Chip';
 import { useLanguage } from '../hooks/useLanguage';
 import type { Puzzle } from '../types';
 import { chipStyle, dotString, formatMinutesAsHours } from '../utils/format';
-import { computeBrandCounts, computeDifficultyCounts, computeMonthlyFinished, computeRecap } from '../utils/stats';
+import {
+  computeBrandCounts,
+  computeDifficultyCounts,
+  computeMonthlyFinished,
+  computeRecap,
+  puzzlesFinishedInMonth,
+} from '../utils/stats';
 
 interface StatsScreenProps {
   collection: Puzzle[];
   onClose: () => void;
+  onOpenPuzzle: (id: string) => void;
 }
 
 // A single hue reused across every chart here: these are magnitude/ranking
@@ -65,9 +72,10 @@ function RankedBar({ label, count, max, color }: { label: ReactNode; count: numb
   );
 }
 
-export default function StatsScreen({ collection, onClose }: StatsScreenProps) {
+export default function StatsScreen({ collection, onClose, onOpenPuzzle }: StatsScreenProps) {
   const { t, lang } = useLanguage();
   const [recapScope, setRecapScope] = useState<'year' | 'all'>('year');
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState<number | null>(null);
 
   const monthly = useMemo(() => computeMonthlyFinished(collection, lang), [collection, lang]);
   const brands = useMemo(() => computeBrandCounts(collection, 6, t.stats.otherBrand), [collection, t.stats.otherBrand]);
@@ -80,6 +88,17 @@ export default function StatsScreen({ collection, onClose }: StatsScreenProps) {
   const monthlyMax = Math.max(1, ...monthly.map((m) => m.count));
   const brandMax = Math.max(1, ...brands.map((b) => b.count));
   const difficultyMax = Math.max(1, ...difficulty);
+
+  const selectedMonth = selectedMonthIndex !== null ? monthly[selectedMonthIndex] : null;
+  const selectedMonthPuzzles = useMemo(
+    () => (selectedMonth ? puzzlesFinishedInMonth(collection, selectedMonth.year, selectedMonth.month) : []),
+    [collection, selectedMonth],
+  );
+  const selectedMonthLabel = useMemo(() => {
+    if (!selectedMonth) return '';
+    const formatter = new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-US', { month: 'long', year: 'numeric' });
+    return formatter.format(new Date(selectedMonth.year, selectedMonth.month, 1));
+  }, [selectedMonth, lang]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)' }}>
@@ -154,6 +173,7 @@ export default function StatsScreen({ collection, onClose }: StatsScreenProps) {
                   {monthly.map((m, i) => (
                     <div
                       key={i}
+                      onClick={() => m.count > 0 && setSelectedMonthIndex((cur) => (cur === i ? null : i))}
                       style={{
                         flex: 1,
                         height: '100%',
@@ -162,6 +182,7 @@ export default function StatsScreen({ collection, onClose }: StatsScreenProps) {
                         alignItems: 'center',
                         justifyContent: 'flex-end',
                         gap: 3,
+                        cursor: m.count > 0 ? 'pointer' : 'default',
                       }}
                     >
                       {m.count > 0 && (
@@ -174,6 +195,7 @@ export default function StatsScreen({ collection, onClose }: StatsScreenProps) {
                           borderRadius: 4,
                           background: m.count > 0 ? BAR_COLOR : BAR_TRACK,
                           height: m.count > 0 ? `${(m.count / monthlyMax) * 80}%` : 3,
+                          opacity: selectedMonthIndex !== null && selectedMonthIndex !== i ? 0.4 : 1,
                         }}
                       />
                     </div>
@@ -183,13 +205,51 @@ export default function StatsScreen({ collection, onClose }: StatsScreenProps) {
                   {monthly.map((m, i) => (
                     <span
                       key={i}
-                      style={{ flex: 1, textAlign: 'center', fontSize: 9, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}
+                      style={{
+                        flex: 1,
+                        textAlign: 'center',
+                        fontSize: 9,
+                        fontWeight: selectedMonthIndex === i ? 800 : 700,
+                        color: selectedMonthIndex === i ? BAR_COLOR : 'oklch(55% 0.03 340)',
+                      }}
                     >
                       {m.label}
                     </span>
                   ))}
                 </div>
               </div>
+
+              {selectedMonth && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: 'oklch(45% 0.03 340)', textTransform: 'capitalize' }}>
+                    {t.stats.monthDetailTitle(selectedMonthLabel)}
+                  </div>
+                  {selectedMonthPuzzles.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => onOpenPuzzle(p.id)}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        textAlign: 'left',
+                        background: 'white',
+                        border: 'none',
+                        borderRadius: 14,
+                        padding: '10px 14px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <span style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 14, color: 'oklch(28% 0.02 340)' }}>
+                        {p.name}
+                      </span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>
+                        {p.brand} · {t.detail.pieces(p.pieces)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div>

@@ -46,6 +46,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [collectionOwnerFilter, setCollectionOwnerFilter] = useState(userId);
   const [wishlistOwnerFilter, setWishlistOwnerFilter] = useState(userId);
   const [detailSource, setDetailSource] = useState<DetailSource>('collection');
+  const [detailReturnScreen, setDetailReturnScreen] = useState<Screen>('home');
   const [search, setSearch] = useState('');
   const [selectedGenres, setSelectedGenres] = useState<Genre[]>([]);
   const [sortMode, setSortMode] = useState<SortMode>('recent');
@@ -98,15 +99,17 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     setMinRating(0);
   }
 
-  function openPuzzle(id: string) {
+  function openPuzzle(id: string, from: Extract<Screen, 'home' | 'stats'> = 'home') {
     setSelectedId(id);
     setDetailSource('collection');
+    setDetailReturnScreen(from);
     setScreen('detail');
   }
 
   function openWishlistItem(id: string) {
     setSelectedId(id);
     setDetailSource('wishlist');
+    setDetailReturnScreen('wishlist');
     setScreen('detail');
   }
 
@@ -217,7 +220,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     if (screen === 'add') {
       cancelAdd();
     } else if (screen === 'detail') {
-      setScreen(detailSource === 'wishlist' ? 'wishlist' : 'home');
+      setScreen(detailReturnScreen);
     } else if (screen === 'wishlist' || screen === 'share' || screen === 'stats') {
       setScreen('home');
     }
@@ -360,6 +363,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     await addPuzzle(item);
     await deleteWishlistItem(selected.id);
     setDetailSource('collection');
+    setDetailReturnScreen('home');
     setSelectedId(item.id);
     setScreen('detail');
   }
@@ -382,6 +386,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     const photoDataUrl = await downloadImageFrom('puzzle-img-' + selected.id, selected.ownerId);
     if (photoDataUrl) await setImage('wish-img-' + newId, photoDataUrl);
     setDetailSource('wishlist');
+    setDetailReturnScreen('wishlist');
     setSelectedId(newId);
     setScreen('detail');
   }
@@ -494,7 +499,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           isOwner={
             detailSource === 'collection' ? selectedPuzzle?.ownerId === userId : selectedWishlistItem?.ownerId === userId
           }
-          onClose={() => setScreen(detailSource === 'wishlist' ? 'wishlist' : 'home')}
+          onClose={() => setScreen(detailReturnScreen)}
           onMarkAsBought={markAsBought}
           onImportToWishlist={importToMyWishlist}
           onDelete={deleteSelected}
@@ -517,7 +522,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       )}
 
       {screen === 'stats' && (
-        <StatsScreen collection={collection.filter((p) => p.ownerId === userId)} onClose={() => setScreen('home')} />
+        <StatsScreen
+          collection={collection.filter((p) => p.ownerId === userId)}
+          onClose={() => setScreen('home')}
+          onOpenPuzzle={(id) => openPuzzle(id, 'stats')}
+        />
       )}
 
       {screen === 'add' && (
