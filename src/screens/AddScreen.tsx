@@ -92,11 +92,11 @@ export default function AddScreen({
 
   const modeCollectionStyle =
     mode === 'collection'
-      ? { background: 'var(--surface)', color: 'oklch(45% 0.2 350)', boxShadow: '0 1px 4px oklch(50% 0.05 340 / 0.15)' }
+      ? { background: 'var(--surface)', color: 'var(--accent-pink)', boxShadow: '0 1px 4px oklch(50% 0.05 340 / 0.15)' }
       : { color: 'var(--text-muted)' };
   const modeWishlistStyle =
     mode === 'wishlist'
-      ? { background: 'var(--surface)', color: 'oklch(45% 0.16 320)', boxShadow: '0 1px 4px oklch(50% 0.05 340 / 0.15)' }
+      ? { background: 'var(--surface)', color: 'var(--accent-purple)', boxShadow: '0 1px 4px oklch(50% 0.05 340 / 0.15)' }
       : { color: 'var(--text-muted)' };
 
   return (
@@ -181,8 +181,8 @@ export default function AddScreen({
                     width: 44,
                     borderRadius: 14,
                     border: 'none',
-                    background: 'oklch(93% 0.05 300)',
-                    color: 'oklch(42% 0.16 300)',
+                    background: 'var(--badge-purple-bg)',
+                    color: 'var(--badge-purple-fg)',
                     fontSize: 17,
                     display: 'flex',
                     alignItems: 'center',
@@ -203,8 +203,8 @@ export default function AddScreen({
                   padding: '0 18px',
                   borderRadius: 14,
                   border: 'none',
-                  background: 'oklch(93% 0.05 300)',
-                  color: 'oklch(42% 0.16 300)',
+                  background: 'var(--badge-purple-bg)',
+                  color: 'var(--badge-purple-fg)',
                   fontWeight: 800,
                   fontSize: 13,
                   display: 'flex',
@@ -217,7 +217,7 @@ export default function AddScreen({
                 {scanning ? (
                   <span
                     className="spinner spinner-active"
-                    style={{ width: 15, height: 15, borderWidth: 2, borderTopColor: 'oklch(42% 0.16 300)' }}
+                    style={{ width: 15, height: 15, borderWidth: 2, borderTopColor: 'var(--badge-purple-fg)' }}
                   />
                 ) : (
                   t.add.search
@@ -370,7 +370,7 @@ export default function AddScreen({
                   onChange={(v) => onFormChange('difficulty', v)}
                   filledChar="●"
                   emptyChar="○"
-                  color="oklch(45% 0.16 300)"
+                  color="var(--accent-purple)"
                   allowClear={false}
                 />
               </div>

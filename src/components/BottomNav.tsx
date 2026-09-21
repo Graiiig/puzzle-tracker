@@ -19,7 +19,7 @@ export default function BottomNav({ active, onGoHome, onGoWishlist }: BottomNavP
           textAlign: 'center',
           background: 'none',
           border: 'none',
-          color: active === 'home' ? 'oklch(45% 0.2 350)' : 'var(--text-muted)',
+          color: active === 'home' ? 'var(--accent-pink)' : 'var(--text-muted)',
           fontWeight: 800,
           fontSize: 12,
         }}
@@ -34,7 +34,7 @@ export default function BottomNav({ active, onGoHome, onGoWishlist }: BottomNavP
           textAlign: 'center',
           background: 'none',
           border: 'none',
-          color: active === 'wishlist' ? 'oklch(50% 0.18 310)' : 'var(--text-muted)',
+          color: active === 'wishlist' ? 'var(--accent-purple)' : 'var(--text-muted)',
           fontWeight: 800,
           fontSize: 12,
         }}
