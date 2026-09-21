@@ -60,7 +60,7 @@ export default function FiltersSheet({
         onClick={(e) => e.stopPropagation()}
         style={{
           width: '100%',
-          background: 'white',
+          background: 'var(--surface)',
           borderRadius: '24px 24px 0 0',
           padding: '20px 20px 16px',
           boxShadow: '0 -8px 32px oklch(20% 0.02 340 / 0.2)',
@@ -69,7 +69,7 @@ export default function FiltersSheet({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-          <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 19, color: 'oklch(28% 0.02 340)' }}>
+          <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 19, color: 'var(--text-primary)' }}>
             {t.filters.button}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -87,7 +87,7 @@ export default function FiltersSheet({
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: 15,
-                color: 'oklch(40% 0.02 340)',
+                color: 'var(--text-secondary)',
                 cursor: 'pointer',
               }}
             >
@@ -97,7 +97,7 @@ export default function FiltersSheet({
         </div>
 
         <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 12, fontWeight: 800, color: 'oklch(55% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
             {t.filters.statusLabel}
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -109,7 +109,7 @@ export default function FiltersSheet({
 
         {brands.length > 0 && (
           <div style={{ marginBottom: 18 }}>
-            <div style={{ fontSize: 12, fontWeight: 800, color: 'oklch(55% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+            <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
               {t.filters.brandLabel}
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -121,7 +121,7 @@ export default function FiltersSheet({
         )}
 
         <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 12, fontWeight: 800, color: 'oklch(55% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
             {t.filters.piecesLabel}
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -137,7 +137,7 @@ export default function FiltersSheet({
         </div>
 
         <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 12, fontWeight: 800, color: 'oklch(55% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
             {t.filters.ratingLabel}
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -153,7 +153,7 @@ export default function FiltersSheet({
         </div>
 
         <div style={{ marginBottom: 4 }}>
-          <div style={{ fontSize: 12, fontWeight: 800, color: 'oklch(55% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
             {t.filters.sortLabel}
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

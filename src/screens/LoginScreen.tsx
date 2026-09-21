@@ -37,7 +37,7 @@ export default function LoginScreen() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)' }}>
       <div
         style={{
           padding: '40px 24px 32px',
@@ -61,10 +61,10 @@ export default function LoginScreen() {
           <form onSubmit={handleVerifyCode}>
             <div style={{ textAlign: 'center', marginBottom: 20 }}>
               <div style={{ fontSize: 32, marginBottom: 12 }}>📬</div>
-              <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 18, color: 'oklch(28% 0.02 340)' }}>
+              <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 18, color: 'var(--text-primary)' }}>
                 {t.login.checkEmailTitle}
               </div>
-              <div style={{ fontSize: 14, color: 'oklch(50% 0.03 340)', marginTop: 8, lineHeight: 1.5 }}>
+              <div style={{ fontSize: 14, color: 'var(--text-tertiary)', marginTop: 8, lineHeight: 1.5 }}>
                 {t.login.codeSentToPrefix}
                 <strong>{email}</strong>.
               </div>
@@ -115,7 +115,7 @@ export default function LoginScreen() {
                   setCode('');
                   setError('');
                 }}
-                style={{ color: 'oklch(55% 0.03 340)', cursor: 'pointer' }}
+                style={{ color: 'var(--text-muted)', cursor: 'pointer' }}
               >
                 {t.login.changeEmail}
               </span>
@@ -164,7 +164,7 @@ export default function LoginScreen() {
             >
               {status === 'sending' ? t.login.sending : t.login.receiveCode}
             </button>
-            <div style={{ marginTop: 14, fontSize: 12, color: 'oklch(55% 0.03 340)', textAlign: 'center', lineHeight: 1.5 }}>
+            <div style={{ marginTop: 14, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.5 }}>
               {t.login.noPassword}
             </div>
           </form>

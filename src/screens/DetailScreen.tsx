@@ -40,7 +40,7 @@ export default function DetailScreen({
   const imgId = source === 'collection' ? 'puzzle-img-' + item.id : 'wish-img-' + item.id;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)' }}>
       <div style={{ position: 'relative', flexShrink: 0 }}>
         <ImageSlot
           id={imgId}
@@ -102,17 +102,17 @@ export default function DetailScreen({
           overflowY: 'auto',
           padding: '20px 22px 28px',
           marginTop: -20,
-          background: 'oklch(97% 0.015 70)',
+          background: 'var(--bg)',
           borderRadius: '24px 24px 0 0',
           position: 'relative',
         }}
       >
-        <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 22, color: 'oklch(26% 0.02 340)' }}>
+        <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 22, color: 'var(--text-primary)' }}>
           {item.name}
         </div>
-        <div style={{ fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)', marginTop: 2 }}>{item.brand}</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)', marginTop: 2 }}>{item.brand}</div>
         {item.artist && (
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'oklch(60% 0.03 340)', marginTop: 2 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', marginTop: 2 }}>
             {t.detail.illustratedBy(item.artist)}
           </div>
         )}
@@ -157,39 +157,39 @@ export default function DetailScreen({
           <>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 18 }}>
               <span style={{ fontSize: 20, color: '#FFB300', letterSpacing: 2 }}>{starString(puzzle.rating)}</span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>{ratingLabel(puzzle, t)}</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)' }}>{ratingLabel(puzzle, t)}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
               <span style={{ fontSize: 15, color: 'oklch(45% 0.16 300)', letterSpacing: 2 }}>
                 {dotString(puzzle.difficulty || 0)}
               </span>
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>{t.detail.difficulty}</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)' }}>{t.detail.difficulty}</span>
             </div>
 
             <div style={{ display: 'flex', gap: 12, marginTop: 18 }}>
-              <div style={{ flex: 1, background: 'white', borderRadius: 16, padding: '12px 14px' }}>
-                <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+              <div style={{ flex: 1, background: 'var(--surface)', borderRadius: 16, padding: '12px 14px' }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
                   {t.detail.finishedOn}
                 </div>
-                <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 15, color: 'oklch(28% 0.02 340)', marginTop: 2 }}>
+                <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginTop: 2 }}>
                   {formatDate(puzzle.date, lang)}
                 </div>
               </div>
-              <div style={{ flex: 1, background: 'white', borderRadius: 16, padding: '12px 14px' }}>
-                <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+              <div style={{ flex: 1, background: 'var(--surface)', borderRadius: 16, padding: '12px 14px' }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
                   {t.detail.timeSpent}
                 </div>
-                <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 15, color: 'oklch(28% 0.02 340)', marginTop: 2 }}>
+                <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 15, color: 'var(--text-primary)', marginTop: 2 }}>
                   {puzzle.time}
                 </div>
               </div>
             </div>
 
             <div style={{ marginTop: 20 }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
                 {t.detail.personalNote}
               </div>
-              <div style={{ background: 'white', borderRadius: 16, padding: 14, fontSize: 14, lineHeight: 1.5, color: 'oklch(32% 0.02 340)', fontWeight: 600 }}>
+              <div style={{ background: 'var(--surface)', borderRadius: 16, padding: 14, fontSize: 14, lineHeight: 1.5, color: 'var(--text-primary)', fontWeight: 600 }}>
                 {puzzle.notes}
               </div>
             </div>
@@ -220,10 +220,10 @@ export default function DetailScreen({
         {source === 'wishlist' && wishlistItem && (
           <>
             <div style={{ marginTop: 20 }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
                 {t.detail.whyIWantIt}
               </div>
-              <div style={{ background: 'white', borderRadius: 16, padding: 14, fontSize: 14, lineHeight: 1.5, color: 'oklch(32% 0.02 340)', fontWeight: 600 }}>
+              <div style={{ background: 'var(--surface)', borderRadius: 16, padding: 14, fontSize: 14, lineHeight: 1.5, color: 'var(--text-primary)', fontWeight: 600 }}>
                 {wishlistItem.notes}
               </div>
             </div>

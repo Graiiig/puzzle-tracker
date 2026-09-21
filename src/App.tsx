@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbox';
 import { LanguageProvider, useLanguage } from './hooks/useLanguage';
+import { ThemeProvider, useTheme } from './hooks/useTheme';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { useAppUpdate } from './hooks/useAppUpdate';
@@ -28,6 +29,7 @@ import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
   const { t } = useLanguage();
+  const { theme, cycleTheme } = useTheme();
   const [screen, setScreen] = useState<Screen>('home');
   const { collection, addPuzzle, updatePuzzle, deletePuzzle, refresh: refreshCollection } = usePuzzles(userId);
   const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
@@ -478,6 +480,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onExport={exportBackup}
           exporting={exporting}
           onImport={importBackup}
+          theme={theme}
+          onCycleTheme={cycleTheme}
         />
       )}
 
@@ -606,12 +610,14 @@ function AuthGate() {
 
 export default function App() {
   return (
-    <LanguageProvider>
-      <AuthProvider>
-        <div className="app-shell">
-          <AuthGate />
-        </div>
-      </AuthProvider>
-    </LanguageProvider>
+    <ThemeProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <div className="app-shell">
+            <AuthGate />
+          </div>
+        </AuthProvider>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }

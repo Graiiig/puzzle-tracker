@@ -37,6 +37,9 @@ export interface Dict {
     menuStats: string;
     menuSignOut: string;
     menuLanguage: string;
+    menuThemeAuto: string;
+    menuThemeLight: string;
+    menuThemeDark: string;
     statInProgress: string;
     statDone: string;
     statPieces: string;
@@ -229,6 +232,9 @@ const fr: Dict = {
     menuStats: 'Statistiques',
     menuSignOut: 'Se déconnecter',
     menuLanguage: '🌐 English',
+    menuThemeAuto: 'Thème : Auto',
+    menuThemeLight: 'Thème : Clair',
+    menuThemeDark: 'Thème : Sombre',
     statInProgress: 'en cours',
     statDone: 'terminés',
     statPieces: 'pièces',
@@ -441,6 +447,9 @@ const en: Dict = {
     menuStats: 'Statistics',
     menuSignOut: 'Sign out',
     menuLanguage: '🌐 Français',
+    menuThemeAuto: 'Theme: Auto',
+    menuThemeLight: 'Theme: Light',
+    menuThemeDark: 'Theme: Dark',
     statInProgress: 'in progress',
     statDone: 'done',
     statPieces: 'pieces',

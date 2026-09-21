@@ -7,6 +7,7 @@ import PullToRefresh from '../components/PullToRefresh';
 import { STATUSES, SORT_MODES } from '../data';
 import { useLanguage } from '../hooks/useLanguage';
 import type { Genre, PieceBucket, Puzzle, SharedOwner, SortMode, Status } from '../types';
+import type { ThemePreference } from '../hooks/useTheme';
 import { chipStyle, formatMinutesAsHours, parseTimeToMinutes, sortList, starString, statusStyle } from '../utils/format';
 import { matchesFilters } from '../utils/filters';
 import { collectBrands, collectGenres } from '../utils/genres';
@@ -43,6 +44,8 @@ interface HomeScreenProps {
   onExport: () => void;
   exporting: boolean;
   onImport: (file: File) => void;
+  theme: ThemePreference;
+  onCycleTheme: () => void;
 }
 
 export default function HomeScreen({
@@ -77,6 +80,8 @@ export default function HomeScreen({
   onExport,
   exporting,
   onImport,
+  theme,
+  onCycleTheme,
 }: HomeScreenProps) {
   const { t, lang, toggleLang } = useLanguage();
   const importInputRef = useRef<HTMLInputElement>(null);
@@ -106,7 +111,7 @@ export default function HomeScreen({
   const activeFilterCount = statusFilter.size + brandFilter.size + pieceBucketFilter.size + (minRating > 0 ? 1 : 0);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)', position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)', position: 'relative' }}>
       <div
         style={{
           padding: '20px 20px 14px',
@@ -157,7 +162,7 @@ export default function HomeScreen({
                     position: 'absolute',
                     top: 46,
                     right: 0,
-                    background: 'white',
+                    background: 'var(--surface)',
                     borderRadius: 14,
                     boxShadow: '0 12px 32px oklch(20% 0.02 340 / 0.28)',
                     overflow: 'hidden',
@@ -176,6 +181,13 @@ export default function HomeScreen({
                     { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false },
                     { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false },
                     { icon: '🌐', label: t.home.menuLanguage, onClick: toggleLang, disabled: false },
+                    {
+                      icon: theme === 'light' ? '☀️' : theme === 'dark' ? '🌙' : '🌓',
+                      label:
+                        theme === 'light' ? t.home.menuThemeLight : theme === 'dark' ? t.home.menuThemeDark : t.home.menuThemeAuto,
+                      onClick: onCycleTheme,
+                      disabled: false,
+                    },
                     { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false },
                   ].map((item) => (
                     <div
@@ -192,7 +204,7 @@ export default function HomeScreen({
                         padding: '12px 16px',
                         fontSize: 14,
                         fontWeight: 700,
-                        color: item.disabled ? 'oklch(65% 0.02 340)' : 'oklch(30% 0.02 340)',
+                        color: item.disabled ? 'var(--text-muted)' : 'var(--text-primary)',
                         cursor: item.disabled ? 'default' : 'pointer',
                         whiteSpace: 'nowrap',
                       }}
@@ -236,7 +248,7 @@ export default function HomeScreen({
         <div
           style={{
             marginTop: 14,
-            background: 'white',
+            background: 'var(--surface)',
             borderRadius: 14,
             padding: '11px 14px',
             display: 'flex',
@@ -256,7 +268,7 @@ export default function HomeScreen({
               fontFamily: "'Nunito',sans-serif",
               fontSize: 14,
               fontWeight: 600,
-              color: 'oklch(30% 0.02 340)',
+              color: 'var(--text-primary)',
               background: 'transparent',
             }}
           />
@@ -293,8 +305,8 @@ export default function HomeScreen({
           style={{
             position: 'relative',
             flexShrink: 0,
-            background: 'white',
-            color: 'oklch(35% 0.02 340)',
+            background: 'var(--surface)',
+            color: 'var(--text-secondary)',
             fontWeight: 800,
             fontSize: 13,
             padding: '9px 16px 9px 14px',
@@ -364,7 +376,7 @@ export default function HomeScreen({
                   fontFamily: "'Baloo 2',sans-serif",
                   fontWeight: 700,
                   fontSize: 16,
-                  color: 'oklch(28% 0.02 340)',
+                  color: 'var(--text-primary)',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -372,7 +384,7 @@ export default function HomeScreen({
               >
                 {p.name}
               </div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>
                 {p.brand} · {t.home.pieces(p.pieces)}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
@@ -383,7 +395,7 @@ export default function HomeScreen({
           </button>
         ))}
         {visible.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'oklch(55% 0.03 340)', fontWeight: 700 }}>
+          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)', fontWeight: 700 }}>
             {t.home.empty}
           </div>
         )}

@@ -13,7 +13,7 @@ export function dotString(n: number): string {
 const STATUS_COLORS: Record<Status, { background: string; color: string }> = {
   done: { background: 'oklch(90% 0.09 150)', color: 'oklch(38% 0.13 150)' },
   in_progress: { background: 'oklch(93% 0.08 350)', color: 'oklch(45% 0.2 350)' },
-  todo: { background: 'oklch(92% 0.02 340)', color: 'oklch(50% 0.02 340)' },
+  todo: { background: 'var(--surface-alt)', color: 'var(--text-tertiary)' },
 };
 
 export function statusStyle(status: Status): CSSProperties {
@@ -30,7 +30,7 @@ export function statusStyle(status: Status): CSSProperties {
 const PRIORITY_COLORS: Record<Priority, { background: string; color: string }> = {
   high: { background: 'oklch(93% 0.08 350)', color: 'oklch(45% 0.2 350)' },
   medium: { background: 'oklch(92% 0.05 300)', color: 'oklch(45% 0.16 300)' },
-  low: { background: 'oklch(92% 0.02 340)', color: 'oklch(50% 0.02 340)' },
+  low: { background: 'var(--surface-alt)', color: 'var(--text-tertiary)' },
 };
 
 export function priorityStyle(p: Priority): CSSProperties {
@@ -51,8 +51,8 @@ export function chipStyle(active: boolean, hue: number): CSSProperties {
   return {
     background: active
       ? `linear-gradient(135deg, oklch(68% 0.22 ${hue}), oklch(60% 0.19 ${hue - 30}))`
-      : 'white',
-    color: active ? 'white' : 'oklch(45% 0.03 340)',
+      : 'var(--surface)',
+    color: active ? 'white' : 'var(--text-tertiary)',
   };
 }
 
