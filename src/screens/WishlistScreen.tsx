@@ -32,7 +32,7 @@ export default function WishlistScreen({
   const { t } = useLanguage();
   const visible = wishlist.filter((w) => w.ownerId === ownerFilter);
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)', position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)', position: 'relative' }}>
       <div
         style={{
           padding: '20px 20px 14px',
@@ -97,7 +97,7 @@ export default function WishlistScreen({
                   fontFamily: "'Baloo 2',sans-serif",
                   fontWeight: 700,
                   fontSize: 16,
-                  color: 'oklch(28% 0.02 340)',
+                  color: 'var(--text-primary)',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
@@ -105,7 +105,7 @@ export default function WishlistScreen({
               >
                 {w.name}
               </div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>
                 {w.brand} · {t.wishlist.pieces(w.pieces)}
               </div>
               <span style={priorityStyle(w.priority)}>{t.wishlist.priorityBadge(t.priority[w.priority])}</span>
@@ -113,7 +113,7 @@ export default function WishlistScreen({
           </button>
         ))}
         {visible.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'oklch(55% 0.03 340)', fontWeight: 700 }}>
+          <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)', fontWeight: 700 }}>
             {t.wishlist.empty}
           </div>
         )}

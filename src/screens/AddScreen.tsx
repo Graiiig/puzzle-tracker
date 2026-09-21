@@ -92,15 +92,15 @@ export default function AddScreen({
 
   const modeCollectionStyle =
     mode === 'collection'
-      ? { background: 'white', color: 'oklch(45% 0.2 350)', boxShadow: '0 1px 4px oklch(50% 0.05 340 / 0.15)' }
-      : { color: 'oklch(55% 0.03 340)' };
+      ? { background: 'var(--surface)', color: 'oklch(45% 0.2 350)', boxShadow: '0 1px 4px oklch(50% 0.05 340 / 0.15)' }
+      : { color: 'var(--text-muted)' };
   const modeWishlistStyle =
     mode === 'wishlist'
-      ? { background: 'white', color: 'oklch(45% 0.16 320)', boxShadow: '0 1px 4px oklch(50% 0.05 340 / 0.15)' }
-      : { color: 'oklch(55% 0.03 340)' };
+      ? { background: 'var(--surface)', color: 'oklch(45% 0.16 320)', boxShadow: '0 1px 4px oklch(50% 0.05 340 / 0.15)' }
+      : { color: 'var(--text-muted)' };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '18px 20px 10px', flexShrink: 0 }}>
         <div
           onClick={onCancel}
@@ -108,26 +108,26 @@ export default function AddScreen({
             width: 38,
             height: 38,
             borderRadius: '50%',
-            background: 'white',
+            background: 'var(--surface)',
             boxShadow: '0 2px 8px oklch(50% 0.05 340 / 0.12)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 18,
             cursor: 'pointer',
-            color: 'oklch(35% 0.02 340)',
+            color: 'var(--text-secondary)',
           }}
         >
           ←
         </div>
-        <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 19, color: 'oklch(28% 0.02 340)' }}>
+        <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 19, color: 'var(--text-primary)' }}>
           {isEditing ? t.add.editTitle : t.add.addTitle}
         </div>
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px 22px 28px' }}>
         {!isEditing && (
-          <div style={{ display: 'flex', background: 'oklch(93% 0.02 340)', borderRadius: 100, padding: 4, marginBottom: 18 }}>
+          <div style={{ display: 'flex', background: 'var(--surface-alt)', borderRadius: 100, padding: 4, marginBottom: 18 }}>
             <button
               onClick={onSetModeCollection}
               disabled={scanning}
@@ -225,7 +225,7 @@ export default function AddScreen({
               </button>
             </div>
             {scanning && (
-              <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>
+              <div style={{ marginTop: 6, fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>
                 {t.add.searching}
               </div>
             )}
@@ -322,7 +322,7 @@ export default function AddScreen({
                 type="button"
                 onClick={() => setAddingGenre(true)}
                 className="chip"
-                style={{ background: 'white', color: 'oklch(50% 0.03 340)', border: '1px dashed oklch(75% 0.03 340)' }}
+                style={{ background: 'var(--surface)', color: 'var(--text-tertiary)', border: '1px dashed oklch(75% 0.03 340)' }}
               >
                 {t.add.newGenreButton}
               </button>

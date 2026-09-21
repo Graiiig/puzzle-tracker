@@ -89,7 +89,7 @@ export default function ShareScreen({
   const sharedWithMe = [...sharedWithMeMap.values()];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'oklch(97% 0.015 70)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '18px 20px 10px', flexShrink: 0 }}>
         <div
           onClick={onClose}
@@ -97,19 +97,19 @@ export default function ShareScreen({
             width: 38,
             height: 38,
             borderRadius: '50%',
-            background: 'white',
+            background: 'var(--surface)',
             boxShadow: '0 2px 8px oklch(50% 0.05 340 / 0.12)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: 18,
             cursor: 'pointer',
-            color: 'oklch(35% 0.02 340)',
+            color: 'var(--text-secondary)',
           }}
         >
           ←
         </div>
-        <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 19, color: 'oklch(28% 0.02 340)' }}>
+        <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 19, color: 'var(--text-primary)' }}>
           {t.share.title}
         </div>
       </div>
@@ -158,7 +158,7 @@ export default function ShareScreen({
         <div style={{ marginTop: 24 }}>
           <div className="field-label">{t.share.inviteTitle}</div>
           {!canInvite && (
-            <div style={{ marginBottom: 8, fontSize: 12, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>
+            <div style={{ marginBottom: 8, fontSize: 12, fontWeight: 700, color: 'var(--text-muted)' }}>
               {t.share.pseudoRequiredHint}
             </div>
           )}
@@ -174,7 +174,7 @@ export default function ShareScreen({
             disabled={!canInvite}
           />
           <div style={{ display: 'flex', gap: 16, marginTop: 10 }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'oklch(35% 0.02 340)' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)' }}>
               <input
                 type="checkbox"
                 checked={shareCollection}
@@ -183,7 +183,7 @@ export default function ShareScreen({
               />
               {t.share.shareCollectionLabel}
             </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'oklch(35% 0.02 340)' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 700, color: 'var(--text-secondary)' }}>
               <input
                 type="checkbox"
                 checked={shareWishlist}
@@ -231,26 +231,26 @@ export default function ShareScreen({
             {t.share.invitedListTitle}
           </div>
           {myShares.length === 0 && (
-            <div style={{ fontSize: 13, fontWeight: 600, color: 'oklch(55% 0.03 340)' }}>{t.share.invitedEmpty}</div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)' }}>{t.share.invitedEmpty}</div>
           )}
           {myShares.map((share) => (
             <div
               key={share.id}
               style={{
-                background: 'white',
+                background: 'var(--surface)',
                 borderRadius: 14,
                 padding: '11px 14px',
                 marginBottom: 8,
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(30% 0.02 340)' }}>{share.invitedEmail}</span>
-                <span onClick={() => handleRemove(share)} style={{ cursor: 'pointer', fontSize: 16, color: 'oklch(55% 0.03 340)' }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{share.invitedEmail}</span>
+                <span onClick={() => handleRemove(share)} style={{ cursor: 'pointer', fontSize: 16, color: 'var(--text-muted)' }}>
                   ✕
                 </span>
               </div>
               <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'oklch(45% 0.03 340)' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--text-tertiary)' }}>
                   <input
                     type="checkbox"
                     checked={share.shareCollection}
@@ -258,7 +258,7 @@ export default function ShareScreen({
                   />
                   {t.share.shareCollectionLabel}
                 </label>
-                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'oklch(45% 0.03 340)' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--text-tertiary)' }}>
                   <input
                     type="checkbox"
                     checked={share.shareWishlist}
@@ -276,7 +276,7 @@ export default function ShareScreen({
             {t.share.sharedWithMeTitle}
           </div>
           {sharedWithMe.length === 0 && (
-            <div style={{ fontSize: 13, fontWeight: 600, color: 'oklch(55% 0.03 340)' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-muted)' }}>
               {t.share.sharedWithMeEmpty}
             </div>
           )}
@@ -289,13 +289,13 @@ export default function ShareScreen({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    background: 'white',
+                    background: 'var(--surface)',
                     borderRadius: 14,
                     padding: '11px 14px',
                     marginBottom: 8,
                   }}
                 >
-                  <span style={{ fontSize: 13, fontWeight: 700, color: 'oklch(30% 0.02 340)' }}>{owner.pseudo}</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>{owner.pseudo}</span>
                   <div style={{ display: 'flex', gap: 6 }}>
                     {owner.collection && (
                       <span
@@ -328,7 +328,7 @@ export default function ShareScreen({
                   </div>
                 </div>
               ))}
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'oklch(55% 0.03 340)', marginTop: 4 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', marginTop: 4 }}>
                 {t.share.sharedWithMeHint}
               </div>
             </>

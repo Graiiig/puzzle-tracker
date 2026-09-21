@@ -61,7 +61,7 @@ export default function ImageSlot({ id, ownerId, shape = 'rounded', radius = 14,
       style={{
         borderRadius: shape === 'rect' ? 0 : radius,
         overflow: 'hidden',
-        background: src ? undefined : 'oklch(93% 0.02 340)',
+        background: src ? undefined : 'var(--surface-alt)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -73,7 +73,7 @@ export default function ImageSlot({ id, ownerId, shape = 'rounded', radius = 14,
       }}
     >
       {busy ? (
-        <span style={{ fontSize: 11, fontWeight: 700, color: 'oklch(55% 0.03 340)' }}>{t.imageSlot.loading}</span>
+        <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)' }}>{t.imageSlot.loading}</span>
       ) : src ? (
         <img src={src} alt={placeholder} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
       ) : (
@@ -83,7 +83,7 @@ export default function ImageSlot({ id, ownerId, shape = 'rounded', radius = 14,
             style={{
               fontSize: 11,
               fontWeight: 700,
-              color: 'oklch(55% 0.03 340)',
+              color: 'var(--text-muted)',
               textAlign: 'center',
               padding: '0 8px',
             }}

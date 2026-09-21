@@ -10,7 +10,7 @@ interface BottomNavProps {
 export default function BottomNav({ active, onGoHome, onGoWishlist }: BottomNavProps) {
   const { t } = useLanguage();
   return (
-    <div style={{ display: 'flex', flexShrink: 0, borderTop: '1px solid oklch(92% 0.01 340)', background: 'white' }}>
+    <div style={{ display: 'flex', flexShrink: 0, borderTop: '1px solid oklch(92% 0.01 340)', background: 'var(--surface)' }}>
       <button
         onClick={onGoHome}
         style={{
@@ -19,7 +19,7 @@ export default function BottomNav({ active, onGoHome, onGoWishlist }: BottomNavP
           textAlign: 'center',
           background: 'none',
           border: 'none',
-          color: active === 'home' ? 'oklch(45% 0.2 350)' : 'oklch(55% 0.03 340)',
+          color: active === 'home' ? 'oklch(45% 0.2 350)' : 'var(--text-muted)',
           fontWeight: 800,
           fontSize: 12,
         }}
@@ -34,7 +34,7 @@ export default function BottomNav({ active, onGoHome, onGoWishlist }: BottomNavP
           textAlign: 'center',
           background: 'none',
           border: 'none',
-          color: active === 'wishlist' ? 'oklch(50% 0.18 310)' : 'oklch(55% 0.03 340)',
+          color: active === 'wishlist' ? 'oklch(50% 0.18 310)' : 'var(--text-muted)',
           fontWeight: 800,
           fontSize: 12,
         }}

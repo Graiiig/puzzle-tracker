@@ -42,14 +42,14 @@ export default function ImportLegacyDataOverlay({ addPuzzle, addWishlistItem, on
         zIndex: 10,
       }}
     >
-      <div style={{ background: 'white', borderRadius: 20, padding: 22, maxWidth: 320, textAlign: 'center' }}>
+      <div style={{ background: 'var(--surface)', borderRadius: 20, padding: 22, maxWidth: 320, textAlign: 'center' }}>
         {state === 'prompt' && (
           <>
             <div style={{ fontSize: 32 }}>📦</div>
-            <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 17, color: 'oklch(28% 0.02 340)', marginTop: 8 }}>
+            <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 17, color: 'var(--text-primary)', marginTop: 8 }}>
               {t.legacyImport.foundTitle}
             </div>
-            <div style={{ fontSize: 13, color: 'oklch(50% 0.03 340)', marginTop: 8, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 8, lineHeight: 1.5 }}>
               {t.legacyImport.foundBody}
             </div>
             <div
@@ -70,7 +70,7 @@ export default function ImportLegacyDataOverlay({ addPuzzle, addWishlistItem, on
             </div>
             <div
               onClick={handleSkip}
-              style={{ marginTop: 12, fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.03 340)', cursor: 'pointer' }}
+              style={{ marginTop: 12, fontSize: 13, fontWeight: 700, color: 'var(--text-muted)', cursor: 'pointer' }}
             >
               {t.legacyImport.skip}
             </div>
@@ -78,7 +78,7 @@ export default function ImportLegacyDataOverlay({ addPuzzle, addWishlistItem, on
         )}
 
         {state === 'importing' && (
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'oklch(50% 0.03 340)', padding: '20px 0' }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-tertiary)', padding: '20px 0' }}>
             {t.legacyImport.importing}
           </div>
         )}
@@ -86,10 +86,10 @@ export default function ImportLegacyDataOverlay({ addPuzzle, addWishlistItem, on
         {state === 'done' && result && (
           <>
             <div style={{ fontSize: 32 }}>✅</div>
-            <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 17, color: 'oklch(28% 0.02 340)', marginTop: 8 }}>
+            <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 17, color: 'var(--text-primary)', marginTop: 8 }}>
               {t.legacyImport.doneTitle}
             </div>
-            <div style={{ fontSize: 13, color: 'oklch(50% 0.03 340)', marginTop: 8, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 8, lineHeight: 1.5 }}>
               {t.legacyImport.doneBody(result.puzzles, result.wishlistItems, result.photos)}
             </div>
             <div
