@@ -4,6 +4,7 @@ import { useLanguage } from '../hooks/useLanguage';
 import type { Puzzle } from '../types';
 import { chipStyle, dotString, formatMinutesAsHours } from '../utils/format';
 import {
+  computeAverageMinutesByExactPieces,
   computeAverageMinutesByPieceBucket,
   computeAverageMinutesPerPuzzle,
   computeBrandCounts,
@@ -90,6 +91,7 @@ export default function StatsScreen({ collection, onClose, onOpenPuzzle }: Stats
   const { t, lang } = useLanguage();
   const [recapScope, setRecapScope] = useState<'year' | 'all'>('year');
   const [selectedMonthIndex, setSelectedMonthIndex] = useState<number | null>(null);
+  const [pieceView, setPieceView] = useState<'exact' | 'bucket'>('exact');
 
   const monthly = useMemo(() => computeMonthlyFinished(collection, lang), [collection, lang]);
   const brands = useMemo(() => computeBrandCounts(collection, 6, t.stats.otherBrand), [collection, t.stats.otherBrand]);
@@ -99,12 +101,16 @@ export default function StatsScreen({ collection, onClose, onOpenPuzzle }: Stats
     [collection, recapScope],
   );
   const averageMinutesPerPuzzle = useMemo(() => computeAverageMinutesPerPuzzle(collection), [collection]);
-  const paceByPieces = useMemo(() => computeAverageMinutesByPieceBucket(collection), [collection]);
+  const paceByExactPieces = useMemo(() => computeAverageMinutesByExactPieces(collection), [collection]);
+  const paceByBucket = useMemo(() => computeAverageMinutesByPieceBucket(collection), [collection]);
 
   const monthlyMax = Math.max(1, ...monthly.map((m) => m.count));
   const brandMax = Math.max(1, ...brands.map((b) => b.count));
   const difficultyMax = Math.max(1, ...difficulty);
-  const paceMax = Math.max(1, ...paceByPieces.map((p) => p.averageMinutes));
+  const paceMax = Math.max(
+    1,
+    ...(pieceView === 'exact' ? paceByExactPieces.map((p) => p.averageMinutes) : paceByBucket.map((p) => p.averageMinutes)),
+  );
 
   const selectedMonth = selectedMonthIndex !== null ? monthly[selectedMonthIndex] : null;
   const selectedMonthPuzzles = useMemo(
@@ -298,20 +304,45 @@ export default function StatsScreen({ collection, onClose, onOpenPuzzle }: Stats
               <div style={{ display: 'flex', marginTop: 10 }}>
                 <StatTile value={formatMinutesAsHours(Math.round(averageMinutesPerPuzzle))} label={t.stats.averageTimePerPuzzle} />
               </div>
-              <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5, marginTop: 16, marginBottom: 10 }}>
-                {t.stats.averageTimeByPieces}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                {paceByPieces.map((p) => (
-                  <RankedBar
-                    key={p.bucket}
-                    label={t.pieceBucket[p.bucket]}
-                    value={p.averageMinutes}
-                    valueLabel={p.count > 0 ? formatMinutesAsHours(Math.round(p.averageMinutes)) : '—'}
-                    max={paceMax}
-                    color={BAR_COLOR}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: 'oklch(60% 0.03 340)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                  {t.stats.averageTimeByPieces}
+                </div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  <Chip
+                    label={t.stats.pieceViewExact}
+                    onClick={() => setPieceView('exact')}
+                    style={{ ...chipStyle(pieceView === 'exact', 350), padding: '6px 12px', fontSize: 11 }}
                   />
-                ))}
+                  <Chip
+                    label={t.stats.pieceViewBucket}
+                    onClick={() => setPieceView('bucket')}
+                    style={{ ...chipStyle(pieceView === 'bucket', 350), padding: '6px 12px', fontSize: 11 }}
+                  />
+                </div>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>
+                {pieceView === 'exact'
+                  ? paceByExactPieces.map((p) => (
+                      <RankedBar
+                        key={p.pieces}
+                        label={t.detail.pieces(p.pieces)}
+                        value={p.averageMinutes}
+                        valueLabel={formatMinutesAsHours(Math.round(p.averageMinutes))}
+                        max={paceMax}
+                        color={BAR_COLOR}
+                      />
+                    ))
+                  : paceByBucket.map((p) => (
+                      <RankedBar
+                        key={p.bucket}
+                        label={t.pieceBucket[p.bucket]}
+                        value={p.averageMinutes}
+                        valueLabel={p.count > 0 ? formatMinutesAsHours(Math.round(p.averageMinutes)) : '—'}
+                        max={paceMax}
+                        color={BAR_COLOR}
+                      />
+                    ))}
               </div>
             </div>
           </>

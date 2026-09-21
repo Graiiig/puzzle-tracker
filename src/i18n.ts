@@ -90,6 +90,8 @@ export interface Dict {
     paceTitle: string;
     averageTimePerPuzzle: string;
     averageTimeByPieces: string;
+    pieceViewExact: string;
+    pieceViewBucket: string;
   };
   add: {
     editTitle: string;
@@ -280,6 +282,8 @@ const fr: Dict = {
     paceTitle: 'Rythme',
     averageTimePerPuzzle: 'Temps moyen par puzzle',
     averageTimeByPieces: 'Temps moyen par nombre de pièces',
+    pieceViewExact: 'Exact',
+    pieceViewBucket: 'Par tranche',
   },
   add: {
     editTitle: 'Modifier',
@@ -490,6 +494,8 @@ const en: Dict = {
     paceTitle: 'Pace',
     averageTimePerPuzzle: 'Average time per puzzle',
     averageTimeByPieces: 'Average time by piece count',
+    pieceViewExact: 'Exact',
+    pieceViewBucket: 'By range',
   },
   add: {
     editTitle: 'Edit',
