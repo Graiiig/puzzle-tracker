@@ -77,13 +77,42 @@ export function computeAverageMinutesPerPuzzle(puzzles: Puzzle[]): number {
   return timed.reduce((sum, p) => sum + parseTimeToMinutes(p.time), 0) / timed.length;
 }
 
+export interface PieceCountPace {
+  pieces: number;
+  averageMinutes: number;
+  count: number;
+}
+
+/**
+ * Average time spent per finished puzzle, grouped by exact piece count —
+ * every puzzle with the same `pieces` value and a recorded time gets
+ * averaged together. Only piece counts with at least one timed finish show
+ * up (unlike a fixed bucket list, there's no empty row to fill in for one
+ * that was never asked about).
+ */
+export function computeAverageMinutesByExactPieces(puzzles: Puzzle[]): PieceCountPace[] {
+  const sums = new Map<number, { totalMinutes: number; count: number }>();
+  for (const p of puzzles) {
+    if (p.status !== 'done' || p.pieces <= 0) continue;
+    const minutes = parseTimeToMinutes(p.time);
+    if (minutes <= 0) continue;
+    const entry = sums.get(p.pieces) ?? { totalMinutes: 0, count: 0 };
+    entry.totalMinutes += minutes;
+    entry.count += 1;
+    sums.set(p.pieces, entry);
+  }
+  return [...sums.entries()]
+    .map(([pieces, { totalMinutes, count }]) => ({ pieces, averageMinutes: totalMinutes / count, count }))
+    .sort((a, b) => a.pieces - b.pieces);
+}
+
 export interface PieceBucketPace {
   bucket: PieceBucket;
   averageMinutes: number;
   count: number;
 }
 
-/** Average time spent per finished puzzle, broken down by the same piece-count buckets used in filters. */
+/** Average time spent per finished puzzle, broken down by the same piece-count buckets used in filters — a coarser alternative to the exact-piece-count view. */
 export function computeAverageMinutesByPieceBucket(puzzles: Puzzle[]): PieceBucketPace[] {
   const sums = new Map<PieceBucket, { totalMinutes: number; count: number }>(
     PIECE_BUCKETS.map((b) => [b, { totalMinutes: 0, count: 0 }]),
