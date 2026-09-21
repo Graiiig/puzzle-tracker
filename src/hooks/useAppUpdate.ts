@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { AppUpdate, AppUpdateAvailability, FlexibleUpdateInstallStatus } from '@capawesome/capacitor-app-update';
@@ -11,12 +11,19 @@ import { AppUpdate, AppUpdateAvailability, FlexibleUpdateInstallStatus } from '@
  */
 export function useAppUpdate() {
   const [readyToInstall, setReadyToInstall] = useState(false);
+  // Play's consent sheet is itself a native screen, so accepting it (or
+  // dismissing it) cycles the host activity through pause/resume — which
+  // fires our own 'resume' listener before Play's update state has settled,
+  // re-triggering checkForUpdate and popping the same sheet a second time.
+  // Once we've asked, we don't ask again this session.
+  const updateStartedRef = useRef(false);
 
   const checkForUpdate = useCallback(async () => {
-    if (!Capacitor.isNativePlatform()) return;
+    if (!Capacitor.isNativePlatform() || updateStartedRef.current) return;
     try {
       const info = await AppUpdate.getAppUpdateInfo();
       if (info.updateAvailability === AppUpdateAvailability.UPDATE_AVAILABLE && info.flexibleUpdateAllowed) {
+        updateStartedRef.current = true;
         await AppUpdate.startFlexibleUpdate();
       }
     } catch {
