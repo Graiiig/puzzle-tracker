@@ -11,6 +11,9 @@ interface FiltersSheetProps {
   brands: string[];
   selectedBrands: Set<string>;
   onToggleBrand: (b: string) => void;
+  artists: string[];
+  selectedArtists: Set<string>;
+  onToggleArtist: (a: string) => void;
   selectedPieceBuckets: Set<PieceBucket>;
   onTogglePieceBucket: (b: PieceBucket) => void;
   minRating: number;
@@ -30,6 +33,9 @@ export default function FiltersSheet({
   brands,
   selectedBrands,
   onToggleBrand,
+  artists,
+  selectedArtists,
+  onToggleArtist,
   selectedPieceBuckets,
   onTogglePieceBucket,
   minRating,
@@ -115,6 +121,19 @@ export default function FiltersSheet({
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {brands.map((b) => (
                 <Chip key={b} label={b} onClick={() => onToggleBrand(b)} style={chipStyle(selectedBrands.has(b), 350)} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {artists.length > 0 && (
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+              {t.filters.artistLabel}
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {artists.map((a) => (
+                <Chip key={a} label={a} onClick={() => onToggleArtist(a)} style={chipStyle(selectedArtists.has(a), 350)} />
               ))}
             </div>
           </div>

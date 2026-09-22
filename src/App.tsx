@@ -14,7 +14,7 @@ import { EMPTY_FORM } from './data';
 import { hasLegacyData } from './lib/legacyImport';
 import { exportDataAsJson } from './utils/export';
 import { importBackupFile } from './utils/importBackup';
-import { collectGenres } from './utils/genres';
+import { collectArtists, collectGenres } from './utils/genres';
 import { fetchLookupImage, isPuzzleLookupConfigured, lookupEan } from './lib/puzzleLookup';
 import { compressImageFile } from './utils/image';
 import type { DetailSource, Genre, PieceBucket, Puzzle, PuzzleForm, Screen, SortMode, Status, WishlistItem } from './types';
@@ -54,6 +54,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [sortMode, setSortMode] = useState<SortMode>('recent');
   const [statusFilter, setStatusFilter] = useState<Set<Status>>(new Set());
   const [brandFilter, setBrandFilter] = useState<Set<string>>(new Set());
+  const [artistFilter, setArtistFilter] = useState<Set<string>>(new Set());
   const [pieceBucketFilter, setPieceBucketFilter] = useState<Set<PieceBucket>>(new Set());
   const [minRating, setMinRating] = useState(0);
   const [addMode, setAddMode] = useState<'collection' | 'wishlist'>('collection');
@@ -97,6 +98,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     setSelectedGenres([]);
     setStatusFilter(new Set());
     setBrandFilter(new Set());
+    setArtistFilter(new Set());
     setPieceBucketFilter(new Set());
     setMinRating(0);
   }
@@ -467,6 +469,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onToggleStatus={(s) => toggleSetItem(setStatusFilter, s)}
           brandFilter={brandFilter}
           onToggleBrand={(b) => toggleSetItem(setBrandFilter, b)}
+          artistFilter={artistFilter}
+          onToggleArtist={(a) => toggleSetItem(setArtistFilter, a)}
           pieceBucketFilter={pieceBucketFilter}
           onTogglePieceBucket={(b) => toggleSetItem(setPieceBucketFilter, b)}
           minRating={minRating}
@@ -543,6 +547,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           isEditing={isEditingForm}
           photoSlotId={photoSlotId}
           genreOptions={collectGenres(
+            collection.filter((p) => p.ownerId === userId),
+            wishlist.filter((w) => w.ownerId === userId),
+          )}
+          artistOptions={collectArtists(
             collection.filter((p) => p.ownerId === userId),
             wishlist.filter((w) => w.ownerId === userId),
           )}

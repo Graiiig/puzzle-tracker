@@ -26,3 +26,13 @@ export function collectBrands(...itemLists: Array<Array<{ brand: string }>>): st
   }
   return [...seen].sort((a, b) => a.localeCompare(b));
 }
+
+export function collectArtists(...itemLists: Array<Array<{ artist: string }>>): string[] {
+  const seen = new Set<string>();
+  for (const items of itemLists) {
+    for (const item of items) {
+      if (item.artist) seen.add(item.artist);
+    }
+  }
+  return [...seen].sort((a, b) => a.localeCompare(b));
+}

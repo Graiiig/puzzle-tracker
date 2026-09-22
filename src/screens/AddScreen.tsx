@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import RatingPicker from '../components/RatingPicker';
+import AutocompleteInput from '../components/AutocompleteInput';
 import { PRIORITIES, STATUSES } from '../data';
 import { useLanguage } from '../hooks/useLanguage';
 import { canScanBarcode, scanBarcode } from '../lib/barcodeScanner';
@@ -13,6 +14,7 @@ interface AddScreenProps {
   isEditing: boolean;
   photoSlotId: string;
   genreOptions: string[];
+  artistOptions: string[];
   onSetModeCollection: () => void;
   onSetModeWishlist: () => void;
   form: PuzzleForm;
@@ -29,6 +31,7 @@ export default function AddScreen({
   isEditing,
   photoSlotId,
   genreOptions,
+  artistOptions,
   onSetModeCollection,
   onSetModeWishlist,
   form,
@@ -277,11 +280,12 @@ export default function AddScreen({
 
         <div style={{ marginTop: 12 }}>
           <div className="field-label">{t.add.artistLabel}</div>
-          <input
-            className="field-input"
+          <AutocompleteInput
             value={form.artist}
-            onChange={(e) => onFormChange('artist', e.target.value)}
+            onChange={(v) => onFormChange('artist', v)}
+            options={artistOptions}
             placeholder={t.add.artistPlaceholder}
+            newOptionLabel={t.add.newArtistOption}
           />
         </div>
 
