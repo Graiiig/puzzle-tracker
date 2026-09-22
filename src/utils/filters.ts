@@ -13,6 +13,7 @@ export interface PuzzleFilters {
   genres: string[];
   statuses: Set<Status>;
   brands: Set<string>;
+  artists: Set<string>;
   pieceBuckets: Set<PieceBucket>;
   minRating: number;
   search: string;
@@ -27,6 +28,7 @@ export function matchesFilters(p: Puzzle, f: PuzzleFilters): boolean {
     (!q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q)) &&
     (f.statuses.size === 0 || f.statuses.has(p.status)) &&
     (f.brands.size === 0 || f.brands.has(p.brand)) &&
+    (f.artists.size === 0 || f.artists.has(p.artist)) &&
     (f.pieceBuckets.size === 0 || f.pieceBuckets.has(pieceBucketOf(p.pieces))) &&
     (f.minRating === 0 || p.rating >= f.minRating)
   );

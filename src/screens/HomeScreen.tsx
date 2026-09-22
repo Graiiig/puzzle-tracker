@@ -10,7 +10,7 @@ import type { Genre, PieceBucket, Puzzle, SharedOwner, SortMode, Status } from '
 import type { ThemePreference } from '../hooks/useTheme';
 import { chipStyle, formatMinutesAsHours, parseTimeToMinutes, sortList, starString, statusStyle } from '../utils/format';
 import { matchesFilters } from '../utils/filters';
-import { collectBrands, collectGenres } from '../utils/genres';
+import { collectArtists, collectBrands, collectGenres } from '../utils/genres';
 
 interface HomeScreenProps {
   collection: Puzzle[];
@@ -31,6 +31,8 @@ interface HomeScreenProps {
   onToggleStatus: (s: Status) => void;
   brandFilter: Set<string>;
   onToggleBrand: (b: string) => void;
+  artistFilter: Set<string>;
+  onToggleArtist: (a: string) => void;
   pieceBucketFilter: Set<PieceBucket>;
   onTogglePieceBucket: (b: PieceBucket) => void;
   minRating: number;
@@ -67,6 +69,8 @@ export default function HomeScreen({
   onToggleStatus,
   brandFilter,
   onToggleBrand,
+  artistFilter,
+  onToggleArtist,
   pieceBucketFilter,
   onTogglePieceBucket,
   minRating,
@@ -100,6 +104,7 @@ export default function HomeScreen({
       genres: selectedGenres,
       statuses: statusFilter,
       brands: brandFilter,
+      artists: artistFilter,
       pieceBuckets: pieceBucketFilter,
       minRating,
       search,
@@ -108,7 +113,9 @@ export default function HomeScreen({
   const visible = sortList(filtered, sortMode);
   const genreOptions: Genre[] = collectGenres(owned);
   const brandOptions: string[] = collectBrands(owned);
-  const activeFilterCount = statusFilter.size + brandFilter.size + pieceBucketFilter.size + (minRating > 0 ? 1 : 0);
+  const artistOptions: string[] = collectArtists(owned);
+  const activeFilterCount =
+    statusFilter.size + brandFilter.size + artistFilter.size + pieceBucketFilter.size + (minRating > 0 ? 1 : 0);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)', position: 'relative' }}>
@@ -350,6 +357,9 @@ export default function HomeScreen({
           brands={brandOptions}
           selectedBrands={brandFilter}
           onToggleBrand={onToggleBrand}
+          artists={artistOptions}
+          selectedArtists={artistFilter}
+          onToggleArtist={onToggleArtist}
           selectedPieceBuckets={pieceBucketFilter}
           onTogglePieceBucket={onTogglePieceBucket}
           minRating={minRating}

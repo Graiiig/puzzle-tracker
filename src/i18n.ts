@@ -114,6 +114,7 @@ export interface Dict {
     brandPlaceholder: string;
     artistLabel: string;
     artistPlaceholder: string;
+    newArtistOption: (name: string) => string;
     piecesLabel: string;
     piecesPlaceholder: string;
     genreLabel: string;
@@ -168,6 +169,7 @@ export interface Dict {
     reset: string;
     statusLabel: string;
     brandLabel: string;
+    artistLabel: string;
     piecesLabel: string;
     ratingLabel: string;
     sortLabel: string;
@@ -309,6 +311,7 @@ const fr: Dict = {
     brandPlaceholder: 'Ravensburger...',
     artistLabel: 'Artiste (optionnel)',
     artistPlaceholder: 'ex. Thomas Kinkade',
+    newArtistOption: (name) => `+ Ajouter « ${name} »`,
     piecesLabel: 'Pièces',
     piecesPlaceholder: '1000',
     genreLabel: 'Genre',
@@ -383,6 +386,7 @@ const fr: Dict = {
     reset: 'Réinitialiser',
     statusLabel: 'Statut',
     brandLabel: 'Marque',
+    artistLabel: 'Artiste',
     piecesLabel: 'Pièces',
     ratingLabel: 'Note minimum',
     sortLabel: 'Trier par',
@@ -524,6 +528,7 @@ const en: Dict = {
     brandPlaceholder: 'Ravensburger...',
     artistLabel: 'Artist (optional)',
     artistPlaceholder: 'e.g. Thomas Kinkade',
+    newArtistOption: (name) => `+ Add "${name}"`,
     piecesLabel: 'Pieces',
     piecesPlaceholder: '1000',
     genreLabel: 'Genre',
@@ -597,6 +602,7 @@ const en: Dict = {
     reset: 'Reset',
     statusLabel: 'Status',
     brandLabel: 'Brand',
+    artistLabel: 'Artist',
     piecesLabel: 'Pieces',
     ratingLabel: 'Minimum rating',
     sortLabel: 'Sort by',
