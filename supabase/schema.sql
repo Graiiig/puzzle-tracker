@@ -63,15 +63,20 @@ create policy "Users manage their own photos"
   using (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text)
   with check (bucket_id = 'photos' and (storage.foldername(name))[1] = auth.uid()::text);
 
--- One row per user (pseudo shown to people a collection is shared with).
+-- One row per user: pseudo (shown to people a collection is shared with)
+-- and is_premium (the premium entitlement flag).
 create table if not exists public.profiles (
   user_id uuid primary key references auth.users(id) on delete cascade,
   created_at timestamptz not null default now()
 );
 alter table public.profiles add column if not exists pseudo text not null default '';
+alter table public.profiles add column if not exists is_premium boolean not null default false;
 
 alter table public.profiles enable row level security;
 
+-- Users can freely manage their own row (e.g. edit their pseudo) — the
+-- guard_premium_column trigger further down stops that from being used to
+-- self-grant is_premium, since RLS alone has no column-level granularity.
 drop policy if exists "Users manage their own profile" on public.profiles;
 create policy "Users manage their own profile"
   on public.profiles
@@ -99,6 +104,35 @@ create trigger on_auth_user_created
 insert into public.profiles (user_id)
 select id from auth.users
 on conflict (user_id) do nothing;
+
+-- Guards is_premium against being self-granted through the permissive
+-- "manage own profile" policy above — see 0009_premium_entitlement.sql for
+-- the full rationale. Requests from a normal client (role 'authenticated')
+-- have is_premium silently forced back to its previous value; requests with
+-- no JWT role (the Supabase SQL editor) or role 'service_role' go through.
+create or replace function public.guard_premium_column()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  if tg_op = 'INSERT' then
+    if auth.role() = 'authenticated' then
+      new.is_premium := false;
+    end if;
+  elsif tg_op = 'UPDATE' then
+    if new.is_premium is distinct from old.is_premium and auth.role() = 'authenticated' then
+      new.is_premium := old.is_premium;
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists guard_premium_column on public.profiles;
+create trigger guard_premium_column
+  before insert or update on public.profiles
+  for each row execute function public.guard_premium_column();
 
 -- Read-only collection sharing: the owner invites by email (no confirmation
 -- flow — the invited person sees it the moment they log in with that email).
