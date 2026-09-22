@@ -11,7 +11,7 @@ import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { useAppUpdate } from './hooks/useAppUpdate';
 import { useShares } from './hooks/useShares';
-import { EMPTY_FORM } from './data';
+import { EMPTY_FORM, FREE_COLLECTION_LIMIT, FREE_WISHLIST_LIMIT } from './data';
 import { hasLegacyData } from './lib/legacyImport';
 import { exportDataAsJson } from './utils/export';
 import { importBackupFile } from './utils/importBackup';
@@ -27,6 +27,7 @@ import LoginScreen from './screens/LoginScreen';
 import ShareScreen from './screens/ShareScreen';
 import StatsScreen from './screens/StatsScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
+import PremiumLimitOverlay from './components/PremiumLimitOverlay';
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
   const { t } = useLanguage();
@@ -68,7 +69,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const { clearImage, downloadImage, downloadImageFrom, setImage } = useImageStore();
   const { isLightboxOpen, closeLightbox } = useImageLightbox();
   const { readyToInstall, applyUpdate } = useAppUpdate();
-  const { refresh: refreshPremium } = usePremium();
+  const { isPremium, refresh: refreshPremium } = usePremium();
+  const [limitReached, setLimitReached] = useState<'collection' | 'wishlist' | null>(null);
   const photoSlotId = (addMode === 'wishlist' ? 'wish-img-' : 'puzzle-img-') + formTargetId;
   // Lets an in-flight scan (lookup + image fetch can take several seconds)
   // detect that the user has since moved on to a different add/edit session,
@@ -120,6 +122,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   }
 
   function openAddFromHome() {
+    const owned = collection.filter((p) => p.ownerId === userId);
+    if (!isPremium && owned.length >= FREE_COLLECTION_LIMIT) {
+      setLimitReached('collection');
+      return;
+    }
     sessionGenerationRef.current += 1;
     setAddMode('collection');
     setForm({ ...EMPTY_FORM });
@@ -129,6 +136,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   }
 
   function openAddFromWishlist() {
+    const owned = wishlist.filter((w) => w.ownerId === userId);
+    if (!isPremium && owned.length >= FREE_WISHLIST_LIMIT) {
+      setLimitReached('wishlist');
+      return;
+    }
     sessionGenerationRef.current += 1;
     setAddMode('wishlist');
     setForm({ ...EMPTY_FORM });
@@ -353,6 +365,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     if (detailSource !== 'wishlist') return;
     const selected = wishlist.find((w) => w.id === selectedId);
     if (!selected) return;
+    const owned = collection.filter((p) => p.ownerId === userId);
+    if (!isPremium && owned.length >= FREE_COLLECTION_LIMIT) {
+      setLimitReached('collection');
+      return;
+    }
     const item: Omit<Puzzle, 'ownerId'> = {
       id: selected.id,
       name: selected.name,
@@ -381,6 +398,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   async function importToMyWishlist() {
     const selected = detailSource === 'collection' ? selectedPuzzle : selectedWishlistItem;
     if (!selected || selected.ownerId === userId) return;
+    const owned = wishlist.filter((w) => w.ownerId === userId);
+    if (!isPremium && owned.length >= FREE_WISHLIST_LIMIT) {
+      setLimitReached('wishlist');
+      return;
+    }
     const newId = crypto.randomUUID();
     const item: Omit<WishlistItem, 'ownerId'> = {
       id: newId,
@@ -574,6 +596,14 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           addPuzzle={addPuzzle}
           addWishlistItem={addWishlistItem}
           onDone={() => setShowImportPrompt(false)}
+        />
+      )}
+
+      {limitReached && (
+        <PremiumLimitOverlay
+          kind={limitReached}
+          limit={limitReached === 'collection' ? FREE_COLLECTION_LIMIT : FREE_WISHLIST_LIMIT}
+          onClose={() => setLimitReached(null)}
         />
       )}
     </>

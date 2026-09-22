@@ -197,6 +197,12 @@ export interface Dict {
     sharedWithMeEmpty: string;
     sharedWithMeHint: string;
   };
+  premium: {
+    limitTitle: string;
+    limitBodyCollection: (limit: number) => string;
+    limitBodyWishlist: (limit: number) => string;
+    limitClose: string;
+  };
 }
 
 const fr: Dict = {
@@ -414,6 +420,14 @@ const fr: Dict = {
     sharedWithMeEmpty: "Personne n'a encore partagé sa collection ou sa wishlist avec toi.",
     sharedWithMeHint: "Utilise le filtre en haut de ta collection ou de ta wishlist pour voir ce que quelqu'un a partagé.",
   },
+  premium: {
+    limitTitle: 'Limite atteinte',
+    limitBodyCollection: (limit) =>
+      `Ta collection gratuite est limitée à ${limit} puzzles. Les fonctionnalités premium arrivent bientôt pour aller plus loin !`,
+    limitBodyWishlist: (limit) =>
+      `Ta liste d'envies gratuite est limitée à ${limit} puzzles. Les fonctionnalités premium arrivent bientôt pour aller plus loin !`,
+    limitClose: "Compris",
+  },
 };
 
 const en: Dict = {
@@ -629,6 +643,14 @@ const en: Dict = {
     sharedWithMeTitle: 'Shared with me',
     sharedWithMeEmpty: "No one has shared their collection or wishlist with you yet.",
     sharedWithMeHint: "Use the filter at the top of your collection or wishlist to see what someone has shared.",
+  },
+  premium: {
+    limitTitle: 'Limit reached',
+    limitBodyCollection: (limit) =>
+      `Your free collection is limited to ${limit} puzzles. Premium features are coming soon to go further!`,
+    limitBodyWishlist: (limit) =>
+      `Your free wishlist is limited to ${limit} puzzles. Premium features are coming soon to go further!`,
+    limitClose: 'Got it',
   },
 };
 
