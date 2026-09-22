@@ -11,8 +11,8 @@ export function dotString(n: number): string {
 }
 
 const STATUS_COLORS: Record<Status, { background: string; color: string }> = {
-  done: { background: 'oklch(90% 0.09 150)', color: 'oklch(38% 0.13 150)' },
-  in_progress: { background: 'oklch(93% 0.08 350)', color: 'oklch(45% 0.2 350)' },
+  done: { background: 'var(--badge-green-bg)', color: 'var(--badge-green-fg)' },
+  in_progress: { background: 'var(--badge-pink-bg)', color: 'var(--badge-pink-fg)' },
   todo: { background: 'var(--surface-alt)', color: 'var(--text-tertiary)' },
 };
 
@@ -28,8 +28,8 @@ export function statusStyle(status: Status): CSSProperties {
 }
 
 const PRIORITY_COLORS: Record<Priority, { background: string; color: string }> = {
-  high: { background: 'oklch(93% 0.08 350)', color: 'oklch(45% 0.2 350)' },
-  medium: { background: 'oklch(92% 0.05 300)', color: 'oklch(45% 0.16 300)' },
+  high: { background: 'var(--badge-pink-bg)', color: 'var(--badge-pink-fg)' },
+  medium: { background: 'var(--badge-purple-bg)', color: 'var(--badge-purple-fg)' },
   low: { background: 'var(--surface-alt)', color: 'var(--text-tertiary)' },
 };
 

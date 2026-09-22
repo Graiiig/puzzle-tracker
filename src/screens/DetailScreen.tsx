@@ -122,8 +122,8 @@ export default function DetailScreen({
             <span
               key={g}
               style={{
-                background: 'oklch(93% 0.06 350)',
-                color: 'oklch(45% 0.2 350)',
+                background: 'var(--badge-pink-bg)',
+                color: 'var(--badge-pink-fg)',
                 fontWeight: 800,
                 fontSize: 12,
                 padding: '6px 12px',
@@ -135,8 +135,8 @@ export default function DetailScreen({
           ))}
           <span
             style={{
-              background: 'oklch(92% 0.05 300)',
-              color: 'oklch(45% 0.16 300)',
+              background: 'var(--badge-purple-bg)',
+              color: 'var(--badge-purple-fg)',
               fontWeight: 800,
               fontSize: 12,
               padding: '6px 12px',
@@ -160,7 +160,7 @@ export default function DetailScreen({
               <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)' }}>{ratingLabel(puzzle, t)}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-              <span style={{ fontSize: 15, color: 'oklch(45% 0.16 300)', letterSpacing: 2 }}>
+              <span style={{ fontSize: 15, color: 'var(--accent-purple)', letterSpacing: 2 }}>
                 {dotString(puzzle.difficulty || 0)}
               </span>
               <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)' }}>{t.detail.difficulty}</span>

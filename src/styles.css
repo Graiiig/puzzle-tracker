@@ -7,6 +7,14 @@
   --text-secondary: oklch(35% 0.02 340);
   --text-tertiary: oklch(50% 0.03 340);
   --text-muted: oklch(55% 0.03 340);
+  --badge-green-bg: oklch(90% 0.09 150);
+  --badge-green-fg: oklch(38% 0.13 150);
+  --badge-pink-bg: oklch(93% 0.08 350);
+  --badge-pink-fg: oklch(45% 0.2 350);
+  --badge-purple-bg: oklch(92% 0.05 300);
+  --badge-purple-fg: oklch(45% 0.16 300);
+  --accent-pink: oklch(45% 0.2 350);
+  --accent-purple: oklch(45% 0.16 300);
 }
 
 /* The media query covers the OS setting; the data-theme scope covers an
@@ -22,6 +30,14 @@
     --text-secondary: oklch(85% 0.02 340);
     --text-tertiary: oklch(72% 0.02 340);
     --text-muted: oklch(62% 0.02 340);
+    --badge-green-bg: oklch(30% 0.07 150);
+    --badge-green-fg: oklch(78% 0.16 150);
+    --badge-pink-bg: oklch(32% 0.09 350);
+    --badge-pink-fg: oklch(78% 0.19 350);
+    --badge-purple-bg: oklch(30% 0.07 300);
+    --badge-purple-fg: oklch(78% 0.15 300);
+    --accent-pink: oklch(78% 0.19 350);
+    --accent-purple: oklch(78% 0.15 300);
   }
 }
 
@@ -34,6 +50,14 @@
   --text-secondary: oklch(85% 0.02 340);
   --text-tertiary: oklch(72% 0.02 340);
   --text-muted: oklch(62% 0.02 340);
+  --badge-green-bg: oklch(30% 0.07 150);
+  --badge-green-fg: oklch(78% 0.16 150);
+  --badge-pink-bg: oklch(32% 0.09 350);
+  --badge-pink-fg: oklch(78% 0.19 350);
+  --badge-purple-bg: oklch(30% 0.07 300);
+  --badge-purple-fg: oklch(78% 0.15 300);
+  --accent-pink: oklch(78% 0.19 350);
+  --accent-purple: oklch(78% 0.15 300);
 }
 
 * {

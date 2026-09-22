@@ -137,8 +137,8 @@ export default function ShareScreen({
                 padding: '0 18px',
                 borderRadius: 14,
                 border: 'none',
-                background: 'oklch(93% 0.05 300)',
-                color: 'oklch(42% 0.16 300)',
+                background: 'var(--badge-purple-bg)',
+                color: 'var(--badge-purple-fg)',
                 fontWeight: 800,
                 fontSize: 13,
                 cursor: savingPseudo || !pseudoInput.trim() ? 'default' : 'pointer',
@@ -208,8 +208,8 @@ export default function ShareScreen({
               padding: '11px 18px',
               borderRadius: 14,
               border: 'none',
-              background: 'oklch(93% 0.05 300)',
-              color: 'oklch(42% 0.16 300)',
+              background: 'var(--badge-purple-bg)',
+              color: 'var(--badge-purple-fg)',
               fontWeight: 800,
               fontSize: 13,
               cursor:
@@ -304,8 +304,8 @@ export default function ShareScreen({
                           fontWeight: 800,
                           padding: '4px 10px',
                           borderRadius: 100,
-                          background: 'oklch(92% 0.05 300)',
-                          color: 'oklch(42% 0.16 300)',
+                          background: 'var(--badge-purple-bg)',
+                          color: 'var(--badge-purple-fg)',
                         }}
                       >
                         {t.share.shareCollectionLabel}
@@ -318,8 +318,8 @@ export default function ShareScreen({
                           fontWeight: 800,
                           padding: '4px 10px',
                           borderRadius: 100,
-                          background: 'oklch(93% 0.06 350)',
-                          color: 'oklch(45% 0.2 350)',
+                          background: 'var(--badge-pink-bg)',
+                          color: 'var(--badge-pink-fg)',
                         }}
                       >
                         {t.share.shareWishlistLabel}
