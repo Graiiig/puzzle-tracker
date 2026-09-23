@@ -5,6 +5,9 @@ export const SORT_MODES: SortMode[] = ['recent', 'alphabetical', 'pieces', 'diff
 export const STATUSES: Status[] = ['todo', 'in_progress', 'done'];
 export const PRIORITIES: Priority[] = ['low', 'medium', 'high'];
 
+export const FREE_COLLECTION_LIMIT = 30;
+export const FREE_WISHLIST_LIMIT = 15;
+
 export const EMPTY_FORM: PuzzleForm = {
   name: '',
   brand: '',
