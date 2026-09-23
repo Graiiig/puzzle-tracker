@@ -95,6 +95,8 @@ export interface Dict {
     averageTimeByPieces: string;
     pieceViewExact: string;
     pieceViewBucket: string;
+    premiumLockTitle: string;
+    premiumLockBody: string;
   };
   add: {
     editTitle: string;
@@ -298,6 +300,8 @@ const fr: Dict = {
     averageTimeByPieces: 'Temps moyen par nombre de pièces',
     pieceViewExact: 'Exact',
     pieceViewBucket: 'Par tranche',
+    premiumLockTitle: 'Statistique premium',
+    premiumLockBody: 'Bientôt disponible pour aller plus loin dans tes stats.',
   },
   add: {
     editTitle: 'Modifier',
@@ -523,6 +527,8 @@ const en: Dict = {
     averageTimeByPieces: 'Average time by piece count',
     pieceViewExact: 'Exact',
     pieceViewBucket: 'By range',
+    premiumLockTitle: 'Premium stat',
+    premiumLockBody: 'Coming soon to go further with your stats.',
   },
   add: {
     editTitle: 'Edit',
