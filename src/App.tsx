@@ -561,6 +561,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       {screen === 'stats' && (
         <StatsScreen
           collection={collection.filter((p) => p.ownerId === userId)}
+          isPremium={isPremium}
           onClose={() => setScreen('home')}
           onOpenPuzzle={(id) => openPuzzle(id, 'stats')}
         />

@@ -16,6 +16,7 @@ import {
 
 interface StatsScreenProps {
   collection: Puzzle[];
+  isPremium: boolean;
   onClose: () => void;
   onOpenPuzzle: (id: string) => void;
 }
@@ -36,6 +37,28 @@ function SectionTitle({ children }: { children: ReactNode }) {
   return (
     <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 15, color: 'var(--text-primary)' }}>
       {children}
+    </div>
+  );
+}
+
+function PremiumLock({ title, body }: { title: string; body: string }) {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 12,
+        background: 'var(--badge-purple-bg)',
+        borderRadius: 16,
+        padding: '14px 16px',
+        marginTop: 12,
+      }}
+    >
+      <span style={{ fontSize: 22 }}>🔒</span>
+      <div>
+        <div style={{ fontWeight: 800, fontSize: 13, color: 'var(--badge-purple-fg)' }}>{title}</div>
+        <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--badge-purple-fg)', marginTop: 2 }}>{body}</div>
+      </div>
     </div>
   );
 }
@@ -87,7 +110,7 @@ function RankedBar({
   );
 }
 
-export default function StatsScreen({ collection, onClose, onOpenPuzzle }: StatsScreenProps) {
+export default function StatsScreen({ collection, isPremium, onClose, onOpenPuzzle }: StatsScreenProps) {
   const { t, lang } = useLanguage();
   const [recapScope, setRecapScope] = useState<'year' | 'all'>('year');
   const [selectedMonthIndex, setSelectedMonthIndex] = useState<number | null>(null);
@@ -277,73 +300,87 @@ export default function StatsScreen({ collection, onClose, onOpenPuzzle }: Stats
 
             <div>
               <SectionTitle>{t.stats.byBrandTitle}</SectionTitle>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
-                {brands.map((b) => (
-                  <RankedBar key={b.brand} label={b.brand} value={b.count} max={brandMax} color={BAR_COLOR} />
-                ))}
-              </div>
+              {isPremium ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
+                  {brands.map((b) => (
+                    <RankedBar key={b.brand} label={b.brand} value={b.count} max={brandMax} color={BAR_COLOR} />
+                  ))}
+                </div>
+              ) : (
+                <PremiumLock title={t.stats.premiumLockTitle} body={t.stats.premiumLockBody} />
+              )}
             </div>
 
             <div>
               <SectionTitle>{t.stats.byDifficultyTitle}</SectionTitle>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
-                {difficulty.map((count, i) => (
-                  <RankedBar
-                    key={i}
-                    label={<span style={{ color: DIFFICULTY_RAMP[i], letterSpacing: 1 }}>{dotString(i + 1)}</span>}
-                    value={count}
-                    max={difficultyMax}
-                    color={DIFFICULTY_RAMP[i]}
-                  />
-                ))}
-              </div>
+              {isPremium ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>
+                  {difficulty.map((count, i) => (
+                    <RankedBar
+                      key={i}
+                      label={<span style={{ color: DIFFICULTY_RAMP[i], letterSpacing: 1 }}>{dotString(i + 1)}</span>}
+                      value={count}
+                      max={difficultyMax}
+                      color={DIFFICULTY_RAMP[i]}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <PremiumLock title={t.stats.premiumLockTitle} body={t.stats.premiumLockBody} />
+              )}
             </div>
 
             <div>
               <SectionTitle>{t.stats.paceTitle}</SectionTitle>
-              <div style={{ display: 'flex', marginTop: 10 }}>
-                <StatTile value={formatMinutesAsHours(Math.round(averageMinutesPerPuzzle))} label={t.stats.averageTimePerPuzzle} />
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16 }}>
-                <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                  {t.stats.averageTimeByPieces}
-                </div>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <Chip
-                    label={t.stats.pieceViewExact}
-                    onClick={() => setPieceView('exact')}
-                    style={{ ...chipStyle(pieceView === 'exact', 350), padding: '6px 12px', fontSize: 11 }}
-                  />
-                  <Chip
-                    label={t.stats.pieceViewBucket}
-                    onClick={() => setPieceView('bucket')}
-                    style={{ ...chipStyle(pieceView === 'bucket', 350), padding: '6px 12px', fontSize: 11 }}
-                  />
-                </div>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>
-                {pieceView === 'exact'
-                  ? paceByExactPieces.map((p) => (
-                      <RankedBar
-                        key={p.pieces}
-                        label={t.detail.pieces(p.pieces)}
-                        value={p.averageMinutes}
-                        valueLabel={formatMinutesAsHours(Math.round(p.averageMinutes))}
-                        max={paceMax}
-                        color={BAR_COLOR}
+              {isPremium ? (
+                <>
+                  <div style={{ display: 'flex', marginTop: 10 }}>
+                    <StatTile value={formatMinutesAsHours(Math.round(averageMinutesPerPuzzle))} label={t.stats.averageTimePerPuzzle} />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 16 }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                      {t.stats.averageTimeByPieces}
+                    </div>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <Chip
+                        label={t.stats.pieceViewExact}
+                        onClick={() => setPieceView('exact')}
+                        style={{ ...chipStyle(pieceView === 'exact', 350), padding: '6px 12px', fontSize: 11 }}
                       />
-                    ))
-                  : paceByBucket.map((p) => (
-                      <RankedBar
-                        key={p.bucket}
-                        label={t.pieceBucket[p.bucket]}
-                        value={p.averageMinutes}
-                        valueLabel={p.count > 0 ? formatMinutesAsHours(Math.round(p.averageMinutes)) : '—'}
-                        max={paceMax}
-                        color={BAR_COLOR}
+                      <Chip
+                        label={t.stats.pieceViewBucket}
+                        onClick={() => setPieceView('bucket')}
+                        style={{ ...chipStyle(pieceView === 'bucket', 350), padding: '6px 12px', fontSize: 11 }}
                       />
-                    ))}
-              </div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 10 }}>
+                    {pieceView === 'exact'
+                      ? paceByExactPieces.map((p) => (
+                          <RankedBar
+                            key={p.pieces}
+                            label={t.detail.pieces(p.pieces)}
+                            value={p.averageMinutes}
+                            valueLabel={formatMinutesAsHours(Math.round(p.averageMinutes))}
+                            max={paceMax}
+                            color={BAR_COLOR}
+                          />
+                        ))
+                      : paceByBucket.map((p) => (
+                          <RankedBar
+                            key={p.bucket}
+                            label={t.pieceBucket[p.bucket]}
+                            value={p.averageMinutes}
+                            valueLabel={p.count > 0 ? formatMinutesAsHours(Math.round(p.averageMinutes)) : '—'}
+                            max={paceMax}
+                            color={BAR_COLOR}
+                          />
+                        ))}
+                  </div>
+                </>
+              ) : (
+                <PremiumLock title={t.stats.premiumLockTitle} body={t.stats.premiumLockBody} />
+              )}
             </div>
           </>
         )}
