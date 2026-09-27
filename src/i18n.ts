@@ -25,6 +25,17 @@ export interface Dict {
     receiveCode: string;
     noPassword: string;
   };
+  onboarding: {
+    skip: string;
+    next: string;
+    start: string;
+    collectionTitle: string;
+    collectionBody: string;
+    wishlistTitle: string;
+    wishlistBody: string;
+    shareTitle: string;
+    shareBody: string;
+  };
   nav: {
     collection: string;
     wishlist: string;
@@ -229,6 +240,18 @@ const fr: Dict = {
     sending: 'Envoi...',
     receiveCode: 'Recevoir le code',
     noPassword: 'Pas de mot de passe : tu reçois un code par email pour te connecter.',
+  },
+  onboarding: {
+    skip: 'Passer',
+    next: 'Suivant',
+    start: 'Commencer',
+    collectionTitle: 'Ta collection en un clin d’œil',
+    collectionBody:
+      'Note tes puzzles terminés, en cours ou à faire, avec photo, note, difficulté et temps passé.',
+    wishlistTitle: 'Ne perds plus tes envies',
+    wishlistBody: 'Garde une liste de puzzles à acheter, classée par priorité.',
+    shareTitle: 'Partage & statistiques',
+    shareBody: 'Partage ta collection avec tes proches et suis tes stats de progression.',
   },
   nav: {
     collection: 'Collection',
@@ -456,6 +479,17 @@ const en: Dict = {
     sending: 'Sending...',
     receiveCode: 'Get the code',
     noPassword: "No password: you'll get a code by email to sign in.",
+  },
+  onboarding: {
+    skip: 'Skip',
+    next: 'Next',
+    start: 'Get started',
+    collectionTitle: 'Your collection at a glance',
+    collectionBody: 'Track finished, in-progress, and to-do puzzles, with a photo, rating, difficulty, and time spent.',
+    wishlistTitle: "Never lose track of what you want",
+    wishlistBody: 'Keep a wishlist of puzzles to buy, sorted by priority.',
+    shareTitle: 'Share & track your stats',
+    shareBody: 'Share your collection with friends and family, and follow your progress over time.',
   },
   nav: {
     collection: 'Collection',
