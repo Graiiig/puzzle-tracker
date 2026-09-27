@@ -24,6 +24,7 @@ import WishlistScreen from './screens/WishlistScreen';
 import DetailScreen from './screens/DetailScreen';
 import AddScreen from './screens/AddScreen';
 import LoginScreen from './screens/LoginScreen';
+import OnboardingScreen from './screens/OnboardingScreen';
 import ShareScreen from './screens/ShareScreen';
 import StatsScreen from './screens/StatsScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
@@ -611,9 +612,12 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   );
 }
 
+const ONBOARDING_SEEN_KEY = 'puzzle-tracker:onboarding-seen';
+
 function AuthGate() {
   const { user, loading, signOut } = useAuth();
   const { t } = useLanguage();
+  const [onboardingSeen, setOnboardingSeen] = useState(() => localStorage.getItem(ONBOARDING_SEEN_KEY) === '1');
 
   if (loading) {
     return (
@@ -633,6 +637,16 @@ function AuthGate() {
   }
 
   if (!user) {
+    if (!onboardingSeen) {
+      return (
+        <OnboardingScreen
+          onDone={() => {
+            localStorage.setItem(ONBOARDING_SEEN_KEY, '1');
+            setOnboardingSeen(true);
+          }}
+        />
+      );
+    }
     return <LoginScreen />;
   }
 
