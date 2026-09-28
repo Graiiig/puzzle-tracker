@@ -7,6 +7,7 @@ import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbo
 import { LanguageProvider, useLanguage } from './hooks/useLanguage';
 import { ThemeProvider, useTheme } from './hooks/useTheme';
 import { PremiumProvider, usePremium } from './hooks/usePremium';
+import { isPurchasesConfigured, PurchasesProvider, usePurchases } from './hooks/usePurchases';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { useAppUpdate } from './hooks/useAppUpdate';
@@ -71,7 +72,9 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const { isLightboxOpen, closeLightbox } = useImageLightbox();
   const { readyToInstall, applyUpdate } = useAppUpdate();
   const { isPremium, refresh: refreshPremium } = usePremium();
+  const { priceLabel, purchasePremium, restorePurchases } = usePurchases();
   const [limitReached, setLimitReached] = useState<'collection' | 'wishlist' | null>(null);
+  const [purchasing, setPurchasing] = useState(false);
   const photoSlotId = (addMode === 'wishlist' ? 'wish-img-' : 'puzzle-img-') + formTargetId;
   // Lets an in-flight scan (lookup + image fetch can take several seconds)
   // detect that the user has since moved on to a different add/edit session,
@@ -463,6 +466,34 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     }
   }
 
+  // is_premium is only ever set server-side (the webhook that receives
+  // RevenueCat purchase events, using the service role key) — the guard
+  // trigger blocks a normal client write. So a successful purchase here
+  // doesn't flip isPremium directly; we just re-fetch shortly after, giving
+  // the webhook time to land.
+  async function handlePurchasePremium() {
+    setPurchasing(true);
+    const result = await purchasePremium();
+    setPurchasing(false);
+    if (result.success) {
+      setLimitReached(null);
+      window.alert(t.premium.purchaseSuccess);
+      setTimeout(() => refreshPremium(), 2500);
+    } else if (result.error === 'unknown') {
+      window.alert(t.premium.purchaseError);
+    }
+  }
+
+  async function handleRestorePurchases() {
+    const result = await restorePurchases();
+    if (result.success) {
+      window.alert(t.premium.restoreDone);
+      setTimeout(() => refreshPremium(), 2000);
+    } else {
+      window.alert(t.premium.restoreError);
+    }
+  }
+
   const selectedPuzzle = collection.find((p) => p.id === selectedId) ?? collection[0];
   const selectedWishlistItem = wishlist.find((w) => w.id === selectedId) ?? wishlist[0];
 
@@ -512,6 +543,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onImport={importBackup}
           theme={theme}
           onCycleTheme={cycleTheme}
+          showRestorePurchases={isPurchasesConfigured && !isPremium}
+          onRestorePurchases={handleRestorePurchases}
         />
       )}
 
@@ -563,6 +596,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         <StatsScreen
           collection={collection.filter((p) => p.ownerId === userId)}
           isPremium={isPremium}
+          purchaseAvailable={isPurchasesConfigured}
+          priceLabel={priceLabel}
+          purchasing={purchasing}
+          onPurchase={handlePurchasePremium}
           onClose={() => setScreen('home')}
           onOpenPuzzle={(id) => openPuzzle(id, 'stats')}
         />
@@ -605,6 +642,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         <PremiumLimitOverlay
           kind={limitReached}
           limit={limitReached === 'collection' ? FREE_COLLECTION_LIMIT : FREE_WISHLIST_LIMIT}
+          purchaseAvailable={isPurchasesConfigured}
+          priceLabel={priceLabel}
+          purchasing={purchasing}
+          onPurchase={handlePurchasePremium}
           onClose={() => setLimitReached(null)}
         />
       )}
@@ -654,12 +695,14 @@ function AuthGate() {
     <ImageStoreProvider userId={user.id}>
       <ImageLightboxProvider>
         <PremiumProvider userId={user.id}>
-          <AppShell
-            userId={user.id}
-            onSignOut={() => {
-              if (window.confirm(t.app.confirmSignOut)) signOut();
-            }}
-          />
+          <PurchasesProvider userId={user.id}>
+            <AppShell
+              userId={user.id}
+              onSignOut={() => {
+                if (window.confirm(t.app.confirmSignOut)) signOut();
+              }}
+            />
+          </PurchasesProvider>
         </PremiumProvider>
       </ImageLightboxProvider>
     </ImageStoreProvider>

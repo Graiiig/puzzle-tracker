@@ -215,6 +215,14 @@ export interface Dict {
     limitBodyCollection: (limit: number) => string;
     limitBodyWishlist: (limit: number) => string;
     limitClose: string;
+    purchaseButton: (price: string) => string;
+    purchaseButtonGeneric: string;
+    purchasing: string;
+    purchaseSuccess: string;
+    purchaseError: string;
+    restoreMenuLabel: string;
+    restoreDone: string;
+    restoreError: string;
   };
 }
 
@@ -324,7 +332,7 @@ const fr: Dict = {
     pieceViewExact: 'Exact',
     pieceViewBucket: 'Par tranche',
     premiumLockTitle: 'Statistique premium',
-    premiumLockBody: 'Bientôt disponible pour aller plus loin dans tes stats.',
+    premiumLockBody: 'Passe premium pour débloquer cette statistique.',
   },
   add: {
     editTitle: 'Modifier',
@@ -449,11 +457,18 @@ const fr: Dict = {
   },
   premium: {
     limitTitle: 'Limite atteinte',
-    limitBodyCollection: (limit) =>
-      `Ta collection gratuite est limitée à ${limit} puzzles. Les fonctionnalités premium arrivent bientôt pour aller plus loin !`,
+    limitBodyCollection: (limit) => `Ta collection gratuite est limitée à ${limit} puzzles. Passe premium pour la rendre illimitée.`,
     limitBodyWishlist: (limit) =>
-      `Ta liste d'envies gratuite est limitée à ${limit} puzzles. Les fonctionnalités premium arrivent bientôt pour aller plus loin !`,
+      `Ta liste d'envies gratuite est limitée à ${limit} puzzles. Passe premium pour la rendre illimitée.`,
     limitClose: "Compris",
+    purchaseButton: (price) => `Débloquer Premium — ${price}`,
+    purchaseButtonGeneric: 'Débloquer Premium',
+    purchasing: 'Achat en cours...',
+    purchaseSuccess: 'Merci pour ton achat ! Premium sera actif dans quelques instants.',
+    purchaseError: "L'achat n'a pas pu aboutir. Réessaie plus tard.",
+    restoreMenuLabel: 'Restaurer mes achats',
+    restoreDone: 'Achats restaurés. Si tu avais déjà Premium, ce sera actif sous peu.',
+    restoreError: 'Impossible de restaurer les achats pour le moment.',
   },
 };
 
@@ -562,7 +577,7 @@ const en: Dict = {
     pieceViewExact: 'Exact',
     pieceViewBucket: 'By range',
     premiumLockTitle: 'Premium stat',
-    premiumLockBody: 'Coming soon to go further with your stats.',
+    premiumLockBody: 'Go premium to unlock this stat.',
   },
   add: {
     editTitle: 'Edit',
@@ -686,11 +701,17 @@ const en: Dict = {
   },
   premium: {
     limitTitle: 'Limit reached',
-    limitBodyCollection: (limit) =>
-      `Your free collection is limited to ${limit} puzzles. Premium features are coming soon to go further!`,
-    limitBodyWishlist: (limit) =>
-      `Your free wishlist is limited to ${limit} puzzles. Premium features are coming soon to go further!`,
+    limitBodyCollection: (limit) => `Your free collection is limited to ${limit} puzzles. Go premium to make it unlimited.`,
+    limitBodyWishlist: (limit) => `Your free wishlist is limited to ${limit} puzzles. Go premium to make it unlimited.`,
     limitClose: 'Got it',
+    purchaseButton: (price) => `Unlock Premium — ${price}`,
+    purchaseButtonGeneric: 'Unlock Premium',
+    purchasing: 'Purchasing...',
+    purchaseSuccess: "Thanks for your purchase! Premium will be active in a moment.",
+    purchaseError: 'The purchase could not go through. Please try again later.',
+    restoreMenuLabel: 'Restore purchases',
+    restoreDone: "Purchases restored. If you already had Premium, it'll be active shortly.",
+    restoreError: 'Could not restore purchases right now.',
   },
 };
 

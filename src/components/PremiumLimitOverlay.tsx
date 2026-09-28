@@ -3,10 +3,22 @@ import { useLanguage } from '../hooks/useLanguage';
 interface PremiumLimitOverlayProps {
   kind: 'collection' | 'wishlist';
   limit: number;
+  purchaseAvailable: boolean;
+  priceLabel: string | null;
+  purchasing: boolean;
+  onPurchase: () => void;
   onClose: () => void;
 }
 
-export default function PremiumLimitOverlay({ kind, limit, onClose }: PremiumLimitOverlayProps) {
+export default function PremiumLimitOverlay({
+  kind,
+  limit,
+  purchaseAvailable,
+  priceLabel,
+  purchasing,
+  onPurchase,
+  onClose,
+}: PremiumLimitOverlayProps) {
   const { t } = useLanguage();
 
   return (
@@ -36,7 +48,7 @@ export default function PremiumLimitOverlay({ kind, limit, onClose }: PremiumLim
           {kind === 'collection' ? t.premium.limitBodyCollection(limit) : t.premium.limitBodyWishlist(limit)}
         </div>
         <div
-          onClick={onClose}
+          onClick={purchaseAvailable && !purchasing ? onPurchase : onClose}
           style={{
             marginTop: 18,
             background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',
@@ -46,11 +58,23 @@ export default function PremiumLimitOverlay({ kind, limit, onClose }: PremiumLim
             fontSize: 15,
             padding: 13,
             borderRadius: 14,
-            cursor: 'pointer',
+            cursor: purchasing ? 'default' : 'pointer',
+            opacity: purchasing ? 0.7 : 1,
           }}
         >
-          {t.premium.limitClose}
+          {purchaseAvailable
+            ? purchasing
+              ? t.premium.purchasing
+              : priceLabel
+                ? t.premium.purchaseButton(priceLabel)
+                : t.premium.purchaseButtonGeneric
+            : t.premium.limitClose}
         </div>
+        {purchaseAvailable && (
+          <div onClick={onClose} style={{ marginTop: 12, fontSize: 13, fontWeight: 700, color: 'var(--text-muted)', cursor: 'pointer' }}>
+            {t.premium.limitClose}
+          </div>
+        )}
       </div>
     </div>
   );

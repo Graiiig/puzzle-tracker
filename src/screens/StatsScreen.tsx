@@ -17,6 +17,10 @@ import {
 interface StatsScreenProps {
   collection: Puzzle[];
   isPremium: boolean;
+  purchaseAvailable: boolean;
+  priceLabel: string | null;
+  purchasing: boolean;
+  onPurchase: () => void;
   onClose: () => void;
   onOpenPuzzle: (id: string) => void;
 }
@@ -110,7 +114,16 @@ function RankedBar({
   );
 }
 
-export default function StatsScreen({ collection, isPremium, onClose, onOpenPuzzle }: StatsScreenProps) {
+export default function StatsScreen({
+  collection,
+  isPremium,
+  purchaseAvailable,
+  priceLabel,
+  purchasing,
+  onPurchase,
+  onClose,
+  onOpenPuzzle,
+}: StatsScreenProps) {
   const { t, lang } = useLanguage();
   const [recapScope, setRecapScope] = useState<'year' | 'all'>('year');
   const [selectedMonthIndex, setSelectedMonthIndex] = useState<number | null>(null);
@@ -382,6 +395,27 @@ export default function StatsScreen({ collection, isPremium, onClose, onOpenPuzz
                 <PremiumLock title={t.stats.premiumLockTitle} body={t.stats.premiumLockBody} />
               )}
             </div>
+
+            {!isPremium && purchaseAvailable && (
+              <div
+                onClick={purchasing ? undefined : onPurchase}
+                style={{
+                  background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',
+                  color: 'white',
+                  fontFamily: "'Baloo 2',sans-serif",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  textAlign: 'center',
+                  padding: 14,
+                  borderRadius: 16,
+                  cursor: purchasing ? 'default' : 'pointer',
+                  opacity: purchasing ? 0.7 : 1,
+                  boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
+                }}
+              >
+                {purchasing ? t.premium.purchasing : priceLabel ? t.premium.purchaseButton(priceLabel) : t.premium.purchaseButtonGeneric}
+              </div>
+            )}
           </>
         )}
       </div>
