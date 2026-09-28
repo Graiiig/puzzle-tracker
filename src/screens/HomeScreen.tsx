@@ -7,7 +7,6 @@ import PullToRefresh from '../components/PullToRefresh';
 import { STATUSES, SORT_MODES } from '../data';
 import { useLanguage } from '../hooks/useLanguage';
 import type { Genre, PieceBucket, Puzzle, SharedOwner, SortMode, Status } from '../types';
-import type { ThemePreference } from '../hooks/useTheme';
 import { chipStyle, formatMinutesAsHours, parseTimeToMinutes, sortList, starString, statusStyle } from '../utils/format';
 import { matchesFilters } from '../utils/filters';
 import { collectArtists, collectBrands, collectGenres } from '../utils/genres';
@@ -44,8 +43,6 @@ interface HomeScreenProps {
   onGoWishlist: () => void;
   onGoSettings: () => void;
   onSignOut: () => void;
-  theme: ThemePreference;
-  onCycleTheme: () => void;
   showGoPremium: boolean;
   onGoPremium: () => void;
 }
@@ -82,12 +79,10 @@ export default function HomeScreen({
   onGoWishlist,
   onGoSettings,
   onSignOut,
-  theme,
-  onCycleTheme,
   showGoPremium,
   onGoPremium,
 }: HomeScreenProps) {
-  const { t, lang, toggleLang } = useLanguage();
+  const { t, lang } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -171,15 +166,6 @@ export default function HomeScreen({
                       : []),
                     { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false, highlight: false },
                     { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false, highlight: false },
-                    { icon: '🌐', label: t.home.menuLanguage, onClick: toggleLang, disabled: false, highlight: false },
-                    {
-                      icon: theme === 'light' ? '☀️' : theme === 'dark' ? '🌙' : '🌓',
-                      label:
-                        theme === 'light' ? t.home.menuThemeLight : theme === 'dark' ? t.home.menuThemeDark : t.home.menuThemeAuto,
-                      onClick: onCycleTheme,
-                      disabled: false,
-                      highlight: false,
-                    },
                     { icon: '⚙️', label: t.home.menuSettings, onClick: onGoSettings, disabled: false, highlight: false },
                     { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false, highlight: false },
                   ].map((item) => (

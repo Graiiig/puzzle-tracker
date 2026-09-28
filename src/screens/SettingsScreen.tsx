@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { useLanguage } from '../hooks/useLanguage';
+import { useTheme } from '../hooks/useTheme';
 
 interface SettingsScreenProps {
   onClose: () => void;
@@ -8,6 +9,8 @@ interface SettingsScreenProps {
   onImport: (file: File) => void;
   showRestorePurchases: boolean;
   onRestorePurchases: () => void;
+  showGoPremium: boolean;
+  onGoPremium: () => void;
 }
 
 export default function SettingsScreen({
@@ -17,15 +20,29 @@ export default function SettingsScreen({
   onImport,
   showRestorePurchases,
   onRestorePurchases,
+  showGoPremium,
+  onGoPremium,
 }: SettingsScreenProps) {
-  const { t } = useLanguage();
+  const { t, toggleLang } = useLanguage();
+  const { theme, cycleTheme } = useTheme();
   const importInputRef = useRef<HTMLInputElement>(null);
 
   const items = [
-    { icon: '⬇️', label: exporting ? t.home.menuExporting : t.home.menuExport, onClick: onExport, disabled: exporting },
-    { icon: '⬆️', label: t.home.menuImport, onClick: () => importInputRef.current?.click(), disabled: false },
+    ...(showGoPremium
+      ? [{ icon: '✨', label: t.home.menuGoPremium, onClick: onGoPremium, disabled: false, highlight: true }]
+      : []),
+    { icon: '🌐', label: t.home.menuLanguage, onClick: toggleLang, disabled: false, highlight: false },
+    {
+      icon: theme === 'light' ? '☀️' : theme === 'dark' ? '🌙' : '🌓',
+      label: theme === 'light' ? t.home.menuThemeLight : theme === 'dark' ? t.home.menuThemeDark : t.home.menuThemeAuto,
+      onClick: cycleTheme,
+      disabled: false,
+      highlight: false,
+    },
+    { icon: '⬇️', label: exporting ? t.home.menuExporting : t.home.menuExport, onClick: onExport, disabled: exporting, highlight: false },
+    { icon: '⬆️', label: t.home.menuImport, onClick: () => importInputRef.current?.click(), disabled: false, highlight: false },
     ...(showRestorePurchases
-      ? [{ icon: '♻️', label: t.premium.restoreMenuLabel, onClick: onRestorePurchases, disabled: false }]
+      ? [{ icon: '♻️', label: t.premium.restoreMenuLabel, onClick: onRestorePurchases, disabled: false, highlight: false }]
       : []),
   ];
 
@@ -79,12 +96,12 @@ export default function SettingsScreen({
               display: 'flex',
               alignItems: 'center',
               gap: 12,
-              background: 'var(--surface)',
+              background: item.highlight ? 'var(--badge-pink-bg)' : 'var(--surface)',
               borderRadius: 16,
               padding: '14px 16px',
               fontSize: 15,
-              fontWeight: 700,
-              color: item.disabled ? 'var(--text-muted)' : 'var(--text-primary)',
+              fontWeight: item.highlight ? 800 : 700,
+              color: item.disabled ? 'var(--text-muted)' : item.highlight ? 'var(--accent-pink)' : 'var(--text-primary)',
               cursor: item.disabled ? 'default' : 'pointer',
             }}
           >

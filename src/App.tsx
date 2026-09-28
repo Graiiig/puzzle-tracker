@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbox';
 import { LanguageProvider, useLanguage } from './hooks/useLanguage';
-import { ThemeProvider, useTheme } from './hooks/useTheme';
+import { ThemeProvider } from './hooks/useTheme';
 import { PremiumProvider, usePremium } from './hooks/usePremium';
 import { isPurchasesConfigured, PurchasesProvider, usePurchases } from './hooks/usePurchases';
 import { usePuzzles } from './hooks/usePuzzles';
@@ -34,7 +34,6 @@ import PremiumLimitOverlay from './components/PremiumLimitOverlay';
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
   const { t } = useLanguage();
-  const { theme, cycleTheme } = useTheme();
   const [screen, setScreen] = useState<Screen>('home');
   const { collection, addPuzzle, updatePuzzle, deletePuzzle, refresh: refreshCollection } = usePuzzles(userId);
   const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
@@ -540,8 +539,6 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onGoWishlist={() => setScreen('wishlist')}
           onGoSettings={() => setScreen('settings')}
           onSignOut={onSignOut}
-          theme={theme}
-          onCycleTheme={cycleTheme}
           showGoPremium={isPurchasesConfigured && !isPremium}
           onGoPremium={handlePurchasePremium}
         />
@@ -555,6 +552,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onImport={importBackup}
           showRestorePurchases={isPurchasesConfigured && !isPremium}
           onRestorePurchases={handleRestorePurchases}
+          showGoPremium={isPurchasesConfigured && !isPremium}
+          onGoPremium={handlePurchasePremium}
         />
       )}
 
