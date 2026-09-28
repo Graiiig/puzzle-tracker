@@ -172,6 +172,7 @@ export interface Dict {
     confirmImportBackup: string;
     importBackupDone: (p: number, w: number, ph: number) => string;
     importBackupError: string;
+    exportDone: string;
     updateDownloaded: string;
     updateRestart: string;
   };
@@ -404,6 +405,7 @@ const fr: Dict = {
       "Importer ce fichier de sauvegarde ? Les puzzles et envies qu'il contient seront ajoutés à ta collection actuelle (rien n'est supprimé ni remplacé).",
     importBackupDone: (p, w, ph) => `Import terminé : ${p} puzzle(s), ${w} envie(s) et ${ph} photo(s) ajouté(s).`,
     importBackupError: "Impossible de lire ce fichier. Vérifie que c'est bien un export JSON de l'application.",
+    exportDone: 'Fichier enregistré dans Documents.',
     updateDownloaded: 'Mise à jour téléchargée',
     updateRestart: 'Redémarrer',
   },
@@ -653,6 +655,7 @@ const en: Dict = {
       "Import this backup file? The puzzles and wishes it contains will be added to your current collection (nothing is deleted or replaced).",
     importBackupDone: (p, w, ph) => `Import complete: ${p} puzzle(s), ${w} wish(es) and ${ph} photo(s) added.`,
     importBackupError: "Couldn't read this file. Make sure it's a JSON export from the app.",
+    exportDone: 'File saved to Documents.',
     updateDownloaded: 'Update downloaded',
     updateRestart: 'Restart',
   },

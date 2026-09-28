@@ -461,6 +461,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     setExporting(true);
     try {
       await exportDataAsJson(collection, wishlist, downloadImage);
+      if (Capacitor.isNativePlatform()) window.alert(t.app.exportDone);
     } finally {
       setExporting(false);
     }

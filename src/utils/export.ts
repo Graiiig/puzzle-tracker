@@ -1,6 +1,5 @@
 import { Capacitor } from '@capacitor/core';
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem';
-import { Share } from '@capacitor/share';
 import type { Puzzle, WishlistItem } from '../types';
 
 function photoIdsFor(collection: Puzzle[], wishlist: WishlistItem[]): string[] {
@@ -32,17 +31,16 @@ export async function exportDataAsJson(
   const filename = `mes-puzzles-export-${new Date().toISOString().slice(0, 10)}.json`;
 
   // A plain <a download> click is a no-op inside the Android WebView (no
-  // Downloads-folder integration there), so on native we write the file to
-  // the app's cache dir and hand it to the OS share sheet instead — the
-  // web build keeps the classic blob-download link.
+  // Downloads-folder integration there), so on native we write straight to
+  // the public Documents directory instead — a real file the user can find
+  // in their Files app, no app-picker share sheet in the way.
   if (Capacitor.isNativePlatform()) {
-    const written = await Filesystem.writeFile({
+    await Filesystem.writeFile({
       path: filename,
       data: json,
-      directory: Directory.Cache,
+      directory: Directory.Documents,
       encoding: Encoding.UTF8,
     });
-    await Share.share({ files: [written.uri], dialogTitle: filename });
     return;
   }
 
