@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
@@ -7,7 +7,6 @@ import PullToRefresh from '../components/PullToRefresh';
 import { STATUSES, SORT_MODES } from '../data';
 import { useLanguage } from '../hooks/useLanguage';
 import type { Genre, PieceBucket, Puzzle, SharedOwner, SortMode, Status } from '../types';
-import type { ThemePreference } from '../hooks/useTheme';
 import { chipStyle, formatMinutesAsHours, parseTimeToMinutes, sortList, starString, statusStyle } from '../utils/format';
 import { matchesFilters } from '../utils/filters';
 import { collectArtists, collectBrands, collectGenres } from '../utils/genres';
@@ -42,14 +41,10 @@ interface HomeScreenProps {
   onAdd: () => void;
   onRefresh: () => Promise<void> | void;
   onGoWishlist: () => void;
+  onGoSettings: () => void;
   onSignOut: () => void;
-  onExport: () => void;
-  exporting: boolean;
-  onImport: (file: File) => void;
-  theme: ThemePreference;
-  onCycleTheme: () => void;
-  showRestorePurchases: boolean;
-  onRestorePurchases: () => void;
+  showGoPremium: boolean;
+  onGoPremium: () => void;
 }
 
 export default function HomeScreen({
@@ -82,17 +77,12 @@ export default function HomeScreen({
   onAdd,
   onRefresh,
   onGoWishlist,
+  onGoSettings,
   onSignOut,
-  onExport,
-  exporting,
-  onImport,
-  theme,
-  onCycleTheme,
-  showRestorePurchases,
-  onRestorePurchases,
+  showGoPremium,
+  onGoPremium,
 }: HomeScreenProps) {
-  const { t, lang, toggleLang } = useLanguage();
-  const importInputRef = useRef<HTMLInputElement>(null);
+  const { t, lang } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -136,17 +126,6 @@ export default function HomeScreen({
           <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 26, color: 'white' }}>
             Mes Puzzles ✨
           </div>
-          <input
-            ref={importInputRef}
-            type="file"
-            accept="application/json"
-            style={{ display: 'none' }}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              e.target.value = '';
-              if (file) onImport(file);
-            }}
-          />
           <div style={{ position: 'relative' }}>
             <div
               onClick={() => setMenuOpen((v) => !v)}
@@ -182,27 +161,13 @@ export default function HomeScreen({
                   }}
                 >
                   {[
-                    {
-                      icon: '⬇️',
-                      label: exporting ? t.home.menuExporting : t.home.menuExport,
-                      onClick: onExport,
-                      disabled: exporting,
-                    },
-                    { icon: '⬆️', label: t.home.menuImport, onClick: () => importInputRef.current?.click(), disabled: false },
-                    { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false },
-                    { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false },
-                    { icon: '🌐', label: t.home.menuLanguage, onClick: toggleLang, disabled: false },
-                    {
-                      icon: theme === 'light' ? '☀️' : theme === 'dark' ? '🌙' : '🌓',
-                      label:
-                        theme === 'light' ? t.home.menuThemeLight : theme === 'dark' ? t.home.menuThemeDark : t.home.menuThemeAuto,
-                      onClick: onCycleTheme,
-                      disabled: false,
-                    },
-                    ...(showRestorePurchases
-                      ? [{ icon: '♻️', label: t.premium.restoreMenuLabel, onClick: onRestorePurchases, disabled: false }]
+                    ...(showGoPremium
+                      ? [{ icon: '✨', label: t.home.menuGoPremium, onClick: onGoPremium, disabled: false, highlight: true }]
                       : []),
-                    { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false },
+                    { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false, highlight: false },
+                    { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false, highlight: false },
+                    { icon: '⚙️', label: t.home.menuSettings, onClick: onGoSettings, disabled: false, highlight: false },
+                    { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false, highlight: false },
                   ].map((item) => (
                     <div
                       key={item.icon}
@@ -217,8 +182,9 @@ export default function HomeScreen({
                         gap: 10,
                         padding: '12px 16px',
                         fontSize: 14,
-                        fontWeight: 700,
-                        color: item.disabled ? 'var(--text-muted)' : 'var(--text-primary)',
+                        fontWeight: item.highlight ? 800 : 700,
+                        color: item.disabled ? 'var(--text-muted)' : item.highlight ? 'var(--accent-pink)' : 'var(--text-primary)',
+                        background: item.highlight ? 'var(--badge-pink-bg)' : 'transparent',
                         cursor: item.disabled ? 'default' : 'pointer',
                         whiteSpace: 'nowrap',
                       }}

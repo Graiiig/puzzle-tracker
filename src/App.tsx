@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from './hooks/useAuth';
 import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbox';
 import { LanguageProvider, useLanguage } from './hooks/useLanguage';
-import { ThemeProvider, useTheme } from './hooks/useTheme';
+import { ThemeProvider } from './hooks/useTheme';
 import { PremiumProvider, usePremium } from './hooks/usePremium';
 import { isPurchasesConfigured, PurchasesProvider, usePurchases } from './hooks/usePurchases';
 import { usePuzzles } from './hooks/usePuzzles';
@@ -28,12 +28,12 @@ import LoginScreen from './screens/LoginScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import ShareScreen from './screens/ShareScreen';
 import StatsScreen from './screens/StatsScreen';
+import SettingsScreen from './screens/SettingsScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 import PremiumLimitOverlay from './components/PremiumLimitOverlay';
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
   const { t } = useLanguage();
-  const { theme, cycleTheme } = useTheme();
   const [screen, setScreen] = useState<Screen>('home');
   const { collection, addPuzzle, updatePuzzle, deletePuzzle, refresh: refreshCollection } = usePuzzles(userId);
   const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
@@ -243,7 +243,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       cancelAdd();
     } else if (screen === 'detail') {
       setScreen(detailReturnScreen);
-    } else if (screen === 'wishlist' || screen === 'share' || screen === 'stats') {
+    } else if (screen === 'wishlist' || screen === 'share' || screen === 'stats' || screen === 'settings') {
       setScreen('home');
     }
   }
@@ -537,14 +537,23 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onAdd={openAddFromHome}
           onRefresh={refreshCollection}
           onGoWishlist={() => setScreen('wishlist')}
+          onGoSettings={() => setScreen('settings')}
           onSignOut={onSignOut}
+          showGoPremium={isPurchasesConfigured && !isPremium}
+          onGoPremium={handlePurchasePremium}
+        />
+      )}
+
+      {screen === 'settings' && (
+        <SettingsScreen
+          onClose={() => setScreen('home')}
           onExport={exportBackup}
           exporting={exporting}
           onImport={importBackup}
-          theme={theme}
-          onCycleTheme={cycleTheme}
           showRestorePurchases={isPurchasesConfigured && !isPremium}
           onRestorePurchases={handleRestorePurchases}
+          showGoPremium={isPurchasesConfigured && !isPremium}
+          onGoPremium={handlePurchasePremium}
         />
       )}
 

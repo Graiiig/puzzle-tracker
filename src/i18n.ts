@@ -46,11 +46,13 @@ export interface Dict {
     menuImport: string;
     menuShare: string;
     menuStats: string;
+    menuSettings: string;
     menuSignOut: string;
     menuLanguage: string;
     menuThemeAuto: string;
     menuThemeLight: string;
     menuThemeDark: string;
+    menuGoPremium: string;
     statInProgress: string;
     statDone: string;
     statPieces: string;
@@ -224,6 +226,9 @@ export interface Dict {
     restoreDone: string;
     restoreError: string;
   };
+  settings: {
+    title: string;
+  };
 }
 
 const fr: Dict = {
@@ -271,11 +276,13 @@ const fr: Dict = {
     menuImport: 'Importer une sauvegarde',
     menuShare: 'Partager ma collection',
     menuStats: 'Statistiques',
+    menuSettings: 'Réglages',
     menuSignOut: 'Se déconnecter',
     menuLanguage: '🌐 English',
     menuThemeAuto: 'Thème : Auto',
     menuThemeLight: 'Thème : Clair',
     menuThemeDark: 'Thème : Sombre',
+    menuGoPremium: 'Passer premium',
     statInProgress: 'en cours',
     statDone: 'terminés',
     statPieces: 'pièces',
@@ -470,6 +477,9 @@ const fr: Dict = {
     restoreDone: 'Achats restaurés. Si tu avais déjà Premium, ce sera actif sous peu.',
     restoreError: 'Impossible de restaurer les achats pour le moment.',
   },
+  settings: {
+    title: 'Réglages',
+  },
 };
 
 const en: Dict = {
@@ -516,11 +526,13 @@ const en: Dict = {
     menuImport: 'Import a backup',
     menuShare: 'Share my collection',
     menuStats: 'Statistics',
+    menuSettings: 'Settings',
     menuSignOut: 'Sign out',
     menuLanguage: '🌐 Français',
     menuThemeAuto: 'Theme: Auto',
     menuThemeLight: 'Theme: Light',
     menuThemeDark: 'Theme: Dark',
+    menuGoPremium: 'Go Premium',
     statInProgress: 'in progress',
     statDone: 'done',
     statPieces: 'pieces',
@@ -712,6 +724,9 @@ const en: Dict = {
     restoreMenuLabel: 'Restore purchases',
     restoreDone: "Purchases restored. If you already had Premium, it'll be active shortly.",
     restoreError: 'Could not restore purchases right now.',
+  },
+  settings: {
+    title: 'Settings',
   },
 };
 
