@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
@@ -42,16 +42,12 @@ interface HomeScreenProps {
   onAdd: () => void;
   onRefresh: () => Promise<void> | void;
   onGoWishlist: () => void;
+  onGoSettings: () => void;
   onSignOut: () => void;
-  onExport: () => void;
-  exporting: boolean;
-  onImport: (file: File) => void;
   theme: ThemePreference;
   onCycleTheme: () => void;
   showGoPremium: boolean;
   onGoPremium: () => void;
-  showRestorePurchases: boolean;
-  onRestorePurchases: () => void;
 }
 
 export default function HomeScreen({
@@ -84,19 +80,14 @@ export default function HomeScreen({
   onAdd,
   onRefresh,
   onGoWishlist,
+  onGoSettings,
   onSignOut,
-  onExport,
-  exporting,
-  onImport,
   theme,
   onCycleTheme,
   showGoPremium,
   onGoPremium,
-  showRestorePurchases,
-  onRestorePurchases,
 }: HomeScreenProps) {
   const { t, lang, toggleLang } = useLanguage();
-  const importInputRef = useRef<HTMLInputElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -140,17 +131,6 @@ export default function HomeScreen({
           <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 26, color: 'white' }}>
             Mes Puzzles ✨
           </div>
-          <input
-            ref={importInputRef}
-            type="file"
-            accept="application/json"
-            style={{ display: 'none' }}
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              e.target.value = '';
-              if (file) onImport(file);
-            }}
-          />
           <div style={{ position: 'relative' }}>
             <div
               onClick={() => setMenuOpen((v) => !v)}
@@ -189,20 +169,6 @@ export default function HomeScreen({
                     ...(showGoPremium
                       ? [{ icon: '✨', label: t.home.menuGoPremium, onClick: onGoPremium, disabled: false, highlight: true }]
                       : []),
-                    {
-                      icon: '⬇️',
-                      label: exporting ? t.home.menuExporting : t.home.menuExport,
-                      onClick: onExport,
-                      disabled: exporting,
-                      highlight: false,
-                    },
-                    {
-                      icon: '⬆️',
-                      label: t.home.menuImport,
-                      onClick: () => importInputRef.current?.click(),
-                      disabled: false,
-                      highlight: false,
-                    },
                     { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false, highlight: false },
                     { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false, highlight: false },
                     { icon: '🌐', label: t.home.menuLanguage, onClick: toggleLang, disabled: false, highlight: false },
@@ -214,17 +180,7 @@ export default function HomeScreen({
                       disabled: false,
                       highlight: false,
                     },
-                    ...(showRestorePurchases
-                      ? [
-                          {
-                            icon: '♻️',
-                            label: t.premium.restoreMenuLabel,
-                            onClick: onRestorePurchases,
-                            disabled: false,
-                            highlight: false,
-                          },
-                        ]
-                      : []),
+                    { icon: '⚙️', label: t.home.menuSettings, onClick: onGoSettings, disabled: false, highlight: false },
                     { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false, highlight: false },
                   ].map((item) => (
                     <div

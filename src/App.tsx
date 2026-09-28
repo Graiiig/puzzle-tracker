@@ -28,6 +28,7 @@ import LoginScreen from './screens/LoginScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import ShareScreen from './screens/ShareScreen';
 import StatsScreen from './screens/StatsScreen';
+import SettingsScreen from './screens/SettingsScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 import PremiumLimitOverlay from './components/PremiumLimitOverlay';
 
@@ -243,7 +244,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       cancelAdd();
     } else if (screen === 'detail') {
       setScreen(detailReturnScreen);
-    } else if (screen === 'wishlist' || screen === 'share' || screen === 'stats') {
+    } else if (screen === 'wishlist' || screen === 'share' || screen === 'stats' || screen === 'settings') {
       setScreen('home');
     }
   }
@@ -537,14 +538,21 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onAdd={openAddFromHome}
           onRefresh={refreshCollection}
           onGoWishlist={() => setScreen('wishlist')}
+          onGoSettings={() => setScreen('settings')}
           onSignOut={onSignOut}
-          onExport={exportBackup}
-          exporting={exporting}
-          onImport={importBackup}
           theme={theme}
           onCycleTheme={cycleTheme}
           showGoPremium={isPurchasesConfigured && !isPremium}
           onGoPremium={handlePurchasePremium}
+        />
+      )}
+
+      {screen === 'settings' && (
+        <SettingsScreen
+          onClose={() => setScreen('home')}
+          onExport={exportBackup}
+          exporting={exporting}
+          onImport={importBackup}
           showRestorePurchases={isPurchasesConfigured && !isPremium}
           onRestorePurchases={handleRestorePurchases}
         />
