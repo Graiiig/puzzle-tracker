@@ -48,6 +48,8 @@ interface HomeScreenProps {
   onImport: (file: File) => void;
   theme: ThemePreference;
   onCycleTheme: () => void;
+  showGoPremium: boolean;
+  onGoPremium: () => void;
   showRestorePurchases: boolean;
   onRestorePurchases: () => void;
 }
@@ -88,6 +90,8 @@ export default function HomeScreen({
   onImport,
   theme,
   onCycleTheme,
+  showGoPremium,
+  onGoPremium,
   showRestorePurchases,
   onRestorePurchases,
 }: HomeScreenProps) {
@@ -182,27 +186,46 @@ export default function HomeScreen({
                   }}
                 >
                   {[
+                    ...(showGoPremium
+                      ? [{ icon: '✨', label: t.home.menuGoPremium, onClick: onGoPremium, disabled: false, highlight: true }]
+                      : []),
                     {
                       icon: '⬇️',
                       label: exporting ? t.home.menuExporting : t.home.menuExport,
                       onClick: onExport,
                       disabled: exporting,
+                      highlight: false,
                     },
-                    { icon: '⬆️', label: t.home.menuImport, onClick: () => importInputRef.current?.click(), disabled: false },
-                    { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false },
-                    { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false },
-                    { icon: '🌐', label: t.home.menuLanguage, onClick: toggleLang, disabled: false },
+                    {
+                      icon: '⬆️',
+                      label: t.home.menuImport,
+                      onClick: () => importInputRef.current?.click(),
+                      disabled: false,
+                      highlight: false,
+                    },
+                    { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false, highlight: false },
+                    { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false, highlight: false },
+                    { icon: '🌐', label: t.home.menuLanguage, onClick: toggleLang, disabled: false, highlight: false },
                     {
                       icon: theme === 'light' ? '☀️' : theme === 'dark' ? '🌙' : '🌓',
                       label:
                         theme === 'light' ? t.home.menuThemeLight : theme === 'dark' ? t.home.menuThemeDark : t.home.menuThemeAuto,
                       onClick: onCycleTheme,
                       disabled: false,
+                      highlight: false,
                     },
                     ...(showRestorePurchases
-                      ? [{ icon: '♻️', label: t.premium.restoreMenuLabel, onClick: onRestorePurchases, disabled: false }]
+                      ? [
+                          {
+                            icon: '♻️',
+                            label: t.premium.restoreMenuLabel,
+                            onClick: onRestorePurchases,
+                            disabled: false,
+                            highlight: false,
+                          },
+                        ]
                       : []),
-                    { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false },
+                    { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false, highlight: false },
                   ].map((item) => (
                     <div
                       key={item.icon}
@@ -217,8 +240,9 @@ export default function HomeScreen({
                         gap: 10,
                         padding: '12px 16px',
                         fontSize: 14,
-                        fontWeight: 700,
-                        color: item.disabled ? 'var(--text-muted)' : 'var(--text-primary)',
+                        fontWeight: item.highlight ? 800 : 700,
+                        color: item.disabled ? 'var(--text-muted)' : item.highlight ? 'var(--accent-pink)' : 'var(--text-primary)',
+                        background: item.highlight ? 'var(--badge-pink-bg)' : 'transparent',
                         cursor: item.disabled ? 'default' : 'pointer',
                         whiteSpace: 'nowrap',
                       }}

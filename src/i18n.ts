@@ -51,6 +51,7 @@ export interface Dict {
     menuThemeAuto: string;
     menuThemeLight: string;
     menuThemeDark: string;
+    menuGoPremium: string;
     statInProgress: string;
     statDone: string;
     statPieces: string;
@@ -276,6 +277,7 @@ const fr: Dict = {
     menuThemeAuto: 'Thème : Auto',
     menuThemeLight: 'Thème : Clair',
     menuThemeDark: 'Thème : Sombre',
+    menuGoPremium: 'Passer premium',
     statInProgress: 'en cours',
     statDone: 'terminés',
     statPieces: 'pièces',
@@ -521,6 +523,7 @@ const en: Dict = {
     menuThemeAuto: 'Theme: Auto',
     menuThemeLight: 'Theme: Light',
     menuThemeDark: 'Theme: Dark',
+    menuGoPremium: 'Go Premium',
     statInProgress: 'in progress',
     statDone: 'done',
     statPieces: 'pieces',

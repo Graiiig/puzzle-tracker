@@ -543,6 +543,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onImport={importBackup}
           theme={theme}
           onCycleTheme={cycleTheme}
+          showGoPremium={isPurchasesConfigured && !isPremium}
+          onGoPremium={handlePurchasePremium}
           showRestorePurchases={isPurchasesConfigured && !isPremium}
           onRestorePurchases={handleRestorePurchases}
         />
