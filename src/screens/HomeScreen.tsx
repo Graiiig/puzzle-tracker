@@ -48,6 +48,8 @@ interface HomeScreenProps {
   onImport: (file: File) => void;
   theme: ThemePreference;
   onCycleTheme: () => void;
+  showRestorePurchases: boolean;
+  onRestorePurchases: () => void;
 }
 
 export default function HomeScreen({
@@ -86,6 +88,8 @@ export default function HomeScreen({
   onImport,
   theme,
   onCycleTheme,
+  showRestorePurchases,
+  onRestorePurchases,
 }: HomeScreenProps) {
   const { t, lang, toggleLang } = useLanguage();
   const importInputRef = useRef<HTMLInputElement>(null);
@@ -195,6 +199,9 @@ export default function HomeScreen({
                       onClick: onCycleTheme,
                       disabled: false,
                     },
+                    ...(showRestorePurchases
+                      ? [{ icon: '♻️', label: t.premium.restoreMenuLabel, onClick: onRestorePurchases, disabled: false }]
+                      : []),
                     { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false },
                   ].map((item) => (
                     <div
