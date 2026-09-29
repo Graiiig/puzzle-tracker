@@ -29,6 +29,7 @@ import OnboardingScreen from './screens/OnboardingScreen';
 import ShareScreen from './screens/ShareScreen';
 import StatsScreen from './screens/StatsScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import AchievementsScreen from './screens/AchievementsScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 import PremiumLimitOverlay from './components/PremiumLimitOverlay';
 
@@ -243,7 +244,13 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       cancelAdd();
     } else if (screen === 'detail') {
       setScreen(detailReturnScreen);
-    } else if (screen === 'wishlist' || screen === 'share' || screen === 'stats' || screen === 'settings') {
+    } else if (
+      screen === 'wishlist' ||
+      screen === 'share' ||
+      screen === 'stats' ||
+      screen === 'settings' ||
+      screen === 'achievements'
+    ) {
       setScreen('home');
     }
   }
@@ -516,6 +523,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onSetOwnerFilter={setCollectionOwnerFilter}
           onGoShare={() => setScreen('share')}
           onGoStats={() => setScreen('stats')}
+          onGoAchievements={() => setScreen('achievements')}
           search={search}
           onSearchChange={setSearch}
           selectedGenres={selectedGenres}
@@ -613,6 +621,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onClose={() => setScreen('home')}
           onOpenPuzzle={(id) => openPuzzle(id, 'stats')}
         />
+      )}
+
+      {screen === 'achievements' && (
+        <AchievementsScreen collection={collection.filter((p) => p.ownerId === userId)} onClose={() => setScreen('home')} />
       )}
 
       {screen === 'add' && (

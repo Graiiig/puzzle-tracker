@@ -46,6 +46,7 @@ export interface Dict {
     menuImport: string;
     menuShare: string;
     menuStats: string;
+    menuAchievements: string;
     menuSettings: string;
     menuSignOut: string;
     menuLanguage: string;
@@ -230,6 +231,28 @@ export interface Dict {
   settings: {
     title: string;
   };
+  achievements: {
+    title: string;
+    subtitle: string;
+    unlockedBadge: string;
+    progress: (current: number | string, target: number | string) => string;
+    firstStepTitle: string;
+    firstStepBody: string;
+    collectorTitle: string;
+    collectorBody: string;
+    expertTitle: string;
+    expertBody: string;
+    marathonTitle: string;
+    marathonBody: string;
+    dedicatedTitle: string;
+    dedicatedBody: string;
+    superfanTitle: string;
+    superfanBody: string;
+    eclecticTitle: string;
+    eclecticBody: string;
+    demandingTitle: string;
+    demandingBody: string;
+  };
 }
 
 const fr: Dict = {
@@ -277,6 +300,7 @@ const fr: Dict = {
     menuImport: 'Importer une sauvegarde',
     menuShare: 'Partager ma collection',
     menuStats: 'Statistiques',
+    menuAchievements: 'Succès',
     menuSettings: 'Réglages',
     menuSignOut: 'Se déconnecter',
     menuLanguage: '🌐 English',
@@ -482,6 +506,28 @@ const fr: Dict = {
   settings: {
     title: 'Réglages',
   },
+  achievements: {
+    title: 'Succès',
+    subtitle: 'Débloque des badges en avançant dans ta collection.',
+    unlockedBadge: 'Débloqué !',
+    progress: (current, target) => `${current} / ${target}`,
+    firstStepTitle: 'Premier pas',
+    firstStepBody: 'Termine ton premier puzzle.',
+    collectorTitle: 'Collectionneur',
+    collectorBody: 'Termine 10 puzzles.',
+    expertTitle: 'Expert',
+    expertBody: 'Termine 50 puzzles.',
+    marathonTitle: 'Marathon',
+    marathonBody: 'Assemble 5000 pièces au total.',
+    dedicatedTitle: 'Assidu',
+    dedicatedBody: 'Cumule 10h de montage.',
+    superfanTitle: 'Fan absolu',
+    superfanBody: 'Assemble 5 puzzles du même artiste.',
+    eclecticTitle: 'Éclectique',
+    eclecticBody: 'Termine au moins un puzzle dans chaque catégorie.',
+    demandingTitle: 'Exigeant',
+    demandingBody: 'Note 10 puzzles 5 étoiles.',
+  },
 };
 
 const en: Dict = {
@@ -528,6 +574,7 @@ const en: Dict = {
     menuImport: 'Import a backup',
     menuShare: 'Share my collection',
     menuStats: 'Statistics',
+    menuAchievements: 'Achievements',
     menuSettings: 'Settings',
     menuSignOut: 'Sign out',
     menuLanguage: '🌐 Français',
@@ -730,6 +777,28 @@ const en: Dict = {
   },
   settings: {
     title: 'Settings',
+  },
+  achievements: {
+    title: 'Achievements',
+    subtitle: 'Unlock badges as you grow your collection.',
+    unlockedBadge: 'Unlocked!',
+    progress: (current, target) => `${current} / ${target}`,
+    firstStepTitle: 'First Step',
+    firstStepBody: 'Finish your first puzzle.',
+    collectorTitle: 'Collector',
+    collectorBody: 'Finish 10 puzzles.',
+    expertTitle: 'Expert',
+    expertBody: 'Finish 50 puzzles.',
+    marathonTitle: 'Marathon',
+    marathonBody: 'Assemble 5000 pieces total.',
+    dedicatedTitle: 'Dedicated',
+    dedicatedBody: 'Log 10h of solving time.',
+    superfanTitle: 'Superfan',
+    superfanBody: 'Finish 5 puzzles by the same artist.',
+    eclecticTitle: 'Eclectic',
+    eclecticBody: 'Finish at least one puzzle in every category.',
+    demandingTitle: 'Demanding',
+    demandingBody: 'Rate 10 puzzles 5 stars.',
   },
 };
 

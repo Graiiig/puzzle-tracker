@@ -19,6 +19,7 @@ interface HomeScreenProps {
   onSetOwnerFilter: (ownerId: string) => void;
   onGoShare: () => void;
   onGoStats: () => void;
+  onGoAchievements: () => void;
   search: string;
   onSearchChange: (value: string) => void;
   selectedGenres: Genre[];
@@ -55,6 +56,7 @@ export default function HomeScreen({
   onSetOwnerFilter,
   onGoShare,
   onGoStats,
+  onGoAchievements,
   search,
   onSearchChange,
   selectedGenres,
@@ -166,6 +168,7 @@ export default function HomeScreen({
                       : []),
                     { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false, highlight: false },
                     { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false, highlight: false },
+                    { icon: '🏅', label: t.home.menuAchievements, onClick: onGoAchievements, disabled: false, highlight: false },
                     { icon: '⚙️', label: t.home.menuSettings, onClick: onGoSettings, disabled: false, highlight: false },
                     { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false, highlight: false },
                   ].map((item) => (
