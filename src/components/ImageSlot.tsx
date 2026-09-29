@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useImageStore } from '../hooks/ImageStore';
 import { useImageLightbox } from '../hooks/useImageLightbox';
 import { useLanguage } from '../hooks/useLanguage';
+import { useToast } from '../hooks/useToast';
 import { compressImageFile } from '../utils/image';
 
 interface ImageSlotProps {
@@ -20,6 +21,7 @@ export default function ImageSlot({ id, ownerId, shape = 'rounded', radius = 14,
   const { getImage, setImage, ensureLoaded } = useImageStore();
   const { openLightbox } = useImageLightbox();
   const { t } = useLanguage();
+  const { showToast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const src = getImage(id);
@@ -37,10 +39,10 @@ export default function ImageSlot({ id, ownerId, shape = 'rounded', radius = 14,
       const dataUrl = await compressImageFile(file);
       const saved = await setImage(id, dataUrl);
       if (!saved) {
-        window.alert(t.imageSlot.saveError);
+        showToast({ icon: '⚠️', title: t.imageSlot.saveError, variant: 'error' });
       }
     } catch {
-      window.alert(t.imageSlot.readError);
+      showToast({ icon: '⚠️', title: t.imageSlot.readError, variant: 'error' });
     } finally {
       setBusy(false);
     }

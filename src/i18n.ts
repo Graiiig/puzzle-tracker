@@ -234,14 +234,16 @@ export interface Dict {
   achievements: {
     title: string;
     subtitle: string;
-    unlockedBadge: string;
     progress: (current: number | string, target: number | string) => string;
-    firstStepTitle: string;
-    firstStepBody: string;
+    tierBronze: string;
+    tierSilver: string;
+    tierGold: string;
+    tierPlatinum: string;
+    nextTier: (tierName: string) => string;
+    maxedOut: string;
+    notUnlocked: string;
     collectorTitle: string;
     collectorBody: string;
-    expertTitle: string;
-    expertBody: string;
     marathonTitle: string;
     marathonBody: string;
     dedicatedTitle: string;
@@ -252,6 +254,8 @@ export interface Dict {
     eclecticBody: string;
     demandingTitle: string;
     demandingBody: string;
+    toastTitle: string;
+    toastBody: (badgeTitle: string, tierName: string) => string;
   };
 }
 
@@ -508,25 +512,29 @@ const fr: Dict = {
   },
   achievements: {
     title: 'Succès',
-    subtitle: 'Débloque des badges en avançant dans ta collection.',
-    unlockedBadge: 'Débloqué !',
+    subtitle: 'Débloque des paliers en avançant dans ta collection.',
     progress: (current, target) => `${current} / ${target}`,
-    firstStepTitle: 'Premier pas',
-    firstStepBody: 'Termine ton premier puzzle.',
+    tierBronze: 'Bronze',
+    tierSilver: 'Argent',
+    tierGold: 'Or',
+    tierPlatinum: 'Platine',
+    nextTier: (tierName) => `Prochain palier : ${tierName}`,
+    maxedOut: 'Palier maximum atteint !',
+    notUnlocked: 'Pas encore débloqué',
     collectorTitle: 'Collectionneur',
-    collectorBody: 'Termine 10 puzzles.',
-    expertTitle: 'Expert',
-    expertBody: 'Termine 50 puzzles.',
+    collectorBody: 'Termine des puzzles pour progresser.',
     marathonTitle: 'Marathon',
-    marathonBody: 'Assemble 5000 pièces au total.',
+    marathonBody: 'Assemble des pièces au total.',
     dedicatedTitle: 'Assidu',
-    dedicatedBody: 'Cumule 10h de montage.',
+    dedicatedBody: 'Cumule du temps de montage.',
     superfanTitle: 'Fan absolu',
-    superfanBody: 'Assemble 5 puzzles du même artiste.',
+    superfanBody: 'Assemble plusieurs puzzles du même artiste.',
     eclecticTitle: 'Éclectique',
-    eclecticBody: 'Termine au moins un puzzle dans chaque catégorie.',
+    eclecticBody: 'Termine un puzzle dans chaque catégorie.',
     demandingTitle: 'Exigeant',
-    demandingBody: 'Note 10 puzzles 5 étoiles.',
+    demandingBody: 'Note des puzzles 5 étoiles.',
+    toastTitle: 'Succès débloqué !',
+    toastBody: (badgeTitle, tierName) => `${badgeTitle} — ${tierName}`,
   },
 };
 
@@ -780,25 +788,29 @@ const en: Dict = {
   },
   achievements: {
     title: 'Achievements',
-    subtitle: 'Unlock badges as you grow your collection.',
-    unlockedBadge: 'Unlocked!',
+    subtitle: 'Unlock tiers as you grow your collection.',
     progress: (current, target) => `${current} / ${target}`,
-    firstStepTitle: 'First Step',
-    firstStepBody: 'Finish your first puzzle.',
+    tierBronze: 'Bronze',
+    tierSilver: 'Silver',
+    tierGold: 'Gold',
+    tierPlatinum: 'Platinum',
+    nextTier: (tierName) => `Next tier: ${tierName}`,
+    maxedOut: 'Top tier reached!',
+    notUnlocked: 'Not unlocked yet',
     collectorTitle: 'Collector',
-    collectorBody: 'Finish 10 puzzles.',
-    expertTitle: 'Expert',
-    expertBody: 'Finish 50 puzzles.',
+    collectorBody: 'Finish puzzles to progress.',
     marathonTitle: 'Marathon',
-    marathonBody: 'Assemble 5000 pieces total.',
+    marathonBody: 'Assemble pieces in total.',
     dedicatedTitle: 'Dedicated',
-    dedicatedBody: 'Log 10h of solving time.',
+    dedicatedBody: 'Log solving time.',
     superfanTitle: 'Superfan',
-    superfanBody: 'Finish 5 puzzles by the same artist.',
+    superfanBody: 'Finish several puzzles by the same artist.',
     eclecticTitle: 'Eclectic',
-    eclecticBody: 'Finish at least one puzzle in every category.',
+    eclecticBody: 'Finish a puzzle in every category.',
     demandingTitle: 'Demanding',
-    demandingBody: 'Rate 10 puzzles 5 stars.',
+    demandingBody: 'Rate puzzles 5 stars.',
+    toastTitle: 'Achievement unlocked!',
+    toastBody: (badgeTitle, tierName) => `${badgeTitle} — ${tierName}`,
   },
 };
 

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useLanguage } from '../hooks/useLanguage';
 import type { Puzzle } from '../types';
-import { computeAchievements, type AchievementId } from '../utils/achievements';
+import { computeAchievements, type AchievementId, type Tier } from '../utils/achievements';
 import { formatMinutesAsHours } from '../utils/format';
 
 interface AchievementsScreenProps {
@@ -9,16 +9,27 @@ interface AchievementsScreenProps {
   onClose: () => void;
 }
 
+const TIER_MEDAL: Record<Tier, string> = {
+  bronze: '🥉',
+  silver: '🥈',
+  gold: '🥇',
+  platinum: '💎',
+};
+
 export default function AchievementsScreen({ collection, onClose }: AchievementsScreenProps) {
   const { t, lang } = useLanguage();
   const achievements = useMemo(() => computeAchievements(collection), [collection]);
 
   const numberFmt = (n: number) => n.toLocaleString(lang === 'fr' ? 'fr-FR' : 'en-US');
+  const tierLabel: Record<Tier, string> = {
+    bronze: t.achievements.tierBronze,
+    silver: t.achievements.tierSilver,
+    gold: t.achievements.tierGold,
+    platinum: t.achievements.tierPlatinum,
+  };
 
   const meta: Record<AchievementId, { title: string; body: string; format: (n: number) => string | number }> = {
-    firstStep: { title: t.achievements.firstStepTitle, body: t.achievements.firstStepBody, format: (n) => n },
     collector: { title: t.achievements.collectorTitle, body: t.achievements.collectorBody, format: (n) => n },
-    expert: { title: t.achievements.expertTitle, body: t.achievements.expertBody, format: (n) => n },
     marathon: { title: t.achievements.marathonTitle, body: t.achievements.marathonBody, format: numberFmt },
     dedicated: { title: t.achievements.dedicatedTitle, body: t.achievements.dedicatedBody, format: formatMinutesAsHours },
     superfan: { title: t.achievements.superfanTitle, body: t.achievements.superfanBody, format: (n) => n },
@@ -57,6 +68,13 @@ export default function AchievementsScreen({ collection, onClose }: Achievements
 
         {achievements.map((a) => {
           const m = meta[a.id];
+          const currentTier = a.tierIndex >= 0 ? a.tiers[a.tierIndex].tier : null;
+          const lowerBound = a.tierIndex >= 0 ? a.tiers[a.tierIndex].target : 0;
+          const pct =
+            a.nextTarget !== null
+              ? Math.min(1, Math.max(0, (a.current - lowerBound) / (a.nextTarget - lowerBound)))
+              : 1;
+
           return (
             <div
               key={a.id}
@@ -69,7 +87,7 @@ export default function AchievementsScreen({ collection, onClose }: Achievements
                 padding: '14px 16px',
               }}
             >
-              <span style={{ fontSize: 24, filter: a.unlocked ? 'none' : 'grayscale(1)', opacity: a.unlocked ? 1 : 0.45 }}>
+              <span style={{ fontSize: 24, filter: currentTier ? 'none' : 'grayscale(1)', opacity: currentTier ? 1 : 0.45 }}>
                 {a.icon}
               </span>
               <div style={{ flex: 1 }}>
@@ -77,7 +95,7 @@ export default function AchievementsScreen({ collection, onClose }: Achievements
                   <span style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 15, color: 'var(--text-primary)' }}>
                     {m.title}
                   </span>
-                  {a.unlocked && (
+                  {currentTier ? (
                     <span
                       style={{
                         fontSize: 10,
@@ -88,8 +106,10 @@ export default function AchievementsScreen({ collection, onClose }: Achievements
                         padding: '2px 8px',
                       }}
                     >
-                      {t.achievements.unlockedBadge}
+                      {TIER_MEDAL[currentTier]} {tierLabel[currentTier]}
                     </span>
+                  ) : (
+                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)' }}>{t.achievements.notUnlocked}</span>
                   )}
                 </div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-muted)', marginTop: 2 }}>{m.body}</div>
@@ -98,14 +118,21 @@ export default function AchievementsScreen({ collection, onClose }: Achievements
                     <div
                       style={{
                         height: '100%',
-                        width: `${(a.current / a.target) * 100}%`,
-                        background: a.unlocked ? 'var(--accent-pink)' : 'var(--text-muted)',
+                        width: `${pct * 100}%`,
+                        background: currentTier ? 'var(--accent-pink)' : 'var(--text-muted)',
                         borderRadius: 3,
                       }}
                     />
                   </div>
                   <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', marginTop: 4 }}>
-                    {t.achievements.progress(m.format(a.current), m.format(a.target))}
+                    {a.nextTarget !== null ? (
+                      <>
+                        {t.achievements.progress(m.format(a.current), m.format(a.nextTarget))} ·{' '}
+                        {t.achievements.nextTier(tierLabel[a.tiers[a.tierIndex + 1].tier])}
+                      </>
+                    ) : (
+                      t.achievements.maxedOut
+                    )}
                   </div>
                 </div>
               </div>
