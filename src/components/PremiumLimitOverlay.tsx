@@ -8,6 +8,7 @@ interface PremiumLimitOverlayProps {
   purchasing: boolean;
   onPurchase: () => void;
   onClose: () => void;
+  onSeeDetails: () => void;
 }
 
 export default function PremiumLimitOverlay({
@@ -18,6 +19,7 @@ export default function PremiumLimitOverlay({
   purchasing,
   onPurchase,
   onClose,
+  onSeeDetails,
 }: PremiumLimitOverlayProps) {
   const { t } = useLanguage();
 
@@ -47,6 +49,11 @@ export default function PremiumLimitOverlay({
         <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 8, lineHeight: 1.5 }}>
           {kind === 'collection' ? t.premium.limitBodyCollection(limit) : t.premium.limitBodyWishlist(limit)}
         </div>
+        {purchaseAvailable && (
+          <div onClick={onSeeDetails} style={{ marginTop: 10, fontSize: 12, fontWeight: 800, color: 'var(--accent-pink)', cursor: 'pointer' }}>
+            {t.premium.seeDetails}
+          </div>
+        )}
         <div
           onClick={purchaseAvailable && !purchasing ? onPurchase : onClose}
           style={{

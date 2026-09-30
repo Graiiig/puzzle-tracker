@@ -47,7 +47,7 @@ export interface PuzzleForm {
   time: string;
 }
 
-export type Screen = 'home' | 'wishlist' | 'detail' | 'add' | 'share' | 'stats' | 'settings' | 'achievements';
+export type Screen = 'home' | 'wishlist' | 'detail' | 'add' | 'share' | 'stats' | 'settings' | 'achievements' | 'premium';
 export type DetailSource = 'collection' | 'wishlist';
 
 export interface ShareInvite {

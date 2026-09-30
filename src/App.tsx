@@ -34,6 +34,7 @@ import ShareScreen from './screens/ShareScreen';
 import StatsScreen from './screens/StatsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import AchievementsScreen from './screens/AchievementsScreen';
+import PremiumScreen from './screens/PremiumScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 import PremiumLimitOverlay from './components/PremiumLimitOverlay';
 
@@ -277,7 +278,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       screen === 'share' ||
       screen === 'stats' ||
       screen === 'settings' ||
-      screen === 'achievements'
+      screen === 'achievements' ||
+      screen === 'premium'
     ) {
       setScreen('home');
     }
@@ -577,7 +579,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onGoSettings={() => setScreen('settings')}
           onSignOut={onSignOut}
           showGoPremium={isPurchasesConfigured && !isPremium}
-          onGoPremium={handlePurchasePremium}
+          onGoPremium={() => setScreen('premium')}
         />
       )}
 
@@ -590,7 +592,19 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           showRestorePurchases={isPurchasesConfigured && !isPremium}
           onRestorePurchases={handleRestorePurchases}
           showGoPremium={isPurchasesConfigured && !isPremium}
-          onGoPremium={handlePurchasePremium}
+          onGoPremium={() => setScreen('premium')}
+        />
+      )}
+
+      {screen === 'premium' && (
+        <PremiumScreen
+          isPremium={isPremium}
+          purchaseAvailable={isPurchasesConfigured}
+          priceLabel={priceLabel}
+          purchasing={purchasing}
+          onPurchase={handlePurchasePremium}
+          onRestore={handleRestorePurchases}
+          onClose={() => setScreen('home')}
         />
       )}
 
@@ -697,6 +711,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           purchasing={purchasing}
           onPurchase={handlePurchasePremium}
           onClose={() => setLimitReached(null)}
+          onSeeDetails={() => {
+            setLimitReached(null);
+            setScreen('premium');
+          }}
         />
       )}
     </>
