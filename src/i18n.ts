@@ -83,6 +83,7 @@ export interface Dict {
     timeSpent: string;
     personalNote: string;
     whyIWantIt: string;
+    progressPhotos: string;
     markAsBought: string;
     addToMyWishlist: string;
     deleteAction: (label: string) => string;
@@ -352,6 +353,7 @@ const fr: Dict = {
     timeSpent: 'Temps passé',
     personalNote: 'Note perso',
     whyIWantIt: 'Pourquoi je le veux',
+    progressPhotos: 'Photos de progression',
     markAsBought: '🛒 Marquer comme acheté',
     addToMyWishlist: '💌 Ajouter à ma liste d\'envies',
     deleteAction: (label) => `🗑️ Supprimer ${label}`,
@@ -641,6 +643,7 @@ const en: Dict = {
     timeSpent: 'Time spent',
     personalNote: 'Personal note',
     whyIWantIt: 'Why I want it',
+    progressPhotos: 'Progress photos',
     markAsBought: '🛒 Mark as bought',
     addToMyWishlist: '💌 Add to my wishlist',
     deleteAction: (label) => `🗑️ Delete ${label}`,

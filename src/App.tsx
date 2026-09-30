@@ -47,6 +47,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     loading: collectionLoading,
     addPuzzle,
     updatePuzzle,
+    updateProgressPhotos,
     deletePuzzle,
     refresh: refreshCollection,
   } = usePuzzles(userId);
@@ -369,7 +370,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
     const id = formTargetId;
     if (addMode === 'collection') {
-      const item: Omit<Puzzle, 'ownerId'> = {
+      const item: Omit<Puzzle, 'ownerId' | 'progressPhotos'> = {
         id,
         name: form.name.trim(),
         brand: form.brand.trim() || t.common.unknownBrand,
@@ -411,7 +412,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       setLimitReached('collection');
       return;
     }
-    const item: Omit<Puzzle, 'ownerId'> = {
+    const item: Omit<Puzzle, 'ownerId' | 'progressPhotos'> = {
       id: selected.id,
       name: selected.name,
       brand: selected.brand,
@@ -471,6 +472,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       if (!id) return;
       await deletePuzzle(id);
       clearImage('puzzle-img-' + id);
+      for (const photoId of selectedPuzzle?.progressPhotos ?? []) clearImage(photoId);
       setScreen('home');
     } else {
       const id = selectedWishlistItem?.id;
@@ -635,6 +637,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onImportToWishlist={importToMyWishlist}
           onDelete={deleteSelected}
           onEdit={openEditSelected}
+          onProgressPhotosChange={(photos) => selectedPuzzle && updateProgressPhotos(selectedPuzzle.id, photos)}
         />
       )}
 

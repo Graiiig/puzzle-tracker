@@ -3,11 +3,12 @@ import { supabase } from '../lib/supabaseClient';
 import type { Puzzle } from '../types';
 import { withRetry } from '../utils/retry';
 
-const COLUMNS = 'id, user_id, name, brand, artist, genres, pieces, status, rating, difficulty, date, time, notes';
+const COLUMNS =
+  'id, user_id, name, brand, artist, genres, pieces, status, rating, difficulty, date, time, notes, progress_photos';
 
 function mapRow(row: Record<string, unknown>): Puzzle {
-  const { user_id, ...rest } = row;
-  return { ...rest, ownerId: user_id } as Puzzle;
+  const { user_id, progress_photos, ...rest } = row;
+  return { ...rest, ownerId: user_id, progressPhotos: progress_photos ?? [] } as Puzzle;
 }
 
 export function usePuzzles(userId: string | null) {
@@ -32,18 +33,25 @@ export function usePuzzles(userId: string | null) {
     refresh();
   }, [refresh]);
 
-  async function addPuzzle(item: Omit<Puzzle, 'ownerId'>): Promise<boolean> {
+  async function addPuzzle(item: Omit<Puzzle, 'ownerId' | 'progressPhotos'>): Promise<boolean> {
     if (!userId) return false;
     const { error } = await supabase.from('puzzles').insert({ ...item, user_id: userId });
     if (error) return false;
-    setCollection((c) => [{ ...item, ownerId: userId }, ...c]);
+    setCollection((c) => [{ ...item, ownerId: userId, progressPhotos: [] }, ...c]);
     return true;
   }
 
-  async function updatePuzzle(id: string, patch: Omit<Puzzle, 'id' | 'ownerId'>): Promise<boolean> {
+  async function updatePuzzle(id: string, patch: Omit<Puzzle, 'id' | 'ownerId' | 'progressPhotos'>): Promise<boolean> {
     const { error } = await supabase.from('puzzles').update(patch).eq('id', id);
     if (error) return false;
     setCollection((c) => c.map((p) => (p.id === id ? { ...p, ...patch } : p)));
+    return true;
+  }
+
+  async function updateProgressPhotos(id: string, photos: string[]): Promise<boolean> {
+    const { error } = await supabase.from('puzzles').update({ progress_photos: photos }).eq('id', id);
+    if (error) return false;
+    setCollection((c) => c.map((p) => (p.id === id ? { ...p, progressPhotos: photos } : p)));
     return true;
   }
 
@@ -52,5 +60,5 @@ export function usePuzzles(userId: string | null) {
     await supabase.from('puzzles').delete().eq('id', id);
   }
 
-  return { collection, loading, addPuzzle, updatePuzzle, deletePuzzle, refresh };
+  return { collection, loading, addPuzzle, updatePuzzle, updateProgressPhotos, deletePuzzle, refresh };
 }
