@@ -1,6 +1,11 @@
+import { useEffect, useRef } from 'react';
 import ImageSlot from '../components/ImageSlot';
+import { useImageStore } from '../hooks/ImageStore';
+import { useImageLightbox } from '../hooks/useImageLightbox';
 import { useLanguage } from '../hooks/useLanguage';
+import { useToast } from '../hooks/useToast';
 import type { DetailSource, Puzzle, WishlistItem } from '../types';
+import { compressImageFile } from '../utils/image';
 import { dotString, formatDate, priorityStyle, ratingLabel, starString, statusStyle } from '../utils/format';
 
 interface DetailScreenProps {
@@ -13,6 +18,63 @@ interface DetailScreenProps {
   onImportToWishlist: () => void;
   onDelete: () => void;
   onEdit: () => void;
+  onProgressPhotosChange: (photos: string[]) => void;
+}
+
+function ProgressPhotoThumb({ id, ownerId, onRemove }: { id: string; ownerId?: string; onRemove?: () => void }) {
+  const { getImage, ensureLoaded } = useImageStore();
+  const { openLightbox } = useImageLightbox();
+
+  useEffect(() => {
+    ensureLoaded(id, ownerId);
+  }, [id, ownerId, ensureLoaded]);
+
+  const src = getImage(id);
+
+  return (
+    <div style={{ position: 'relative', flexShrink: 0, width: 84, height: 84 }}>
+      <div
+        onClick={() => src && openLightbox(src)}
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: 12,
+          overflow: 'hidden',
+          background: 'var(--surface-alt)',
+          cursor: src ? 'pointer' : 'default',
+        }}
+      >
+        {src && <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+      </div>
+      {onRemove && (
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          style={{
+            position: 'absolute',
+            top: -6,
+            right: -6,
+            width: 22,
+            height: 22,
+            borderRadius: '50%',
+            background: 'var(--surface)',
+            boxShadow: '0 2px 6px oklch(20% 0.02 340 / 0.25)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 11,
+            fontWeight: 800,
+            color: 'var(--text-secondary)',
+            cursor: 'pointer',
+          }}
+        >
+          ✕
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function DetailScreen({
@@ -25,10 +87,38 @@ export default function DetailScreen({
   onImportToWishlist,
   onDelete,
   onEdit,
+  onProgressPhotosChange,
 }: DetailScreenProps) {
   const { t, lang } = useLanguage();
+  const { setImage, clearImage } = useImageStore();
+  const { showToast } = useToast();
+  const progressInputRef = useRef<HTMLInputElement>(null);
   const item = source === 'collection' ? puzzle : wishlistItem;
   if (!item) return null;
+
+  async function handleAddProgressPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file || !puzzle) return;
+    try {
+      const dataUrl = await compressImageFile(file);
+      const photoId = `puzzle-progress-${puzzle.id}-${crypto.randomUUID()}`;
+      const saved = await setImage(photoId, dataUrl);
+      if (!saved) {
+        showToast({ icon: '⚠️', title: t.imageSlot.saveError, variant: 'error' });
+        return;
+      }
+      onProgressPhotosChange([...puzzle.progressPhotos, photoId]);
+    } catch {
+      showToast({ icon: '⚠️', title: t.imageSlot.readError, variant: 'error' });
+    }
+  }
+
+  function handleRemoveProgressPhoto(photoId: string) {
+    if (!puzzle) return;
+    clearImage(photoId);
+    onProgressPhotosChange(puzzle.progressPhotos.filter((id) => id !== photoId));
+  }
 
   function handleDelete() {
     const label = source === 'collection' ? t.detail.thisPuzzle : t.detail.thisWish;
@@ -193,6 +283,51 @@ export default function DetailScreen({
                 {puzzle.notes}
               </div>
             </div>
+
+            {(puzzle.progressPhotos.length > 0 || isOwner) && (
+              <div style={{ marginTop: 20 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+                  {t.detail.progressPhotos}
+                </div>
+                <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 2 }}>
+                  {puzzle.progressPhotos.map((photoId) => (
+                    <ProgressPhotoThumb
+                      key={photoId}
+                      id={photoId}
+                      ownerId={puzzle.ownerId}
+                      onRemove={isOwner ? () => handleRemoveProgressPhoto(photoId) : undefined}
+                    />
+                  ))}
+                  {isOwner && (
+                    <div
+                      onClick={() => progressInputRef.current?.click()}
+                      style={{
+                        flexShrink: 0,
+                        width: 84,
+                        height: 84,
+                        borderRadius: 12,
+                        background: 'var(--surface-alt)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 26,
+                        color: 'var(--text-muted)',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      +
+                    </div>
+                  )}
+                </div>
+                <input
+                  ref={progressInputRef}
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handleAddProgressPhoto}
+                />
+              </div>
+            )}
 
             {!isOwner && (
               <div

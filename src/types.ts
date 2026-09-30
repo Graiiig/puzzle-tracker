@@ -18,6 +18,7 @@ export interface Puzzle {
   date: string;
   time: string;
   notes: string;
+  progressPhotos: string[];
 }
 
 export interface WishlistItem {

@@ -18,6 +18,7 @@ create table if not exists public.puzzles (
   date text not null default '',
   time text not null default '',
   notes text not null default '',
+  progress_photos text[] not null default '{}',
   created_at timestamptz not null default now()
 );
 
