@@ -227,6 +227,17 @@ export interface Dict {
     restoreMenuLabel: string;
     restoreDone: string;
     restoreError: string;
+    screenTitle: string;
+    heroTagline: string;
+    benefitCollectionTitle: string;
+    benefitCollectionBody: (limit: number) => string;
+    benefitWishlistTitle: string;
+    benefitWishlistBody: (limit: number) => string;
+    benefitStatsTitle: string;
+    benefitStatsBody: string;
+    alreadyPremiumTitle: string;
+    alreadyPremiumBody: string;
+    seeDetails: string;
   };
   settings: {
     title: string;
@@ -506,6 +517,17 @@ const fr: Dict = {
     restoreMenuLabel: 'Restaurer mes achats',
     restoreDone: 'Achats restaurés. Si tu avais déjà Premium, ce sera actif sous peu.',
     restoreError: 'Impossible de restaurer les achats pour le moment.',
+    screenTitle: 'Premium',
+    heroTagline: 'Débloque tout le potentiel de Mes Puzzles.',
+    benefitCollectionTitle: 'Collection illimitée',
+    benefitCollectionBody: (limit) => `Ajoute autant de puzzles que tu veux (gratuit : ${limit} max).`,
+    benefitWishlistTitle: "Liste d'envies illimitée",
+    benefitWishlistBody: (limit) => `Note toutes tes envies sans limite (gratuit : ${limit} max).`,
+    benefitStatsTitle: 'Statistiques avancées',
+    benefitStatsBody: 'Répartition par marque, par difficulté, et ton rythme de montage.',
+    alreadyPremiumTitle: 'Tu es déjà Premium !',
+    alreadyPremiumBody: 'Merci pour ton soutien — profite de toutes les fonctionnalités sans limite.',
+    seeDetails: 'Voir tous les avantages',
   },
   settings: {
     title: 'Réglages',
@@ -782,6 +804,17 @@ const en: Dict = {
     restoreMenuLabel: 'Restore purchases',
     restoreDone: "Purchases restored. If you already had Premium, it'll be active shortly.",
     restoreError: 'Could not restore purchases right now.',
+    screenTitle: 'Premium',
+    heroTagline: 'Unlock the full potential of Mes Puzzles.',
+    benefitCollectionTitle: 'Unlimited collection',
+    benefitCollectionBody: (limit) => `Add as many puzzles as you want (free: ${limit} max).`,
+    benefitWishlistTitle: 'Unlimited wishlist',
+    benefitWishlistBody: (limit) => `Track every wish, no limit (free: ${limit} max).`,
+    benefitStatsTitle: 'Advanced statistics',
+    benefitStatsBody: 'Breakdown by brand, by difficulty, and your solving pace.',
+    alreadyPremiumTitle: "You're already Premium!",
+    alreadyPremiumBody: 'Thanks for your support — enjoy every feature with no limits.',
+    seeDetails: 'See all benefits',
   },
   settings: {
     title: 'Settings',
