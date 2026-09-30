@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { AuthProvider, useAuth } from './hooks/useAuth';
@@ -6,12 +6,16 @@ import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbox';
 import { LanguageProvider, useLanguage } from './hooks/useLanguage';
 import { ThemeProvider } from './hooks/useTheme';
+import { ToastProvider, useToast } from './hooks/useToast';
 import { PremiumProvider, usePremium } from './hooks/usePremium';
 import { isPurchasesConfigured, PurchasesProvider, usePurchases } from './hooks/usePurchases';
 import { usePuzzles } from './hooks/usePuzzles';
 import { useWishlist } from './hooks/useWishlist';
 import { useAppUpdate } from './hooks/useAppUpdate';
 import { useShares } from './hooks/useShares';
+import { useAchievementNotifications } from './hooks/useAchievementNotifications';
+import { computeAchievements, type Achievement } from './utils/achievements';
+import { achievementTitle, tierLabel } from './utils/achievementLabels';
 import { EMPTY_FORM, FREE_COLLECTION_LIMIT, FREE_WISHLIST_LIMIT } from './data';
 import { hasLegacyData } from './lib/legacyImport';
 import { exportDataAsJson } from './utils/export';
@@ -35,9 +39,33 @@ import PremiumLimitOverlay from './components/PremiumLimitOverlay';
 
 function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void }) {
   const { t } = useLanguage();
+  const { showToast } = useToast();
   const [screen, setScreen] = useState<Screen>('home');
-  const { collection, addPuzzle, updatePuzzle, deletePuzzle, refresh: refreshCollection } = usePuzzles(userId);
+  const {
+    collection,
+    loading: collectionLoading,
+    addPuzzle,
+    updatePuzzle,
+    deletePuzzle,
+    refresh: refreshCollection,
+  } = usePuzzles(userId);
   const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
+  const ownedCollection = useMemo(() => collection.filter((p) => p.ownerId === userId), [collection, userId]);
+  const achievements = useMemo(() => computeAchievements(ownedCollection), [ownedCollection]);
+  const handleTierUp = useCallback(
+    (achievement: Achievement) => {
+      const tier = achievement.tiers[achievement.tierIndex].tier;
+      showToast({
+        icon: achievement.icon,
+        title: t.achievements.toastTitle,
+        body: t.achievements.toastBody(achievementTitle(t, achievement.id), tierLabel(t, tier)),
+        variant: 'success',
+        durationMs: 4500,
+      });
+    },
+    [t, showToast],
+  );
+  useAchievementNotifications(userId, achievements, handleTierUp, !collectionLoading);
   const {
     pseudo,
     savePseudo,
@@ -458,9 +486,9 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     }
     try {
       const result = await importBackupFile(file, addPuzzle, addWishlistItem, setImage);
-      window.alert(t.app.importBackupDone(result.puzzles, result.wishlistItems, result.photos));
+      showToast({ icon: '📥', title: t.app.importBackupDone(result.puzzles, result.wishlistItems, result.photos), variant: 'success' });
     } catch {
-      window.alert(t.app.importBackupError);
+      showToast({ icon: '⚠️', title: t.app.importBackupError, variant: 'error' });
     }
   }
 
@@ -468,7 +496,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     setExporting(true);
     try {
       await exportDataAsJson(collection, wishlist, downloadImage);
-      if (Capacitor.isNativePlatform()) window.alert(t.app.exportDone);
+      if (Capacitor.isNativePlatform()) showToast({ icon: '⬇️', title: t.app.exportDone, variant: 'success' });
     } finally {
       setExporting(false);
     }
@@ -485,20 +513,20 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     setPurchasing(false);
     if (result.success) {
       setLimitReached(null);
-      window.alert(t.premium.purchaseSuccess);
+      showToast({ icon: '🎉', title: t.premium.purchaseSuccess, variant: 'success' });
       setTimeout(() => refreshPremium(), 2500);
     } else if (result.error === 'unknown') {
-      window.alert(t.premium.purchaseError);
+      showToast({ icon: '⚠️', title: t.premium.purchaseError, variant: 'error' });
     }
   }
 
   async function handleRestorePurchases() {
     const result = await restorePurchases();
     if (result.success) {
-      window.alert(t.premium.restoreDone);
+      showToast({ icon: '♻️', title: t.premium.restoreDone, variant: 'success' });
       setTimeout(() => refreshPremium(), 2000);
     } else {
-      window.alert(t.premium.restoreError);
+      showToast({ icon: '⚠️', title: t.premium.restoreError, variant: 'error' });
     }
   }
 
@@ -624,7 +652,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       )}
 
       {screen === 'achievements' && (
-        <AchievementsScreen collection={collection.filter((p) => p.ownerId === userId)} onClose={() => setScreen('home')} />
+        <AchievementsScreen collection={ownedCollection} onClose={() => setScreen('home')} />
       )}
 
       {screen === 'add' && (
@@ -737,7 +765,9 @@ export default function App() {
       <LanguageProvider>
         <AuthProvider>
           <div className="app-shell">
-            <AuthGate />
+            <ToastProvider>
+              <AuthGate />
+            </ToastProvider>
           </div>
         </AuthProvider>
       </LanguageProvider>
