@@ -659,7 +659,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           purchaseAvailable={isPurchasesConfigured}
           priceLabel={priceLabel}
           purchasing={purchasing}
-          onPurchase={handlePurchasePremium}
+          onPurchase={() => setScreen('premium')}
           onClose={() => setScreen('home')}
           onOpenPuzzle={(id) => openPuzzle(id, 'stats')}
         />
