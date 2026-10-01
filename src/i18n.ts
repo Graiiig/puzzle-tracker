@@ -579,7 +579,7 @@ const fr: Dict = {
   championships: {
     title: 'Championnats',
     subtitle: 'Les grands événements de puzzle à ne pas manquer.',
-    liveBanner: (title) => `🔴 En direct : ${title}`,
+    liveBanner: (title) => `En direct : ${title}`,
     liveBadge: 'En direct',
     upcomingLabel: 'À venir',
     pastLabel: 'Événements passés',
@@ -882,7 +882,7 @@ const en: Dict = {
   championships: {
     title: 'Championships',
     subtitle: "The big jigsaw puzzle events you shouldn't miss.",
-    liveBanner: (title) => `🔴 Live now: ${title}`,
+    liveBanner: (title) => `Live now: ${title}`,
     liveBadge: 'Live',
     upcomingLabel: 'Upcoming',
     pastLabel: 'Past events',

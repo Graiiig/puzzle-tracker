@@ -22,6 +22,7 @@ interface HomeScreenProps {
   onGoAchievements: () => void;
   onGoChampionships: () => void;
   liveChampionship: Championship | null;
+  onDismissLiveBanner: (championshipId: string) => void;
   search: string;
   onSearchChange: (value: string) => void;
   selectedGenres: Genre[];
@@ -61,6 +62,7 @@ export default function HomeScreen({
   onGoAchievements,
   onGoChampionships,
   liveChampionship,
+  onDismissLiveBanner,
   search,
   onSearchChange,
   selectedGenres,
@@ -281,7 +283,24 @@ export default function HomeScreen({
             cursor: 'pointer',
           }}
         >
-          🔴 {t.championships.liveBanner(liveChampionship.title)}
+          <span style={{ flex: 1 }}>🔴 {t.championships.liveBanner(liveChampionship.title)}</span>
+          <span
+            onClick={(e) => {
+              e.stopPropagation();
+              onDismissLiveBanner(liveChampionship.id);
+            }}
+            title={t.common.close}
+            style={{
+              fontSize: 16,
+              lineHeight: 1,
+              opacity: 0.85,
+              padding: '2px 4px',
+              cursor: 'pointer',
+              flexShrink: 0,
+            }}
+          >
+            ✕
+          </span>
         </div>
       )}
 
