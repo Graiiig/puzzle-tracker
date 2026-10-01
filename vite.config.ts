@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
@@ -6,6 +7,19 @@ const isCapacitor = process.env.CAPACITOR_BUILD === '1';
 
 export default defineConfig({
   base: isCapacitor ? '/' : '/puzzle-tracker/',
+  // The admin page is a separate static entry, left out of the Capacitor
+  // (Android) build so it never ships inside the app bundle — it's only
+  // ever served from GitHub Pages, gated by the championships RLS policy.
+  build: isCapacitor
+    ? undefined
+    : {
+        rollupOptions: {
+          input: {
+            main: fileURLToPath(new URL('./index.html', import.meta.url)),
+            admin: fileURLToPath(new URL('./admin.html', import.meta.url)),
+          },
+        },
+      },
   plugins: [
     react(),
     ...(isCapacitor

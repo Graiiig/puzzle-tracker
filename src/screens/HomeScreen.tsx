@@ -6,7 +6,7 @@ import FiltersSheet from '../components/FiltersSheet';
 import PullToRefresh from '../components/PullToRefresh';
 import { STATUSES, SORT_MODES } from '../data';
 import { useLanguage } from '../hooks/useLanguage';
-import type { Genre, PieceBucket, Puzzle, SharedOwner, SortMode, Status } from '../types';
+import type { Championship, Genre, PieceBucket, Puzzle, SharedOwner, SortMode, Status } from '../types';
 import { chipStyle, formatMinutesAsHours, parseTimeToMinutes, sortList, starString, statusStyle } from '../utils/format';
 import { matchesFilters } from '../utils/filters';
 import { collectArtists, collectBrands, collectGenres } from '../utils/genres';
@@ -20,6 +20,8 @@ interface HomeScreenProps {
   onGoShare: () => void;
   onGoStats: () => void;
   onGoAchievements: () => void;
+  onGoChampionships: () => void;
+  liveChampionship: Championship | null;
   search: string;
   onSearchChange: (value: string) => void;
   selectedGenres: Genre[];
@@ -57,6 +59,8 @@ export default function HomeScreen({
   onGoShare,
   onGoStats,
   onGoAchievements,
+  onGoChampionships,
+  liveChampionship,
   search,
   onSearchChange,
   selectedGenres,
@@ -169,6 +173,7 @@ export default function HomeScreen({
                     { icon: '🔗', label: t.home.menuShare, onClick: onGoShare, disabled: false, highlight: false },
                     { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false, highlight: false },
                     { icon: '🏅', label: t.home.menuAchievements, onClick: onGoAchievements, disabled: false, highlight: false },
+                    { icon: '🏆', label: t.home.menuChampionships, onClick: onGoChampionships, disabled: false, highlight: false },
                     { icon: '⚙️', label: t.home.menuSettings, onClick: onGoSettings, disabled: false, highlight: false },
                     { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false, highlight: false },
                   ].map((item) => (
@@ -257,6 +262,28 @@ export default function HomeScreen({
           />
         </div>
       </div>
+
+      {liveChampionship && (
+        <div
+          onClick={onGoChampionships}
+          style={{
+            margin: '14px 20px 0',
+            flexShrink: 0,
+            background: 'oklch(45% 0.2 25)',
+            color: 'white',
+            borderRadius: 14,
+            padding: '10px 14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            fontSize: 13,
+            fontWeight: 800,
+            cursor: 'pointer',
+          }}
+        >
+          🔴 {t.championships.liveBanner(liveChampionship.title)}
+        </div>
+      )}
 
       {sharedOwners.length > 0 && (
         <div style={{ display: 'flex', gap: 8, padding: '14px 20px 0', flexShrink: 0, overflowX: 'auto' }}>

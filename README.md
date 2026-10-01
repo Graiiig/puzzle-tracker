@@ -38,6 +38,8 @@ Si tu avais déjà exécuté `schema.sql` avant l'ajout du champ artiste, exécu
 
 Si tu avais déjà exécuté `schema.sql` avant l'ajout des photos de progression, exécute aussi `supabase/migrations/0010_progress_photos.sql` pour ajouter la colonne (vide par défaut, les données existantes sont conservées).
 
+Si tu avais déjà exécuté `schema.sql` avant l'ajout de la section Championnats, exécute aussi `supabase/migrations/0011_championships.sql` pour créer la table `championships`.
+
 ## Variables d'environnement
 
 Copie `.env.example` vers `.env.local` et renseigne les deux valeurs récupérées ci-dessus :
