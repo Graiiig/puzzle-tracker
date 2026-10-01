@@ -15,6 +15,7 @@ import { useAppUpdate } from './hooks/useAppUpdate';
 import { useShares } from './hooks/useShares';
 import { useAchievementNotifications } from './hooks/useAchievementNotifications';
 import { useChampionships } from './hooks/useChampionships';
+import { useDismissedLiveBanner } from './hooks/useDismissedLiveBanner';
 import { computeAchievements, type Achievement } from './utils/achievements';
 import { achievementTitle, tierLabel } from './utils/achievementLabels';
 import { EMPTY_FORM, FREE_COLLECTION_LIMIT, FREE_WISHLIST_LIMIT } from './data';
@@ -71,7 +72,11 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   );
   useAchievementNotifications(userId, achievements, handleTierUp, !collectionLoading);
   const { championships } = useChampionships(userId);
-  const liveChampionship = useMemo(() => championships.find((c) => c.isLive) ?? null, [championships]);
+  const { dismissedIds: dismissedLiveBannerIds, dismiss: dismissLiveBanner } = useDismissedLiveBanner(userId);
+  const liveChampionship = useMemo(() => {
+    const live = championships.find((c) => c.isLive) ?? null;
+    return live && !dismissedLiveBannerIds.includes(live.id) ? live : null;
+  }, [championships, dismissedLiveBannerIds]);
   const {
     pseudo,
     savePseudo,
@@ -563,6 +568,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onGoAchievements={() => setScreen('achievements')}
           onGoChampionships={() => setScreen('championships')}
           liveChampionship={liveChampionship}
+          onDismissLiveBanner={dismissLiveBanner}
           search={search}
           onSearchChange={setSearch}
           selectedGenres={selectedGenres}
