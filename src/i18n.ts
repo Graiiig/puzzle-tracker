@@ -47,6 +47,7 @@ export interface Dict {
     menuShare: string;
     menuStats: string;
     menuAchievements: string;
+    menuChampionships: string;
     menuSettings: string;
     menuSignOut: string;
     menuLanguage: string;
@@ -269,6 +270,20 @@ export interface Dict {
     toastTitle: string;
     toastBody: (badgeTitle: string, tierName: string) => string;
   };
+  championships: {
+    title: string;
+    subtitle: string;
+    liveBanner: (title: string) => string;
+    liveBadge: string;
+    upcomingLabel: string;
+    pastLabel: string;
+    showPast: string;
+    hidePast: string;
+    empty: string;
+    seeStream: string;
+    moreInfo: string;
+    daysUntil: (n: number) => string;
+  };
 }
 
 const fr: Dict = {
@@ -317,6 +332,7 @@ const fr: Dict = {
     menuShare: 'Partager ma collection',
     menuStats: 'Statistiques',
     menuAchievements: 'Succès',
+    menuChampionships: 'Championnats',
     menuSettings: 'Réglages',
     menuSignOut: 'Se déconnecter',
     menuLanguage: '🌐 English',
@@ -560,6 +576,20 @@ const fr: Dict = {
     toastTitle: 'Succès débloqué !',
     toastBody: (badgeTitle, tierName) => `${badgeTitle} — ${tierName}`,
   },
+  championships: {
+    title: 'Championnats',
+    subtitle: 'Les grands événements de puzzle à ne pas manquer.',
+    liveBanner: (title) => `🔴 En direct : ${title}`,
+    liveBadge: 'En direct',
+    upcomingLabel: 'À venir',
+    pastLabel: 'Événements passés',
+    showPast: 'Voir les événements passés',
+    hidePast: 'Masquer les événements passés',
+    empty: 'Aucun championnat à venir pour le moment.',
+    seeStream: 'Voir le stream',
+    moreInfo: "Plus d'infos",
+    daysUntil: (n) => (n === 0 ? "Aujourd'hui" : n === 1 ? 'Dans 1 jour' : `Dans ${n} jours`),
+  },
 };
 
 const en: Dict = {
@@ -607,6 +637,7 @@ const en: Dict = {
     menuShare: 'Share my collection',
     menuStats: 'Statistics',
     menuAchievements: 'Achievements',
+    menuChampionships: 'Championships',
     menuSettings: 'Settings',
     menuSignOut: 'Sign out',
     menuLanguage: '🌐 Français',
@@ -847,6 +878,20 @@ const en: Dict = {
     demandingBody: 'Rate puzzles 5 stars.',
     toastTitle: 'Achievement unlocked!',
     toastBody: (badgeTitle, tierName) => `${badgeTitle} — ${tierName}`,
+  },
+  championships: {
+    title: 'Championships',
+    subtitle: "The big jigsaw puzzle events you shouldn't miss.",
+    liveBanner: (title) => `🔴 Live now: ${title}`,
+    liveBadge: 'Live',
+    upcomingLabel: 'Upcoming',
+    pastLabel: 'Past events',
+    showPast: 'Show past events',
+    hidePast: 'Hide past events',
+    empty: 'No upcoming championships for now.',
+    seeStream: 'Watch the stream',
+    moreInfo: 'More info',
+    daysUntil: (n) => (n === 0 ? 'Today' : n === 1 ? 'In 1 day' : `In ${n} days`),
   },
 };
 

@@ -14,6 +14,7 @@ import { useWishlist } from './hooks/useWishlist';
 import { useAppUpdate } from './hooks/useAppUpdate';
 import { useShares } from './hooks/useShares';
 import { useAchievementNotifications } from './hooks/useAchievementNotifications';
+import { useChampionships } from './hooks/useChampionships';
 import { computeAchievements, type Achievement } from './utils/achievements';
 import { achievementTitle, tierLabel } from './utils/achievementLabels';
 import { EMPTY_FORM, FREE_COLLECTION_LIMIT, FREE_WISHLIST_LIMIT } from './data';
@@ -34,6 +35,7 @@ import ShareScreen from './screens/ShareScreen';
 import StatsScreen from './screens/StatsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import AchievementsScreen from './screens/AchievementsScreen';
+import ChampionshipsScreen from './screens/ChampionshipsScreen';
 import PremiumScreen from './screens/PremiumScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 import PremiumLimitOverlay from './components/PremiumLimitOverlay';
@@ -68,6 +70,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     [t, showToast],
   );
   useAchievementNotifications(userId, achievements, handleTierUp, !collectionLoading);
+  const { championships } = useChampionships(userId);
+  const liveChampionship = useMemo(() => championships.find((c) => c.isLive) ?? null, [championships]);
   const {
     pseudo,
     savePseudo,
@@ -280,7 +284,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       screen === 'stats' ||
       screen === 'settings' ||
       screen === 'achievements' ||
-      screen === 'premium'
+      screen === 'premium' ||
+      screen === 'championships'
     ) {
       setScreen('home');
     }
@@ -556,6 +561,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onGoShare={() => setScreen('share')}
           onGoStats={() => setScreen('stats')}
           onGoAchievements={() => setScreen('achievements')}
+          onGoChampionships={() => setScreen('championships')}
+          liveChampionship={liveChampionship}
           search={search}
           onSearchChange={setSearch}
           selectedGenres={selectedGenres}
@@ -670,6 +677,10 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
 
       {screen === 'achievements' && (
         <AchievementsScreen collection={ownedCollection} onClose={() => setScreen('home')} />
+      )}
+
+      {screen === 'championships' && (
+        <ChampionshipsScreen championships={championships} onClose={() => setScreen('home')} />
       )}
 
       {screen === 'add' && (

@@ -48,8 +48,29 @@ export interface PuzzleForm {
   time: string;
 }
 
-export type Screen = 'home' | 'wishlist' | 'detail' | 'add' | 'share' | 'stats' | 'settings' | 'achievements' | 'premium';
+export type Screen =
+  | 'home'
+  | 'wishlist'
+  | 'detail'
+  | 'add'
+  | 'share'
+  | 'stats'
+  | 'settings'
+  | 'achievements'
+  | 'premium'
+  | 'championships';
 export type DetailSource = 'collection' | 'wishlist';
+
+export interface Championship {
+  id: string;
+  title: string;
+  startDate: string;
+  endDate: string | null;
+  location: string;
+  streamUrl: string | null;
+  infoUrl: string | null;
+  isLive: boolean;
+}
 
 export interface ShareInvite {
   id: string;
