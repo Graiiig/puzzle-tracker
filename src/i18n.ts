@@ -91,6 +91,11 @@ export interface Dict {
     notRatedYet: string;
     pieces: (n: number) => string;
     illustratedBy: (artist: string) => string;
+    shareButton: string;
+    shareDialogTitle: string;
+    shareError: string;
+    shareCardHeadline: string;
+    shareCardWatermark: string;
   };
   stats: {
     title: string;
@@ -376,6 +381,11 @@ const fr: Dict = {
     notRatedYet: 'Pas encore noté',
     pieces: (n) => `${n} pièces`,
     illustratedBy: (artist) => `Illustration de ${artist}`,
+    shareButton: '📤 Partager mon succès',
+    shareDialogTitle: 'Partager mon puzzle terminé',
+    shareError: "Impossible de générer l'image à partager",
+    shareCardHeadline: 'Puzzle terminé ! 🎉',
+    shareCardWatermark: 'Mes Puzzles ✨',
   },
   stats: {
     title: 'Statistiques',
@@ -681,6 +691,11 @@ const en: Dict = {
     notRatedYet: 'Not rated yet',
     pieces: (n) => `${n} pieces`,
     illustratedBy: (artist) => `Illustrated by ${artist}`,
+    shareButton: '📤 Share my achievement',
+    shareDialogTitle: 'Share my finished puzzle',
+    shareError: 'Could not generate the image to share',
+    shareCardHeadline: 'Puzzle finished! 🎉',
+    shareCardWatermark: 'Mes Puzzles ✨',
   },
   stats: {
     title: 'Statistics',

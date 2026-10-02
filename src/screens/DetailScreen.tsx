@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ImageSlot from '../components/ImageSlot';
 import { useImageStore } from '../hooks/ImageStore';
 import { useImageLightbox } from '../hooks/useImageLightbox';
@@ -7,6 +7,8 @@ import { useToast } from '../hooks/useToast';
 import type { DetailSource, Puzzle, WishlistItem } from '../types';
 import { compressImageFile } from '../utils/image';
 import { dotString, formatDate, priorityStyle, ratingLabel, starString, statusStyle } from '../utils/format';
+import { generateShareCardBlob } from '../utils/shareCard';
+import { shareImageBlob } from '../utils/shareImage';
 
 interface DetailScreenProps {
   source: DetailSource;
@@ -90,11 +92,32 @@ export default function DetailScreen({
   onProgressPhotosChange,
 }: DetailScreenProps) {
   const { t, lang } = useLanguage();
-  const { setImage, clearImage } = useImageStore();
+  const { setImage, clearImage, downloadImage } = useImageStore();
   const { showToast } = useToast();
   const progressInputRef = useRef<HTMLInputElement>(null);
+  const [sharing, setSharing] = useState(false);
   const item = source === 'collection' ? puzzle : wishlistItem;
   if (!item) return null;
+
+  async function handleShare() {
+    if (!puzzle || sharing) return;
+    setSharing(true);
+    try {
+      const photoUrl = await downloadImage('puzzle-img-' + puzzle.id);
+      const blob = await generateShareCardBlob(puzzle, photoUrl, {
+        headline: t.detail.shareCardHeadline,
+        piecesSuffix: lang === 'fr' ? 'pièces' : 'pieces',
+        watermark: t.detail.shareCardWatermark,
+      });
+      await shareImageBlob(blob, `puzzle-${puzzle.id}.png`, puzzle.name, t.detail.shareDialogTitle);
+    } catch (err) {
+      if (!/cancel/i.test((err as Error)?.message ?? '')) {
+        showToast({ icon: '⚠️', title: t.detail.shareError, variant: 'error' });
+      }
+    } finally {
+      setSharing(false);
+    }
+  }
 
   async function handleAddProgressPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -347,6 +370,28 @@ export default function DetailScreen({
                 }}
               >
                 {t.detail.addToMyWishlist}
+              </div>
+            )}
+
+            {isOwner && puzzle.status === 'done' && (
+              <div
+                onClick={handleShare}
+                style={{
+                  marginTop: 22,
+                  background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',
+                  color: 'white',
+                  fontFamily: "'Baloo 2',sans-serif",
+                  fontWeight: 700,
+                  fontSize: 15,
+                  textAlign: 'center',
+                  padding: 14,
+                  borderRadius: 16,
+                  cursor: sharing ? 'default' : 'pointer',
+                  opacity: sharing ? 0.7 : 1,
+                  boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
+                }}
+              >
+                {t.detail.shareButton}
               </div>
             )}
           </>
