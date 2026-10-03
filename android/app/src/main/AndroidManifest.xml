@@ -31,6 +31,19 @@
             </intent-filter>
 
         </activity>
+
+        <!-- Exposes files written to the app's cache dir (e.g. the share-card
+             PNG in src/utils/shareImage.ts) to other apps via a content://
+             URI, as required by @capacitor/share's file sharing. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
     <!-- Permissions -->
