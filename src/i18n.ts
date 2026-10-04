@@ -92,6 +92,7 @@ export interface Dict {
     pieces: (n: number) => string;
     illustratedBy: (artist: string) => string;
     shareButton: string;
+    sharing: string;
     shareDialogTitle: string;
     shareError: string;
     shareCardHeadline: string;
@@ -288,6 +289,7 @@ export interface Dict {
     seeStream: string;
     moreInfo: string;
     daysUntil: (n: number) => string;
+    ongoing: string;
   };
 }
 
@@ -382,6 +384,7 @@ const fr: Dict = {
     pieces: (n) => `${n} pièces`,
     illustratedBy: (artist) => `Illustration de ${artist}`,
     shareButton: '📤 Partager mon succès',
+    sharing: '⏳ Génération de l\'image...',
     shareDialogTitle: 'Partager mon puzzle terminé',
     shareError: "Impossible de générer l'image à partager",
     shareCardHeadline: 'Puzzle terminé ! 🎉',
@@ -599,6 +602,7 @@ const fr: Dict = {
     seeStream: 'Voir le stream',
     moreInfo: "Plus d'infos",
     daysUntil: (n) => (n === 0 ? "Aujourd'hui" : n === 1 ? 'Dans 1 jour' : `Dans ${n} jours`),
+    ongoing: 'En cours',
   },
 };
 
@@ -692,6 +696,7 @@ const en: Dict = {
     pieces: (n) => `${n} pieces`,
     illustratedBy: (artist) => `Illustrated by ${artist}`,
     shareButton: '📤 Share my achievement',
+    sharing: '⏳ Generating the image...',
     shareDialogTitle: 'Share my finished puzzle',
     shareError: 'Could not generate the image to share',
     shareCardHeadline: 'Puzzle finished! 🎉',
@@ -907,6 +912,7 @@ const en: Dict = {
     seeStream: 'Watch the stream',
     moreInfo: 'More info',
     daysUntil: (n) => (n === 0 ? 'Today' : n === 1 ? 'In 1 day' : `In ${n} days`),
+    ongoing: 'Happening now',
   },
 };
 

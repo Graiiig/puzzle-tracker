@@ -391,7 +391,7 @@ export default function DetailScreen({
                   boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
                 }}
               >
-                {t.detail.shareButton}
+                {sharing ? t.detail.sharing : t.detail.shareButton}
               </div>
             )}
           </>

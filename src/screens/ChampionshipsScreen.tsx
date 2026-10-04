@@ -47,6 +47,8 @@ export default function ChampionshipsScreen({ championships, onClose }: Champion
     };
   }, [championships, todayStr]);
 
+  const featuredDays = featured ? daysUntil(featured.startDate) : 0;
+
   function renderLinks(c: Championship) {
     if (!c.streamUrl && !c.infoUrl) return null;
     return (
@@ -160,7 +162,7 @@ export default function ChampionshipsScreen({ championships, onClose }: Champion
             </div>
             {!featured.isLive && (
               <div style={{ fontSize: 12, fontWeight: 700, marginTop: 4, opacity: 0.85 }}>
-                {t.championships.daysUntil(daysUntil(featured.startDate))}
+                {featuredDays < 0 ? t.championships.ongoing : t.championships.daysUntil(featuredDays)}
               </div>
             )}
             {renderLinks(featured)}
