@@ -14,6 +14,7 @@ export interface Dict {
     checkEmailTitle: string;
     codeSentToPrefix: string;
     codeLabel: string;
+    passwordLabel: string;
     codePlaceholder: string;
     verifying: string;
     signIn: string;
@@ -305,6 +306,7 @@ const fr: Dict = {
     checkEmailTitle: 'Vérifie ta boîte mail',
     codeSentToPrefix: 'On a envoyé un code à ',
     codeLabel: 'Code de connexion',
+    passwordLabel: 'Mot de passe',
     codePlaceholder: 'Code reçu par email',
     verifying: 'Vérification...',
     signIn: 'Se connecter',
@@ -618,6 +620,7 @@ const en: Dict = {
     checkEmailTitle: 'Check your inbox',
     codeSentToPrefix: 'We sent a code to ',
     codeLabel: 'Sign-in code',
+    passwordLabel: 'Password',
     codePlaceholder: 'Code received by email',
     verifying: 'Verifying...',
     signIn: 'Sign in',

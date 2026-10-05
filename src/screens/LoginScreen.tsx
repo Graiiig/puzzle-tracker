@@ -2,17 +2,30 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
 
+// A single dedicated Supabase account (email+password, created manually in
+// the Supabase dashboard) exists only so the Play Store review team has a
+// working login that doesn't depend on access to any external inbox —
+// Google's own policy forbids credentials that require reading an email or
+// SMS to sign in. Everyone else keeps using the OTP flow below.
+const REVIEWER_EMAIL = 'play-store-reviewer@mespuzzles.app';
+
 export default function LoginScreen() {
-  const { signInWithEmail, verifyCode } = useAuth();
+  const { signInWithEmail, verifyCode, signInWithPassword } = useAuth();
   const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
+  const [password, setPassword] = useState('');
   const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'verifying' | 'error'>('idle');
   const [error, setError] = useState('');
+  const isReviewer = email.trim().toLowerCase() === REVIEWER_EMAIL;
 
   async function handleSendCode(e: React.FormEvent) {
     e.preventDefault();
     if (!email.trim()) return;
+    if (isReviewer) {
+      setStatus('sent');
+      return;
+    }
     setStatus('sending');
     setError('');
     const { error } = await signInWithEmail(email.trim());
@@ -26,9 +39,18 @@ export default function LoginScreen() {
 
   async function handleVerifyCode(e: React.FormEvent) {
     e.preventDefault();
-    if (!code.trim()) return;
     setStatus('verifying');
     setError('');
+    if (isReviewer) {
+      if (!password) return;
+      const { error } = await signInWithPassword(email.trim(), password);
+      if (error) {
+        setError(error);
+        setStatus('sent');
+      }
+      return;
+    }
+    if (!code.trim()) return;
     const { error } = await verifyCode(email.trim(), code);
     if (error) {
       setError(error);
@@ -59,30 +81,49 @@ export default function LoginScreen() {
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '32px 28px' }}>
         {status === 'sent' || status === 'verifying' ? (
           <form onSubmit={handleVerifyCode}>
-            <div style={{ textAlign: 'center', marginBottom: 20 }}>
-              <div style={{ fontSize: 32, marginBottom: 12 }}>📬</div>
-              <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 18, color: 'var(--text-primary)' }}>
-                {t.login.checkEmailTitle}
+            {!isReviewer && (
+              <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                <div style={{ fontSize: 32, marginBottom: 12 }}>📬</div>
+                <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 18, color: 'var(--text-primary)' }}>
+                  {t.login.checkEmailTitle}
+                </div>
+                <div style={{ fontSize: 14, color: 'var(--text-tertiary)', marginTop: 8, lineHeight: 1.5 }}>
+                  {t.login.codeSentToPrefix}
+                  <strong>{email}</strong>.
+                </div>
               </div>
-              <div style={{ fontSize: 14, color: 'var(--text-tertiary)', marginTop: 8, lineHeight: 1.5 }}>
-                {t.login.codeSentToPrefix}
-                <strong>{email}</strong>.
-              </div>
-            </div>
-            <div className="field-label">{t.login.codeLabel}</div>
-            <input
-              className="field-input"
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              autoFocus
-              required
-              maxLength={10}
-              value={code}
-              onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-              placeholder={t.login.codePlaceholder}
-              style={{ textAlign: 'center', letterSpacing: 4, fontSize: 20, fontWeight: 700 }}
-            />
+            )}
+            {isReviewer ? (
+              <>
+                <div className="field-label">{t.login.passwordLabel}</div>
+                <input
+                  className="field-input"
+                  type="password"
+                  autoComplete="current-password"
+                  autoFocus
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </>
+            ) : (
+              <>
+                <div className="field-label">{t.login.codeLabel}</div>
+                <input
+                  className="field-input"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  autoFocus
+                  required
+                  maxLength={10}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+                  placeholder={t.login.codePlaceholder}
+                  style={{ textAlign: 'center', letterSpacing: 4, fontSize: 20, fontWeight: 700 }}
+                />
+              </>
+            )}
             {error ? (
               <div style={{ marginTop: 8, fontSize: 13, fontWeight: 700, color: 'oklch(55% 0.2 25)' }}>{error}</div>
             ) : null}
@@ -108,23 +149,26 @@ export default function LoginScreen() {
             >
               {status === 'verifying' ? t.login.verifying : t.login.signIn}
             </button>
-            <div style={{ marginTop: 16, display: 'flex', justifyContent: 'space-between', fontSize: 13, fontWeight: 800 }}>
+            <div style={{ marginTop: 16, display: 'flex', justifyContent: isReviewer ? 'center' : 'space-between', fontSize: 13, fontWeight: 800 }}>
               <span
                 onClick={() => {
                   setStatus('idle');
                   setCode('');
+                  setPassword('');
                   setError('');
                 }}
                 style={{ color: 'var(--text-muted)', cursor: 'pointer' }}
               >
                 {t.login.changeEmail}
               </span>
-              <span
-                onClick={(e) => handleSendCode(e as unknown as React.FormEvent)}
-                style={{ color: 'oklch(55% 0.2 350)', cursor: 'pointer' }}
-              >
-                {t.login.resendCode}
-              </span>
+              {!isReviewer && (
+                <span
+                  onClick={(e) => handleSendCode(e as unknown as React.FormEvent)}
+                  style={{ color: 'oklch(55% 0.2 350)', cursor: 'pointer' }}
+                >
+                  {t.login.resendCode}
+                </span>
+              )}
             </div>
           </form>
         ) : (

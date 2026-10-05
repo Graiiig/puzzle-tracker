@@ -7,6 +7,7 @@ interface AuthValue {
   loading: boolean;
   signInWithEmail: (email: string) => Promise<{ error: string | null }>;
   verifyCode: (email: string, code: string) => Promise<{ error: string | null }>;
+  signInWithPassword: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
 }
 
@@ -53,6 +54,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     signOut: async () => {
       await supabase.auth.signOut();
+    },
+    // Password sign-in exists only for the Play Store reviewer account (see
+    // LoginScreen's REVIEWER_EMAIL) — regular users only ever use the OTP
+    // flow above. It lets Google's review team log in without needing
+    // access to any external inbox, which their own policy now requires.
+    signInWithPassword: async (email, password) => {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      return { error: error ? error.message : null };
     },
   };
 
