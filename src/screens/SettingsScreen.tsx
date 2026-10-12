@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { useLanguage } from '../hooks/useLanguage';
 import { useTheme } from '../hooks/useTheme';
+import { ACCENT_GRADIENTS, ACCENT_IDS, useAccentTheme, type AccentId } from '../hooks/useAccentTheme';
 
 interface SettingsScreenProps {
   onClose: () => void;
@@ -25,7 +26,17 @@ export default function SettingsScreen({
 }: SettingsScreenProps) {
   const { t, toggleLang } = useLanguage();
   const { theme, cycleTheme } = useTheme();
+  const { accent, setAccent } = useAccentTheme();
   const importInputRef = useRef<HTMLInputElement>(null);
+
+  const accentLabels: Record<AccentId, string> = {
+    rose: t.settings.accentRose,
+    ocean: t.settings.accentOcean,
+    mint: t.settings.accentMint,
+    coral: t.settings.accentCoral,
+    night: t.settings.accentNight,
+    wine: t.settings.accentWine,
+  };
 
   const items = [
     ...(showGoPremium
@@ -109,6 +120,32 @@ export default function SettingsScreen({
             {item.label}
           </div>
         ))}
+
+        <div style={{ background: 'var(--surface)', borderRadius: 16, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--text-muted)' }}>{t.settings.colorThemeLabel}</div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+            {ACCENT_IDS.map((id) => (
+              <div
+                key={id}
+                onClick={() => setAccent(id)}
+                title={accentLabels[id]}
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: '50%',
+                  background: ACCENT_GRADIENTS[id],
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: accent === id ? '0 0 0 3px var(--surface), 0 0 0 5px var(--text-primary)' : 'none',
+                }}
+              >
+                {accent === id && <span style={{ color: 'white', fontSize: 15, fontWeight: 800 }}>✓</span>}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

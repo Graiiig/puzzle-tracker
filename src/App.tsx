@@ -6,6 +6,7 @@ import { ImageStoreProvider, useImageStore } from './hooks/ImageStore';
 import { ImageLightboxProvider, useImageLightbox } from './hooks/useImageLightbox';
 import { LanguageProvider, useLanguage } from './hooks/useLanguage';
 import { ThemeProvider } from './hooks/useTheme';
+import { AccentThemeProvider } from './hooks/useAccentTheme';
 import { ToastProvider, useToast } from './hooks/useToast';
 import { PremiumProvider, usePremium } from './hooks/usePremium';
 import { isPurchasesConfigured, PurchasesProvider, usePurchases } from './hooks/usePurchases';
@@ -800,15 +801,17 @@ function AuthGate() {
 export default function App() {
   return (
     <ThemeProvider>
-      <LanguageProvider>
-        <AuthProvider>
-          <div className="app-shell">
-            <ToastProvider>
-              <AuthGate />
-            </ToastProvider>
-          </div>
-        </AuthProvider>
-      </LanguageProvider>
+      <AccentThemeProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <div className="app-shell">
+              <ToastProvider>
+                <AuthGate />
+              </ToastProvider>
+            </div>
+          </AuthProvider>
+        </LanguageProvider>
+      </AccentThemeProvider>
     </ThemeProvider>
   );
 }

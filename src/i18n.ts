@@ -250,6 +250,13 @@ export interface Dict {
   };
   settings: {
     title: string;
+    colorThemeLabel: string;
+    accentRose: string;
+    accentOcean: string;
+    accentMint: string;
+    accentCoral: string;
+    accentNight: string;
+    accentWine: string;
   };
   achievements: {
     title: string;
@@ -564,6 +571,13 @@ const fr: Dict = {
   },
   settings: {
     title: 'Réglages',
+    colorThemeLabel: 'Couleur',
+    accentRose: 'Rose',
+    accentOcean: 'Océan',
+    accentMint: 'Menthe',
+    accentCoral: 'Corail',
+    accentNight: 'Nuit',
+    accentWine: 'Lie de vin',
   },
   achievements: {
     title: 'Succès',
@@ -875,6 +889,13 @@ const en: Dict = {
   },
   settings: {
     title: 'Settings',
+    colorThemeLabel: 'Color',
+    accentRose: 'Rose',
+    accentOcean: 'Ocean',
+    accentMint: 'Mint',
+    accentCoral: 'Coral',
+    accentNight: 'Night',
+    accentWine: 'Wine',
   },
   achievements: {
     title: 'Achievements',
