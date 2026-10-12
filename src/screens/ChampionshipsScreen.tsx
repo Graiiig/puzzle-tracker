@@ -131,11 +131,11 @@ export default function ChampionshipsScreen({ championships, onClose }: Champion
         {featured && (
           <div
             style={{
-              background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(64% 0.2 320))',
+              background: 'var(--accent-gradient)',
               borderRadius: 18,
               padding: '16px 18px',
               color: 'white',
-              boxShadow: '0 8px 24px oklch(70% 0.2 350 / 0.35)',
+              boxShadow: '0 8px 24px var(--accent-shadow-header)',
             }}
           >
             {featured.isLive && (

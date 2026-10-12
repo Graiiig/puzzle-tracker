@@ -58,7 +58,7 @@ export default function PremiumLimitOverlay({
           onClick={purchaseAvailable && !purchasing ? onPurchase : onClose}
           style={{
             marginTop: 18,
-            background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',
+            background: 'var(--accent-gradient)',
             color: 'white',
             fontFamily: "'Baloo 2',sans-serif",
             fontWeight: 700,

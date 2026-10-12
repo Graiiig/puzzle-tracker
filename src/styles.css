@@ -17,6 +17,16 @@
   --badge-red-fg: oklch(40% 0.15 25);
   --accent-pink: oklch(45% 0.2 350);
   --accent-purple: oklch(45% 0.16 300);
+  /* The brand gradient/shadow pair stays the same across light and dark —
+     only the surfaces and text around it adapt — so these live in the
+     shared block below rather than being repeated per theme. */
+  --accent-gradient: linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320));
+  --accent-shadow: oklch(60% 0.2 350 / 0.3);
+  --accent-shadow-header: oklch(70% 0.2 350 / 0.35);
+  --accent-shadow-fab: oklch(60% 0.2 350 / 0.45);
+  --accent-gradient-wishlist: linear-gradient(135deg, oklch(64% 0.19 320), oklch(66% 0.2 300));
+  --accent-shadow-wishlist-header: oklch(60% 0.18 310 / 0.35);
+  --accent-shadow-wishlist-fab: oklch(55% 0.18 310 / 0.45);
 }
 
 /* The media query covers the OS setting; the data-theme scope covers an

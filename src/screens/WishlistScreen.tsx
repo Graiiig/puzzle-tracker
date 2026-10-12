@@ -36,9 +36,9 @@ export default function WishlistScreen({
       <div
         style={{
           padding: '20px 20px 14px',
-          background: 'linear-gradient(135deg, oklch(64% 0.19 320), oklch(66% 0.2 300))',
+          background: 'var(--accent-gradient-wishlist)',
           borderRadius: '0 0 28px 28px',
-          boxShadow: '0 8px 24px oklch(60% 0.18 310 / 0.35)',
+          boxShadow: '0 8px 24px var(--accent-shadow-wishlist-header)',
           flexShrink: 0,
         }}
       >
@@ -122,7 +122,7 @@ export default function WishlistScreen({
       <button
         onClick={onAdd}
         className="fab"
-        style={{ background: 'linear-gradient(135deg, oklch(64% 0.19 320), oklch(60% 0.18 300))', boxShadow: '0 8px 20px oklch(55% 0.18 310 / 0.45)' }}
+        style={{ background: 'var(--accent-gradient-wishlist)', boxShadow: '0 8px 20px var(--accent-shadow-wishlist-fab)' }}
       >
         +
       </button>

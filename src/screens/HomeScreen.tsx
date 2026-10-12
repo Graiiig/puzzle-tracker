@@ -124,9 +124,9 @@ export default function HomeScreen({
       <div
         style={{
           padding: '20px 20px 14px',
-          background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(64% 0.2 320))',
+          background: 'var(--accent-gradient)',
           borderRadius: '0 0 28px 28px',
-          boxShadow: '0 8px 24px oklch(70% 0.2 350 / 0.35)',
+          boxShadow: '0 8px 24px var(--accent-shadow-header)',
           flexShrink: 0,
         }}
       >
@@ -436,7 +436,7 @@ export default function HomeScreen({
       <button
         onClick={onAdd}
         className="fab"
-        style={{ background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(60% 0.2 320))', boxShadow: '0 8px 20px oklch(60% 0.2 350 / 0.45)' }}
+        style={{ background: 'var(--accent-gradient)', boxShadow: '0 8px 20px var(--accent-shadow-fab)' }}
       >
         +
       </button>
