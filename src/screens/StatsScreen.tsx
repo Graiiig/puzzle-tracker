@@ -400,7 +400,7 @@ export default function StatsScreen({
               <div
                 onClick={purchasing ? undefined : onPurchase}
                 style={{
-                  background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',
+                  background: 'var(--accent-gradient)',
                   color: 'white',
                   fontFamily: "'Baloo 2',sans-serif",
                   fontWeight: 700,
@@ -410,7 +410,7 @@ export default function StatsScreen({
                   borderRadius: 16,
                   cursor: purchasing ? 'default' : 'pointer',
                   opacity: purchasing ? 0.7 : 1,
-                  boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
+                  boxShadow: '0 6px 16px var(--accent-shadow)',
                 }}
               >
                 {purchasing ? t.premium.purchasing : priceLabel ? t.premium.purchaseButton(priceLabel) : t.premium.purchaseButtonGeneric}

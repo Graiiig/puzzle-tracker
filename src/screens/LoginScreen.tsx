@@ -63,9 +63,9 @@ export default function LoginScreen() {
       <div
         style={{
           padding: '40px 24px 32px',
-          background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(64% 0.2 320))',
+          background: 'var(--accent-gradient)',
           borderRadius: '0 0 28px 28px',
-          boxShadow: '0 8px 24px oklch(70% 0.2 350 / 0.35)',
+          boxShadow: '0 8px 24px var(--accent-shadow-header)',
           textAlign: 'center',
         }}
       >
@@ -133,7 +133,7 @@ export default function LoginScreen() {
               style={{
                 marginTop: 16,
                 width: '100%',
-                background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',
+                background: 'var(--accent-gradient)',
                 color: 'white',
                 fontFamily: "'Baloo 2',sans-serif",
                 fontWeight: 700,
@@ -144,7 +144,7 @@ export default function LoginScreen() {
                 border: 'none',
                 cursor: status === 'verifying' ? 'default' : 'pointer',
                 opacity: status === 'verifying' ? 0.7 : 1,
-                boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
+                boxShadow: '0 6px 16px var(--accent-shadow)',
               }}
             >
               {status === 'verifying' ? t.login.verifying : t.login.signIn}
@@ -192,7 +192,7 @@ export default function LoginScreen() {
               style={{
                 marginTop: 16,
                 width: '100%',
-                background: 'linear-gradient(135deg, oklch(68% 0.23 350), oklch(62% 0.19 320))',
+                background: 'var(--accent-gradient)',
                 color: 'white',
                 fontFamily: "'Baloo 2',sans-serif",
                 fontWeight: 700,
@@ -203,7 +203,7 @@ export default function LoginScreen() {
                 border: 'none',
                 cursor: status === 'sending' ? 'default' : 'pointer',
                 opacity: status === 'sending' ? 0.7 : 1,
-                boxShadow: '0 6px 16px oklch(60% 0.2 350 / 0.3)',
+                boxShadow: '0 6px 16px var(--accent-shadow)',
               }}
             >
               {status === 'sending' ? t.login.sending : t.login.receiveCode}
