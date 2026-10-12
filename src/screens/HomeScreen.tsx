@@ -363,7 +363,7 @@ export default function HomeScreen({
           {activeFilterCount > 0 && (
             <span
               style={{
-                background: 'oklch(45% 0.2 350)',
+                background: 'var(--accent-pink)',
                 color: 'white',
                 fontSize: 11,
                 fontWeight: 800,

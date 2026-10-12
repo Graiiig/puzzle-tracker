@@ -165,7 +165,7 @@ export default function LoginScreen() {
               {!isReviewer && (
                 <span
                   onClick={(e) => handleSendCode(e as unknown as React.FormEvent)}
-                  style={{ color: 'oklch(55% 0.2 350)', cursor: 'pointer' }}
+                  style={{ color: 'var(--accent-pink)', cursor: 'pointer' }}
                 >
                   {t.login.resendCode}
                 </span>

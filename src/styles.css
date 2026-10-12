@@ -265,11 +265,11 @@ body {
 }
 
 a {
-  color: oklch(60% 0.22 350);
+  color: var(--accent-pink);
 }
 
 a:hover {
-  color: oklch(52% 0.22 350);
+  color: var(--accent-purple);
 }
 
 input,
@@ -385,7 +385,7 @@ button {
   height: 20px;
   border-radius: 50%;
   border: 3px solid var(--surface-alt);
-  border-top-color: oklch(60% 0.22 350);
+  border-top-color: var(--accent-pink);
 }
 
 .update-banner {
@@ -412,7 +412,7 @@ button {
   padding: 6px 14px;
   border-radius: 999px;
   border: none;
-  background: oklch(68% 0.22 350);
+  background: var(--accent-gradient);
   color: white;
   font-weight: 800;
   font-size: 13px;

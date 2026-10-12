@@ -79,7 +79,7 @@ export default function FiltersSheet({
             {t.filters.button}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div onClick={onReset} style={{ fontSize: 13, fontWeight: 800, color: 'oklch(55% 0.2 350)', cursor: 'pointer' }}>
+            <div onClick={onReset} style={{ fontSize: 13, fontWeight: 800, color: 'var(--accent-pink)', cursor: 'pointer' }}>
               {t.filters.reset}
             </div>
             <div
