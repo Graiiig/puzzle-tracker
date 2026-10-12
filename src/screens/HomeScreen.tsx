@@ -310,24 +310,33 @@ export default function HomeScreen({
           <Chip
             label={t.home.ownerFilterMine}
             onClick={() => onSetOwnerFilter(myUserId)}
-            style={chipStyle(ownerFilter === myUserId, 320)}
+            style={chipStyle(ownerFilter === myUserId)}
           />
           {sharedOwners.map((owner) => (
             <Chip
               key={owner.userId}
               label={t.home.ownerFilterOf(owner.pseudo)}
               onClick={() => onSetOwnerFilter(owner.userId)}
-              style={chipStyle(ownerFilter === owner.userId, 320)}
+              style={chipStyle(ownerFilter === owner.userId)}
             />
           ))}
         </div>
       )}
 
       <div style={{ display: 'flex', gap: 8, padding: '14px 20px 6px', flexShrink: 0 }}>
-        <div style={{ flex: 1, display: 'flex', gap: 8, overflowX: 'auto' }}>
-          <Chip label={t.home.filterAll} onClick={onClearGenres} style={chipStyle(selectedGenres.length === 0, 350)} />
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            gap: 8,
+            overflowX: 'auto',
+            maskImage: 'linear-gradient(to right, black calc(100% - 20px), transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, black calc(100% - 20px), transparent 100%)',
+          }}
+        >
+          <Chip label={t.home.filterAll} onClick={onClearGenres} style={chipStyle(selectedGenres.length === 0)} />
           {genreOptions.map((g) => (
-            <Chip key={g} label={g} onClick={() => onToggleGenre(g)} style={chipStyle(selectedGenres.includes(g), 350)} />
+            <Chip key={g} label={g} onClick={() => onToggleGenre(g)} style={chipStyle(selectedGenres.includes(g))} />
           ))}
         </div>
         <div

@@ -108,7 +108,7 @@ export default function FiltersSheet({
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {statuses.map((s) => (
-              <Chip key={s} label={t.status[s]} onClick={() => onToggleStatus(s)} style={chipStyle(selectedStatuses.has(s), 350)} />
+              <Chip key={s} label={t.status[s]} onClick={() => onToggleStatus(s)} style={chipStyle(selectedStatuses.has(s))} />
             ))}
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function FiltersSheet({
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {brands.map((b) => (
-                <Chip key={b} label={b} onClick={() => onToggleBrand(b)} style={chipStyle(selectedBrands.has(b), 350)} />
+                <Chip key={b} label={b} onClick={() => onToggleBrand(b)} style={chipStyle(selectedBrands.has(b))} />
               ))}
             </div>
           </div>
@@ -133,7 +133,7 @@ export default function FiltersSheet({
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {artists.map((a) => (
-                <Chip key={a} label={a} onClick={() => onToggleArtist(a)} style={chipStyle(selectedArtists.has(a), 350)} />
+                <Chip key={a} label={a} onClick={() => onToggleArtist(a)} style={chipStyle(selectedArtists.has(a))} />
               ))}
             </div>
           </div>
@@ -149,7 +149,7 @@ export default function FiltersSheet({
                 key={b}
                 label={t.pieceBucket[b]}
                 onClick={() => onTogglePieceBucket(b)}
-                style={chipStyle(selectedPieceBuckets.has(b), 350)}
+                style={chipStyle(selectedPieceBuckets.has(b))}
               />
             ))}
           </div>
@@ -165,7 +165,7 @@ export default function FiltersSheet({
                 key={n}
                 label={t.filters.ratingAtLeast(n)}
                 onClick={() => onSetMinRating(minRating === n ? 0 : n)}
-                style={chipStyle(minRating === n, 350)}
+                style={chipStyle(minRating === n)}
               />
             ))}
           </div>
@@ -177,7 +177,7 @@ export default function FiltersSheet({
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {sortModes.map((m) => (
-              <Chip key={m} label={t.sort[m]} onClick={() => onSetSortMode(m)} style={chipStyle(sortMode === m, 350)} />
+              <Chip key={m} label={t.sort[m]} onClick={() => onSetSortMode(m)} style={chipStyle(sortMode === m)} />
             ))}
           </div>
         </div>

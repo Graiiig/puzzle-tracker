@@ -295,7 +295,7 @@ export default function AddScreen({
           </div>
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {displayedGenres.map((g) => (
-              <Chip key={g} label={g} onClick={() => toggleGenre(g)} style={chipStyle(form.genres.includes(g), 300)} />
+              <Chip key={g} label={g} onClick={() => toggleGenre(g)} style={chipStyle(form.genres.includes(g))} />
             ))}
             {addingGenre ? (
               <input
@@ -347,7 +347,7 @@ export default function AddScreen({
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
                 {STATUSES.map((st) => (
-                  <Chip key={st} label={t.status[st]} onClick={() => onFormChange('status', st)} style={chipStyle(st === form.status, 350)} />
+                  <Chip key={st} label={t.status[st]} onClick={() => onFormChange('status', st)} style={chipStyle(st === form.status)} />
                 ))}
               </div>
             </div>
@@ -410,7 +410,7 @@ export default function AddScreen({
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               {PRIORITIES.map((pr) => (
-                <Chip key={pr} label={t.priority[pr]} onClick={() => onFormChange('priority', pr)} style={chipStyle(pr === form.priority, 320)} />
+                <Chip key={pr} label={t.priority[pr]} onClick={() => onFormChange('priority', pr)} style={chipStyle(pr === form.priority)} />
               ))}
             </div>
           </div>

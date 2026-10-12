@@ -199,12 +199,12 @@ export default function StatsScreen({
                   <Chip
                     label={t.stats.scopeYear}
                     onClick={() => setRecapScope('year')}
-                    style={{ ...chipStyle(recapScope === 'year', 350), padding: '6px 12px', fontSize: 11 }}
+                    style={{ ...chipStyle(recapScope === 'year'), padding: '6px 12px', fontSize: 11 }}
                   />
                   <Chip
                     label={t.stats.scopeAll}
                     onClick={() => setRecapScope('all')}
-                    style={{ ...chipStyle(recapScope === 'all', 350), padding: '6px 12px', fontSize: 11 }}
+                    style={{ ...chipStyle(recapScope === 'all'), padding: '6px 12px', fontSize: 11 }}
                   />
                 </div>
               </div>
@@ -358,12 +358,12 @@ export default function StatsScreen({
                       <Chip
                         label={t.stats.pieceViewExact}
                         onClick={() => setPieceView('exact')}
-                        style={{ ...chipStyle(pieceView === 'exact', 350), padding: '6px 12px', fontSize: 11 }}
+                        style={{ ...chipStyle(pieceView === 'exact'), padding: '6px 12px', fontSize: 11 }}
                       />
                       <Chip
                         label={t.stats.pieceViewBucket}
                         onClick={() => setPieceView('bucket')}
-                        style={{ ...chipStyle(pieceView === 'bucket', 350), padding: '6px 12px', fontSize: 11 }}
+                        style={{ ...chipStyle(pieceView === 'bucket'), padding: '6px 12px', fontSize: 11 }}
                       />
                     </div>
                   </div>
