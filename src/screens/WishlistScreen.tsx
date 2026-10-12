@@ -71,14 +71,14 @@ export default function WishlistScreen({
           <Chip
             label={t.wishlist.ownerFilterMine}
             onClick={() => onSetOwnerFilter(myUserId)}
-            style={chipStyle(ownerFilter === myUserId, 320)}
+            style={chipStyle(ownerFilter === myUserId, 'var(--accent-gradient-wishlist)')}
           />
           {sharedOwners.map((owner) => (
             <Chip
               key={owner.userId}
               label={t.wishlist.ownerFilterOf(owner.pseudo)}
               onClick={() => onSetOwnerFilter(owner.userId)}
-              style={chipStyle(ownerFilter === owner.userId, 320)}
+              style={chipStyle(ownerFilter === owner.userId, 'var(--accent-gradient-wishlist)')}
             />
           ))}
         </div>

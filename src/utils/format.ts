@@ -47,11 +47,9 @@ export function priorityStyle(p: Priority): CSSProperties {
   };
 }
 
-export function chipStyle(active: boolean, hue: number): CSSProperties {
+export function chipStyle(active: boolean, gradient = 'var(--accent-gradient)'): CSSProperties {
   return {
-    background: active
-      ? `linear-gradient(135deg, oklch(68% 0.22 ${hue}), oklch(60% 0.19 ${hue - 30}))`
-      : 'var(--surface)',
+    background: active ? gradient : 'var(--surface)',
     color: active ? 'white' : 'var(--text-tertiary)',
   };
 }
