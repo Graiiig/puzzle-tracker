@@ -4,6 +4,7 @@ import Chip from '../components/Chip';
 import BottomNav from '../components/BottomNav';
 import FiltersSheet from '../components/FiltersSheet';
 import PullToRefresh from '../components/PullToRefresh';
+import PuzzleLogo from '../components/PuzzleLogo';
 import { STATUSES, SORT_MODES } from '../data';
 import { useLanguage } from '../hooks/useLanguage';
 import type { Championship, Genre, PieceBucket, Puzzle, SharedOwner, SortMode, Status } from '../types';
@@ -150,7 +151,7 @@ export default function HomeScreen({
                 cursor: 'pointer',
               }}
             >
-              🧩
+              <PuzzleLogo size={20} tone="accent" />
             </div>
             {menuOpen && (
               <>
