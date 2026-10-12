@@ -12,6 +12,11 @@ if (storedTheme === 'light' || storedTheme === 'dark') {
   document.documentElement.setAttribute('data-theme', storedTheme);
 }
 
+const storedAccent = localStorage.getItem('puzzle-tracker:accent');
+if (storedAccent && storedAccent !== 'rose') {
+  document.documentElement.setAttribute('data-accent', storedAccent);
+}
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />

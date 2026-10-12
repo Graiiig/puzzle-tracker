@@ -76,6 +76,173 @@
   --accent-purple: oklch(78% 0.15 300);
 }
 
+/* Accent color themes — an in-app choice independent of light/dark, picked
+   from the "Thème de couleur" setting. Only the brand gradient/shadow and
+   the pink/purple accent+badge tokens shift per theme; everything else
+   (surfaces, text, the green/red semantic badges, the Wishlist screen's
+   own purple gradient) stays the same in every theme. Each theme needs its
+   own light AND dark variant of the accent-pink/purple + badge tokens —
+   the combined [data-accent][data-theme='dark'] / :not([data-theme='light'])
+   selectors below outrank the single-attribute light block on specificity,
+   so they correctly win over it once dark mode is active, regardless of
+   which block comes first in the file. "Rose" is the default above: no
+   [data-accent] attribute is set for it. */
+
+:root[data-accent='ocean'] {
+  --accent-gradient: linear-gradient(135deg, oklch(65% 0.18 235), oklch(58% 0.16 265));
+  --accent-shadow: oklch(57% 0.18 235 / 0.3);
+  --accent-shadow-header: oklch(67% 0.18 235 / 0.35);
+  --accent-shadow-fab: oklch(57% 0.18 235 / 0.45);
+  --accent-pink: oklch(45% 0.2 235);
+  --accent-purple: oklch(45% 0.16 265);
+  --badge-pink-bg: oklch(93% 0.08 235);
+  --badge-pink-fg: oklch(45% 0.2 235);
+  --badge-purple-bg: oklch(92% 0.05 265);
+  --badge-purple-fg: oklch(45% 0.16 265);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-accent='ocean']:not([data-theme='light']) {
+    --accent-pink: oklch(78% 0.19 235);
+    --accent-purple: oklch(78% 0.15 265);
+    --badge-pink-bg: oklch(32% 0.09 235);
+    --badge-pink-fg: oklch(78% 0.19 235);
+    --badge-purple-bg: oklch(30% 0.07 265);
+    --badge-purple-fg: oklch(78% 0.15 265);
+  }
+}
+:root[data-accent='ocean'][data-theme='dark'] {
+  --accent-pink: oklch(78% 0.19 235);
+  --accent-purple: oklch(78% 0.15 265);
+  --badge-pink-bg: oklch(32% 0.09 235);
+  --badge-pink-fg: oklch(78% 0.19 235);
+  --badge-purple-bg: oklch(30% 0.07 265);
+  --badge-purple-fg: oklch(78% 0.15 265);
+}
+
+:root[data-accent='mint'] {
+  --accent-gradient: linear-gradient(135deg, oklch(66% 0.17 165), oklch(60% 0.15 185));
+  --accent-shadow: oklch(58% 0.17 165 / 0.3);
+  --accent-shadow-header: oklch(68% 0.17 165 / 0.35);
+  --accent-shadow-fab: oklch(58% 0.17 165 / 0.45);
+  --accent-pink: oklch(45% 0.2 165);
+  --accent-purple: oklch(45% 0.16 195);
+  --badge-pink-bg: oklch(93% 0.08 165);
+  --badge-pink-fg: oklch(45% 0.2 165);
+  --badge-purple-bg: oklch(92% 0.05 195);
+  --badge-purple-fg: oklch(45% 0.16 195);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-accent='mint']:not([data-theme='light']) {
+    --accent-pink: oklch(78% 0.19 165);
+    --accent-purple: oklch(78% 0.15 195);
+    --badge-pink-bg: oklch(32% 0.09 165);
+    --badge-pink-fg: oklch(78% 0.19 165);
+    --badge-purple-bg: oklch(30% 0.07 195);
+    --badge-purple-fg: oklch(78% 0.15 195);
+  }
+}
+:root[data-accent='mint'][data-theme='dark'] {
+  --accent-pink: oklch(78% 0.19 165);
+  --accent-purple: oklch(78% 0.15 195);
+  --badge-pink-bg: oklch(32% 0.09 165);
+  --badge-pink-fg: oklch(78% 0.19 165);
+  --badge-purple-bg: oklch(30% 0.07 195);
+  --badge-purple-fg: oklch(78% 0.15 195);
+}
+
+:root[data-accent='coral'] {
+  --accent-gradient: linear-gradient(135deg, oklch(70% 0.19 55), oklch(63% 0.2 30));
+  --accent-shadow: oklch(62% 0.19 55 / 0.3);
+  --accent-shadow-header: oklch(72% 0.19 55 / 0.35);
+  --accent-shadow-fab: oklch(62% 0.19 55 / 0.45);
+  --accent-pink: oklch(45% 0.2 55);
+  --accent-purple: oklch(45% 0.16 15);
+  --badge-pink-bg: oklch(93% 0.08 55);
+  --badge-pink-fg: oklch(45% 0.2 55);
+  --badge-purple-bg: oklch(92% 0.05 15);
+  --badge-purple-fg: oklch(45% 0.16 15);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-accent='coral']:not([data-theme='light']) {
+    --accent-pink: oklch(78% 0.19 55);
+    --accent-purple: oklch(78% 0.15 15);
+    --badge-pink-bg: oklch(32% 0.09 55);
+    --badge-pink-fg: oklch(78% 0.19 55);
+    --badge-purple-bg: oklch(30% 0.07 15);
+    --badge-purple-fg: oklch(78% 0.15 15);
+  }
+}
+:root[data-accent='coral'][data-theme='dark'] {
+  --accent-pink: oklch(78% 0.19 55);
+  --accent-purple: oklch(78% 0.15 15);
+  --badge-pink-bg: oklch(32% 0.09 55);
+  --badge-pink-fg: oklch(78% 0.19 55);
+  --badge-purple-bg: oklch(30% 0.07 15);
+  --badge-purple-fg: oklch(78% 0.15 15);
+}
+
+:root[data-accent='night'] {
+  --accent-gradient: linear-gradient(135deg, oklch(62% 0.2 300), oklch(55% 0.18 275));
+  --accent-shadow: oklch(54% 0.2 300 / 0.3);
+  --accent-shadow-header: oklch(64% 0.2 300 / 0.35);
+  --accent-shadow-fab: oklch(54% 0.2 300 / 0.45);
+  --accent-pink: oklch(45% 0.2 300);
+  --accent-purple: oklch(45% 0.16 340);
+  --badge-pink-bg: oklch(93% 0.08 300);
+  --badge-pink-fg: oklch(45% 0.2 300);
+  --badge-purple-bg: oklch(92% 0.05 340);
+  --badge-purple-fg: oklch(45% 0.16 340);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-accent='night']:not([data-theme='light']) {
+    --accent-pink: oklch(78% 0.19 300);
+    --accent-purple: oklch(78% 0.15 340);
+    --badge-pink-bg: oklch(32% 0.09 300);
+    --badge-pink-fg: oklch(78% 0.19 300);
+    --badge-purple-bg: oklch(30% 0.07 340);
+    --badge-purple-fg: oklch(78% 0.15 340);
+  }
+}
+:root[data-accent='night'][data-theme='dark'] {
+  --accent-pink: oklch(78% 0.19 300);
+  --accent-purple: oklch(78% 0.15 340);
+  --badge-pink-bg: oklch(32% 0.09 300);
+  --badge-pink-fg: oklch(78% 0.19 300);
+  --badge-purple-bg: oklch(30% 0.07 340);
+  --badge-purple-fg: oklch(78% 0.15 340);
+}
+
+:root[data-accent='wine'] {
+  --accent-gradient: linear-gradient(135deg, oklch(55% 0.18 15), oklch(45% 0.17 350));
+  --accent-shadow: oklch(47% 0.18 15 / 0.3);
+  --accent-shadow-header: oklch(57% 0.18 15 / 0.35);
+  --accent-shadow-fab: oklch(47% 0.18 15 / 0.45);
+  --accent-pink: oklch(45% 0.2 15);
+  --accent-purple: oklch(45% 0.16 330);
+  --badge-pink-bg: oklch(93% 0.08 15);
+  --badge-pink-fg: oklch(45% 0.2 15);
+  --badge-purple-bg: oklch(92% 0.05 330);
+  --badge-purple-fg: oklch(45% 0.16 330);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-accent='wine']:not([data-theme='light']) {
+    --accent-pink: oklch(78% 0.19 15);
+    --accent-purple: oklch(78% 0.15 330);
+    --badge-pink-bg: oklch(32% 0.09 15);
+    --badge-pink-fg: oklch(78% 0.19 15);
+    --badge-purple-bg: oklch(30% 0.07 330);
+    --badge-purple-fg: oklch(78% 0.15 330);
+  }
+}
+:root[data-accent='wine'][data-theme='dark'] {
+  --accent-pink: oklch(78% 0.19 15);
+  --accent-purple: oklch(78% 0.15 330);
+  --badge-pink-bg: oklch(32% 0.09 15);
+  --badge-pink-fg: oklch(78% 0.19 15);
+  --badge-purple-bg: oklch(30% 0.07 330);
+  --badge-purple-fg: oklch(78% 0.15 330);
+}
+
 * {
   box-sizing: border-box;
 }
