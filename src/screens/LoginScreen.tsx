@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useLanguage } from '../hooks/useLanguage';
+import PuzzleLogo from '../components/PuzzleLogo';
 
 // A single dedicated Supabase account (email+password, created manually in
 // the Supabase dashboard) exists only so the Play Store review team has a
@@ -69,7 +70,7 @@ export default function LoginScreen() {
           textAlign: 'center',
         }}
       >
-        <div style={{ fontSize: 40 }}>🧩</div>
+        <PuzzleLogo size={40} tone="white" />
         <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 26, color: 'white', marginTop: 8 }}>
           Mes Puzzles
         </div>
