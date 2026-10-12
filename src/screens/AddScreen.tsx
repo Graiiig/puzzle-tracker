@@ -315,7 +315,7 @@ export default function AddScreen({
                   fontSize: 13,
                   padding: '7px 14px',
                   borderRadius: 100,
-                  border: '1px solid oklch(75% 0.1 300)',
+                  border: '1px solid var(--accent-purple)',
                   outline: 'none',
                   width: 130,
                   fontFamily: "'Nunito',sans-serif",
