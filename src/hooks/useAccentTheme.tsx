@@ -26,7 +26,7 @@ const AccentThemeContext = createContext<AccentThemeValue | null>(null);
 
 function readStoredAccent(): AccentId {
   const stored = localStorage.getItem(STORAGE_KEY);
-  return (ACCENT_IDS as readonly string[]).includes(stored ?? '') ? (stored as AccentId) : 'rose';
+  return (ACCENT_IDS as readonly string[]).includes(stored ?? '') ? (stored as AccentId) : 'mint';
 }
 
 export function AccentThemeProvider({ children }: { children: ReactNode }) {

@@ -27,7 +27,7 @@ export default defineConfig({
       : [
           VitePWA({
             registerType: 'autoUpdate',
-            includeAssets: ['apple-touch-icon.png'],
+            includeAssets: ['apple-touch-icon.png', 'favicon.svg'],
             manifest: {
               name: 'Mes Puzzles',
               short_name: 'Puzzles',

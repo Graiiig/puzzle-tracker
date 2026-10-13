@@ -12,8 +12,8 @@ if (storedTheme === 'light' || storedTheme === 'dark') {
   document.documentElement.setAttribute('data-theme', storedTheme);
 }
 
-const storedAccent = localStorage.getItem('puzzle-tracker:accent');
-if (storedAccent && storedAccent !== 'rose') {
+const storedAccent = localStorage.getItem('puzzle-tracker:accent') ?? 'mint';
+if (storedAccent !== 'rose') {
   document.documentElement.setAttribute('data-accent', storedAccent);
 }
 
