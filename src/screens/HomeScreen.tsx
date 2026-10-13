@@ -151,7 +151,7 @@ export default function HomeScreen({
                 cursor: 'pointer',
               }}
             >
-              <PuzzleLogo size={20} tone="accent" />
+              <PuzzleLogo size={32} background="light" />
             </div>
             {menuOpen && (
               <>

@@ -70,7 +70,7 @@ export default function LoginScreen() {
           textAlign: 'center',
         }}
       >
-        <PuzzleLogo size={40} tone="white" />
+        <PuzzleLogo size={40} background="gradient" />
         <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 800, fontSize: 26, color: 'white', marginTop: 8 }}>
           Mes Puzzles
         </div>

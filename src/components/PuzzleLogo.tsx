@@ -1,28 +1,34 @@
-import { useId } from 'react';
-
 interface PuzzleLogoProps {
   size?: number;
-  tone?: 'white' | 'accent';
+  background?: 'gradient' | 'light';
 }
 
-export default function PuzzleLogo({ size = 40, tone = 'accent' }: PuzzleLogoProps) {
-  const gradientId = useId();
-  const fill = tone === 'white' ? 'white' : `url(#${gradientId})`;
+const PIECE_D = 'M36 36 H45.5 A5.5 5.5 0 1 1 54.5 36 H64 V51 A5.5 5.5 0 1 1 64 60 V64 H36 Z';
+
+const PIECES = [
+  { offset: -12, color: 'oklch(0.62 0.2 300)' },
+  { offset: 0, color: 'oklch(0.68 0.23 350)' },
+  { offset: 12, color: 'oklch(0.8 0.15 70)' },
+];
+
+export default function PuzzleLogo({ size = 40, background = 'light' }: PuzzleLogoProps) {
+  const stroke = background === 'gradient' ? 'white' : 'oklch(0.97 0.02 70)';
 
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-      {tone === 'accent' && (
-        <defs>
-          <linearGradient id={gradientId} x1="0" y1="0" x2="64" y2="64">
-            <stop offset="0%" stopColor="var(--accent-pink)" />
-            <stop offset="100%" stopColor="var(--accent-purple)" />
-          </linearGradient>
-        </defs>
-      )}
-      <path
-        d="M16 10 L24 10 A8 8 0 0 1 40 10 L48 10 Q54 10 54 16 L54 48 Q54 54 48 54 L40 54 A8 8 0 0 0 24 54 L16 54 Q10 54 10 48 L10 16 Q10 10 16 10 Z"
-        fill={fill}
-      />
+    <svg width={size} height={size} viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(-2 2)">
+        {PIECES.map(({ offset, color }) => (
+          <path
+            key={offset}
+            transform={offset ? `translate(${offset} ${offset})` : undefined}
+            d={PIECE_D}
+            fill={color}
+            stroke={stroke}
+            strokeWidth={2.5}
+            strokeLinejoin="round"
+          />
+        ))}
+      </g>
     </svg>
   );
 }
