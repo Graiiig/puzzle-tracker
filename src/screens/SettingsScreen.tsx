@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useLanguage } from '../hooks/useLanguage';
 import { useTheme } from '../hooks/useTheme';
 import { ACCENT_GRADIENTS, ACCENT_IDS, useAccentTheme, type AccentId } from '../hooks/useAccentTheme';
@@ -12,6 +12,8 @@ interface SettingsScreenProps {
   onRestorePurchases: () => void;
   showGoPremium: boolean;
   onGoPremium: () => void;
+  showCheckUpdate: boolean;
+  onCheckUpdate: () => Promise<'ready' | 'downloading' | 'up-to-date' | 'unavailable'>;
 }
 
 export default function SettingsScreen({
@@ -23,11 +25,33 @@ export default function SettingsScreen({
   onRestorePurchases,
   showGoPremium,
   onGoPremium,
+  showCheckUpdate,
+  onCheckUpdate,
 }: SettingsScreenProps) {
   const { t, toggleLang } = useLanguage();
   const { theme, cycleTheme } = useTheme();
   const { accent, setAccent } = useAccentTheme();
   const importInputRef = useRef<HTMLInputElement>(null);
+  const [updateCheck, setUpdateCheck] = useState<'idle' | 'checking' | 'ready' | 'downloading' | 'up-to-date'>('idle');
+
+  const updateCheckLabel: Record<typeof updateCheck, string> = {
+    idle: t.settings.checkForUpdate,
+    checking: t.settings.checkingForUpdate,
+    ready: t.settings.updateReady,
+    downloading: t.settings.updateDownloading,
+    'up-to-date': t.settings.updateUpToDate,
+  };
+
+  const handleCheckUpdate = async () => {
+    setUpdateCheck('checking');
+    const result = await onCheckUpdate();
+    if (result === 'unavailable') {
+      setUpdateCheck('idle');
+      return;
+    }
+    setUpdateCheck(result);
+    setTimeout(() => setUpdateCheck('idle'), 4000);
+  };
 
   const accentLabels: Record<AccentId, string> = {
     rose: t.settings.accentRose,
@@ -52,6 +76,9 @@ export default function SettingsScreen({
     },
     { icon: '⬇️', label: exporting ? t.home.menuExporting : t.home.menuExport, onClick: onExport, disabled: exporting, highlight: false },
     { icon: '⬆️', label: t.home.menuImport, onClick: () => importInputRef.current?.click(), disabled: false, highlight: false },
+    ...(showCheckUpdate
+      ? [{ icon: '🔄', label: updateCheckLabel[updateCheck], onClick: handleCheckUpdate, disabled: updateCheck === 'checking', highlight: false }]
+      : []),
     ...(showRestorePurchases
       ? [{ icon: '♻️', label: t.premium.restoreMenuLabel, onClick: onRestorePurchases, disabled: false, highlight: false }]
       : []),

@@ -111,7 +111,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [scanning, setScanning] = useState(false);
   const { clearImage, downloadImage, downloadImageFrom, setImage } = useImageStore();
   const { isLightboxOpen, closeLightbox } = useImageLightbox();
-  const { readyToInstall, applyUpdate } = useAppUpdate();
+  const { readyToInstall, applyUpdate, checkForUpdate } = useAppUpdate();
   const { isPremium, refresh: refreshPremium } = usePremium();
   const { priceLabel, purchasePremium, restorePurchases } = usePurchases();
   const [limitReached, setLimitReached] = useState<'collection' | 'wishlist' | null>(null);
@@ -609,6 +609,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onRestorePurchases={handleRestorePurchases}
           showGoPremium={isPurchasesConfigured && !isPremium}
           onGoPremium={() => setScreen('premium')}
+          showCheckUpdate={Capacitor.isNativePlatform()}
+          onCheckUpdate={checkForUpdate}
         />
       )}
 

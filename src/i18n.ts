@@ -257,6 +257,11 @@ export interface Dict {
     accentCoral: string;
     accentNight: string;
     accentWine: string;
+    checkForUpdate: string;
+    checkingForUpdate: string;
+    updateUpToDate: string;
+    updateDownloading: string;
+    updateReady: string;
   };
   achievements: {
     title: string;
@@ -578,6 +583,11 @@ const fr: Dict = {
     accentCoral: 'Corail',
     accentNight: 'Nuit',
     accentWine: 'Lie de vin',
+    checkForUpdate: 'Vérifier les mises à jour',
+    checkingForUpdate: 'Vérification...',
+    updateUpToDate: 'À jour',
+    updateDownloading: 'Téléchargement en cours...',
+    updateReady: 'Mise à jour prête, redémarre l\'appli',
   },
   achievements: {
     title: 'Succès',
@@ -896,6 +906,11 @@ const en: Dict = {
     accentCoral: 'Coral',
     accentNight: 'Night',
     accentWine: 'Wine',
+    checkForUpdate: 'Check for updates',
+    checkingForUpdate: 'Checking...',
+    updateUpToDate: 'Up to date',
+    updateDownloading: 'Downloading update...',
+    updateReady: 'Update ready, restart the app',
   },
   achievements: {
     title: 'Achievements',
