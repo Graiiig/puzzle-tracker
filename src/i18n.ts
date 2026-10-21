@@ -98,6 +98,11 @@ export interface Dict {
     shareError: string;
     shareCardHeadline: string;
     shareCardWatermark: string;
+    communityStatsTitle: string;
+    communityCollectors: (n: number) => string;
+    communityAvgRating: string;
+    communityAvgDifficulty: string;
+    communityAvgTime: string;
   };
   stats: {
     title: string;
@@ -403,6 +408,11 @@ const fr: Dict = {
     shareError: "Impossible de générer l'image à partager",
     shareCardHeadline: 'Puzzle terminé ! 🎉',
     shareCardWatermark: 'Mes Puzzles ✨',
+    communityStatsTitle: 'Chez les autres collectionneurs',
+    communityCollectors: (n) => `${n} collectionneurs ont ce puzzle`,
+    communityAvgRating: 'Note moyenne',
+    communityAvgDifficulty: 'Difficulté moyenne',
+    communityAvgTime: 'Temps moyen',
   },
   stats: {
     title: 'Statistiques',
@@ -728,6 +738,11 @@ const en: Dict = {
     shareError: 'Could not generate the image to share',
     shareCardHeadline: 'Puzzle finished! 🎉',
     shareCardWatermark: 'Mes Puzzles ✨',
+    communityStatsTitle: 'Among other collectors',
+    communityCollectors: (n) => `${n} collectors have this puzzle`,
+    communityAvgRating: 'Average rating',
+    communityAvgDifficulty: 'Average difficulty',
+    communityAvgTime: 'Average time',
   },
   stats: {
     title: 'Statistics',

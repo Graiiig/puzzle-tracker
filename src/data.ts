@@ -21,4 +21,5 @@ export const EMPTY_FORM: PuzzleForm = {
   difficulty: 3,
   date: '',
   time: '',
+  ean: '',
 };

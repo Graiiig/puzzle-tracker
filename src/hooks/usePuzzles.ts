@@ -4,7 +4,7 @@ import type { Puzzle } from '../types';
 import { withRetry } from '../utils/retry';
 
 const COLUMNS =
-  'id, user_id, name, brand, artist, genres, pieces, status, rating, difficulty, date, time, notes, progress_photos';
+  'id, user_id, name, brand, artist, genres, pieces, status, rating, difficulty, date, time, notes, progress_photos, ean';
 
 function mapRow(row: Record<string, unknown>): Puzzle {
   const { user_id, progress_photos, ...rest } = row;
