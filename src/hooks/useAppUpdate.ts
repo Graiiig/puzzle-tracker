@@ -18,16 +18,29 @@ export function useAppUpdate() {
   // Once we've asked, we don't ask again this session.
   const updateStartedRef = useRef(false);
 
-  const checkForUpdate = useCallback(async () => {
-    if (!Capacitor.isNativePlatform() || updateStartedRef.current) return;
+  const checkForUpdate = useCallback(async (): Promise<'ready' | 'downloading' | 'up-to-date' | 'unavailable'> => {
+    if (!Capacitor.isNativePlatform()) return 'unavailable';
     try {
       const info = await AppUpdate.getAppUpdateInfo();
-      if (info.updateAvailability === AppUpdateAvailability.UPDATE_AVAILABLE && info.flexibleUpdateAllowed) {
+      // A flexible update already downloaded in a previous session only reports
+      // via this field — the live listener below is lost if the app was
+      // backgrounded/killed mid-download, so this is the only reliable way to
+      // pick it back up on resume (and the only path a manual check has).
+      if (info.installStatus === FlexibleUpdateInstallStatus.DOWNLOADED) {
+        setReadyToInstall(true);
+        return 'ready';
+      }
+      if (info.updateAvailability !== AppUpdateAvailability.UPDATE_AVAILABLE || !info.flexibleUpdateAllowed) {
+        return 'up-to-date';
+      }
+      if (!updateStartedRef.current) {
         updateStartedRef.current = true;
         await AppUpdate.startFlexibleUpdate();
       }
+      return 'downloading';
     } catch {
       // No Play Store update channel available (dev build, sideload, offline...) — skip silently.
+      return 'unavailable';
     }
   }, []);
 
@@ -54,5 +67,5 @@ export function useAppUpdate() {
     AppUpdate.completeFlexibleUpdate();
   }, []);
 
-  return { readyToInstall, applyUpdate };
+  return { readyToInstall, applyUpdate, checkForUpdate };
 }
