@@ -33,6 +33,9 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig System.getenv("ANDROID_KEYSTORE_PATH") != null ? signingConfigs.release : null
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
     }
 }
