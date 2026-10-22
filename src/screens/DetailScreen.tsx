@@ -4,9 +4,10 @@ import { useImageStore } from '../hooks/ImageStore';
 import { useImageLightbox } from '../hooks/useImageLightbox';
 import { useLanguage } from '../hooks/useLanguage';
 import { useToast } from '../hooks/useToast';
+import { usePuzzleEanStats } from '../hooks/usePuzzleEanStats';
 import type { DetailSource, Puzzle, WishlistItem } from '../types';
 import { compressImageFile } from '../utils/image';
-import { dotString, formatDate, priorityStyle, ratingLabel, starString, statusStyle } from '../utils/format';
+import { dotString, formatDate, formatMinutesAsHours, priorityStyle, ratingLabel, starString, statusStyle } from '../utils/format';
 import { generateShareCardBlob } from '../utils/shareCard';
 import { shareImageBlob } from '../utils/shareImage';
 
@@ -94,6 +95,7 @@ export default function DetailScreen({
   const { t, lang } = useLanguage();
   const { setImage, clearImage, downloadImage } = useImageStore();
   const { showToast } = useToast();
+  const communityStats = usePuzzleEanStats(puzzle?.ean ?? '');
   const progressInputRef = useRef<HTMLInputElement>(null);
   const [sharing, setSharing] = useState(false);
   const item = source === 'collection' ? puzzle : wishlistItem;
@@ -306,6 +308,51 @@ export default function DetailScreen({
                 {puzzle.notes}
               </div>
             </div>
+
+            {communityStats && (
+              <div style={{ marginTop: 20 }}>
+                <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+                  {t.detail.communityStatsTitle}
+                </div>
+                <div style={{ background: 'var(--surface)', borderRadius: 16, padding: 14 }}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10 }}>
+                    {t.detail.communityCollectors(communityStats.collectorCount)}
+                  </div>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    {communityStats.avgRating !== null && (
+                      <div style={{ flex: 1, minWidth: 90 }}>
+                        <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                          {t.detail.communityAvgRating}
+                        </div>
+                        <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>
+                          {communityStats.avgRating.toFixed(1)}/5
+                        </div>
+                      </div>
+                    )}
+                    {communityStats.avgDifficulty !== null && (
+                      <div style={{ flex: 1, minWidth: 90 }}>
+                        <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                          {t.detail.communityAvgDifficulty}
+                        </div>
+                        <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>
+                          {communityStats.avgDifficulty.toFixed(1)}/5
+                        </div>
+                      </div>
+                    )}
+                    {communityStats.avgMinutes !== null && (
+                      <div style={{ flex: 1, minWidth: 90 }}>
+                        <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                          {t.detail.communityAvgTime}
+                        </div>
+                        <div style={{ fontFamily: "'Baloo 2',sans-serif", fontWeight: 700, fontSize: 15, color: 'var(--text-primary)' }}>
+                          {formatMinutesAsHours(Math.round(communityStats.avgMinutes))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {(puzzle.progressPhotos.length > 0 || isOwner) && (
               <div style={{ marginTop: 20 }}>

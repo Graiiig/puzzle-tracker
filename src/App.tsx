@@ -213,6 +213,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         difficulty: p.difficulty,
         date: /^\d{4}-\d{2}-\d{2}$/.test(p.date) ? p.date : '',
         time: p.time === '—' ? '' : p.time,
+        ean: p.ean,
       });
       setFormTargetId(p.id);
     } else {
@@ -232,6 +233,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         difficulty: 3,
         date: '',
         time: '',
+        ean: '',
       });
       setFormTargetId(w.id);
     }
@@ -255,6 +257,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     const isStale = () => sessionGenerationRef.current !== scanGeneration;
 
     try {
+      updateForm('ean', ean);
       const result = await lookupEan(ean);
       if (isStale() || !result.found) return false;
 
@@ -361,6 +364,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           date: form.date,
           time: form.time.trim() || '—',
           notes: form.notes.trim() || '—',
+          ean: form.ean,
         });
       } else {
         await updateWishlistItem(formTargetId, {
@@ -394,6 +398,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
         date: form.date || (form.status === 'done' ? new Date().toISOString().slice(0, 10) : ''),
         time: form.time.trim() || (form.status === 'todo' ? '—' : t.common.inProgressDefaultTime),
         notes: form.notes.trim() || '—',
+        ean: form.ean,
       };
       await addPuzzle(item);
       setScreen('home');
@@ -436,6 +441,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       date: '',
       time: '—',
       notes: selected.notes,
+      ean: '',
     };
     await addPuzzle(item);
     const photoDataUrl = await downloadImage('wish-img-' + selected.id);

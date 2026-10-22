@@ -19,6 +19,7 @@ export interface Puzzle {
   time: string;
   notes: string;
   progressPhotos: string[];
+  ean: string;
 }
 
 export interface WishlistItem {
@@ -46,6 +47,7 @@ export interface PuzzleForm {
   difficulty: number;
   date: string;
   time: string;
+  ean: string;
 }
 
 export type Screen =

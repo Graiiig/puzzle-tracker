@@ -61,6 +61,7 @@ export function toPuzzle(record: Record<string, unknown>, id: string): Omit<Puzz
     time: str(record, 'time'),
     notes: str(record, 'notes'),
     progressPhotos: [],
+    ean: '',
   };
 }
 
