@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- Only needed on Android 9 and older to write the export file into the
@@ -31,6 +31,16 @@
             </intent-filter>
 
         </activity>
+
+        <!-- The ML Kit barcode-scanning library's own manifest declares this
+             delegate activity as portrait-locked, which Android 16+ ignores
+             on large screens, causing layout/usability issues there. We
+             don't control the library's manifest, so override the merged
+             attribute to let the system pick the orientation instead. -->
+        <activity
+            android:name="com.google.mlkit.vision.codescanner.internal.GmsBarcodeScanningDelegateActivity"
+            android:screenOrientation="unspecified"
+            tools:replace="android:screenOrientation" />
 
         <!-- Exposes files written to the app's cache dir (e.g. the share-card
              PNG in src/utils/shareImage.ts) to other apps via a content://

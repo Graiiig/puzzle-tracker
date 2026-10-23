@@ -305,6 +305,14 @@ button {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* Android 15+ (targetSdk 35+) draws content edge-to-edge by default, so
+     without this every screen's header/bottom content would sit under the
+     status bar/gesture nav/notch. Resolves to 0 on web (no notch) and on
+     older Android, so it's a no-op there. */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 @media (min-width: 560px) {
