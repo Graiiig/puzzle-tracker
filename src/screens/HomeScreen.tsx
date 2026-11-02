@@ -29,6 +29,8 @@ interface HomeScreenProps {
   selectedGenres: Genre[];
   onToggleGenre: (g: Genre) => void;
   onClearGenres: () => void;
+  removedGenres: Set<string>;
+  onDeleteGenre: (g: Genre) => void;
   sortMode: SortMode;
   onSetSortMode: (m: SortMode) => void;
   statusFilter: Set<Status>;
@@ -69,6 +71,8 @@ export default function HomeScreen({
   selectedGenres,
   onToggleGenre,
   onClearGenres,
+  removedGenres,
+  onDeleteGenre,
   sortMode,
   onSetSortMode,
   statusFilter,
@@ -114,7 +118,7 @@ export default function HomeScreen({
     }),
   );
   const visible = sortList(filtered, sortMode);
-  const genreOptions: Genre[] = collectGenres(owned);
+  const genreOptions: Genre[] = collectGenres(removedGenres, owned);
   const brandOptions: string[] = collectBrands(owned);
   const artistOptions: string[] = collectArtists(owned);
   const activeFilterCount =
@@ -336,7 +340,13 @@ export default function HomeScreen({
         >
           <Chip label={t.home.filterAll} onClick={onClearGenres} style={chipStyle(selectedGenres.length === 0)} />
           {genreOptions.map((g) => (
-            <Chip key={g} label={g} onClick={() => onToggleGenre(g)} style={chipStyle(selectedGenres.includes(g))} />
+            <Chip
+              key={g}
+              label={g}
+              onClick={() => onToggleGenre(g)}
+              onLongPress={ownerFilter === myUserId ? () => onDeleteGenre(g) : undefined}
+              style={chipStyle(selectedGenres.includes(g))}
+            />
           ))}
         </div>
         <div
