@@ -66,6 +66,7 @@ export interface Dict {
     pieces: (n: number) => string;
     ownerFilterMine: string;
     ownerFilterOf: (pseudo: string) => string;
+    deleteGenreConfirm: (genre: string) => string;
   };
   wishlist: {
     title: string;
@@ -376,6 +377,7 @@ const fr: Dict = {
     pieces: (n) => `${n} pièces`,
     ownerFilterMine: 'Mes puzzles',
     ownerFilterOf: (pseudo) => `Puzzles de ${pseudo}`,
+    deleteGenreConfirm: (genre) => `Supprimer le thème "${genre}" ? Il sera retiré de tous tes puzzles et envies.`,
   },
   wishlist: {
     title: 'Ma Wishlist 💗',
@@ -706,6 +708,7 @@ const en: Dict = {
     pieces: (n) => `${n} pieces`,
     ownerFilterMine: 'My puzzles',
     ownerFilterOf: (pseudo) => `${pseudo}'s puzzles`,
+    deleteGenreConfirm: (genre) => `Delete the theme "${genre}"? It will be removed from all your puzzles and wishes.`,
   },
   wishlist: {
     title: 'My Wishlist 💗',

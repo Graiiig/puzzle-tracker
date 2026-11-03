@@ -1,7 +1,7 @@
 import { DEFAULT_GENRES } from '../data';
 import type { Genre } from '../types';
 
-export function collectGenres(...itemLists: Array<Array<{ genres: Genre[] }>>): Genre[] {
+export function collectGenres(removed: Set<Genre>, ...itemLists: Array<Array<{ genres: Genre[] }>>): Genre[] {
   const seen = new Set<Genre>(DEFAULT_GENRES);
   const extra: Genre[] = [];
   for (const items of itemLists) {
@@ -14,7 +14,7 @@ export function collectGenres(...itemLists: Array<Array<{ genres: Genre[] }>>): 
       }
     }
   }
-  return [...DEFAULT_GENRES, ...extra];
+  return [...DEFAULT_GENRES, ...extra].filter((g) => !removed.has(g));
 }
 
 export function collectBrands(...itemLists: Array<Array<{ brand: string }>>): string[] {

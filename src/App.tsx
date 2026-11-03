@@ -16,6 +16,7 @@ import { useAppUpdate } from './hooks/useAppUpdate';
 import { useShares } from './hooks/useShares';
 import { useAchievementNotifications } from './hooks/useAchievementNotifications';
 import { useChampionships } from './hooks/useChampionships';
+import { useGenrePrefs } from './hooks/useGenrePrefs';
 import { useDismissedLiveBanner } from './hooks/useDismissedLiveBanner';
 import { computeAchievements, type Achievement } from './utils/achievements';
 import { achievementTitle, tierLabel } from './utils/achievementLabels';
@@ -56,6 +57,14 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     refresh: refreshCollection,
   } = usePuzzles(userId);
   const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
+  const { removedGenres, removeGenre } = useGenrePrefs(userId);
+  async function handleDeleteGenre(genre: Genre) {
+    if (!window.confirm(t.home.deleteGenreConfirm(genre))) return;
+    if (await removeGenre(genre)) {
+      refreshCollection();
+      refreshWishlist();
+    }
+  }
   const ownedCollection = useMemo(() => collection.filter((p) => p.ownerId === userId), [collection, userId]);
   const achievements = useMemo(() => computeAchievements(ownedCollection), [ownedCollection]);
   const handleTierUp = useCallback(
@@ -581,6 +590,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           selectedGenres={selectedGenres}
           onToggleGenre={toggleGenreFilter}
           onClearGenres={() => setSelectedGenres([])}
+          removedGenres={removedGenres}
+          onDeleteGenre={handleDeleteGenre}
           sortMode={sortMode}
           onSetSortMode={setSortMode}
           statusFilter={statusFilter}
@@ -704,6 +715,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           isEditing={isEditingForm}
           photoSlotId={photoSlotId}
           genreOptions={collectGenres(
+            removedGenres,
             collection.filter((p) => p.ownerId === userId),
             wishlist.filter((w) => w.ownerId === userId),
           )}
