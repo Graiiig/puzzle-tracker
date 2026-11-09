@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ImageSlot from '../components/ImageSlot';
 import Chip from '../components/Chip';
+import ConfirmDialog from '../components/ConfirmDialog';
 import BottomNav from '../components/BottomNav';
 import FiltersSheet from '../components/FiltersSheet';
 import PullToRefresh from '../components/PullToRefresh';
@@ -31,6 +32,8 @@ interface HomeScreenProps {
   onClearGenres: () => void;
   removedGenres: Set<string>;
   onDeleteGenre: (g: Genre) => void;
+  onDeleteBrand: (b: string) => void;
+  onDeleteArtist: (a: string) => void;
   sortMode: SortMode;
   onSetSortMode: (m: SortMode) => void;
   statusFilter: Set<Status>;
@@ -73,6 +76,8 @@ export default function HomeScreen({
   onClearGenres,
   removedGenres,
   onDeleteGenre,
+  onDeleteBrand,
+  onDeleteArtist,
   sortMode,
   onSetSortMode,
   statusFilter,
@@ -98,6 +103,7 @@ export default function HomeScreen({
   const { t, lang } = useLanguage();
   const [menuOpen, setMenuOpen] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [pendingDeleteGenre, setPendingDeleteGenre] = useState<Genre | null>(null);
 
   const owned = collection.filter((p) => p.ownerId === ownerFilter);
   const doneCount = owned.filter((p) => p.status === 'done').length;
@@ -344,7 +350,7 @@ export default function HomeScreen({
               key={g}
               label={g}
               onClick={() => onToggleGenre(g)}
-              onLongPress={ownerFilter === myUserId ? () => onDeleteGenre(g) : undefined}
+              onLongPress={ownerFilter === myUserId ? () => setPendingDeleteGenre(g) : undefined}
               style={chipStyle(selectedGenres.includes(g))}
             />
           ))}
@@ -415,6 +421,24 @@ export default function HomeScreen({
           onReset={onResetFilters}
           onClose={() => setFiltersOpen(false)}
           resultCount={visible.length}
+          canDelete={ownerFilter === myUserId}
+          onDeleteGenre={onDeleteGenre}
+          onDeleteBrand={onDeleteBrand}
+          onDeleteArtist={onDeleteArtist}
+        />
+      )}
+
+      {pendingDeleteGenre && (
+        <ConfirmDialog
+          title={t.filters.deleteConfirmTitle}
+          message={t.filters.deleteGenreConfirm(pendingDeleteGenre)}
+          confirmLabel={t.common.delete}
+          cancelLabel={t.common.cancel}
+          onCancel={() => setPendingDeleteGenre(null)}
+          onConfirm={() => {
+            onDeleteGenre(pendingDeleteGenre);
+            setPendingDeleteGenre(null);
+          }}
         />
       )}
 

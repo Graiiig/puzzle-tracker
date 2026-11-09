@@ -8,6 +8,8 @@ export interface Dict {
     unknownBrand: string;
     inProgressDefaultTime: string;
     close: string;
+    cancel: string;
+    delete: string;
   };
   login: {
     tagline: string;
@@ -66,7 +68,6 @@ export interface Dict {
     pieces: (n: number) => string;
     ownerFilterMine: string;
     ownerFilterOf: (pseudo: string) => string;
-    deleteGenreConfirm: (genre: string) => string;
   };
   wishlist: {
     title: string;
@@ -208,6 +209,10 @@ export interface Dict {
     sortLabel: string;
     ratingAtLeast: (n: number) => string;
     seeResults: (n: number) => string;
+    deleteConfirmTitle: string;
+    deleteGenreConfirm: (genre: string) => string;
+    deleteBrandConfirm: (brand: string) => string;
+    deleteArtistConfirm: (artist: string) => string;
   };
   share: {
     title: string;
@@ -319,6 +324,8 @@ const fr: Dict = {
     unknownBrand: 'Éditeur inconnu',
     inProgressDefaultTime: 'en cours',
     close: 'Fermer',
+    cancel: 'Annuler',
+    delete: 'Supprimer',
   },
   login: {
     tagline: 'Ta collection, synchronisée partout',
@@ -378,7 +385,6 @@ const fr: Dict = {
     pieces: (n) => `${n} pièces`,
     ownerFilterMine: 'Mes puzzles',
     ownerFilterOf: (pseudo) => `Puzzles de ${pseudo}`,
-    deleteGenreConfirm: (genre) => `Supprimer le thème "${genre}" ? Il sera retiré de tous tes puzzles et envies.`,
   },
   wishlist: {
     title: 'Ma Wishlist 💗',
@@ -540,6 +546,10 @@ const fr: Dict = {
     sortLabel: 'Trier par',
     ratingAtLeast: (n) => (n >= 5 ? '★ 5' : `★ ${n}+`),
     seeResults: (n) => `Voir ${n} puzzle${n === 1 ? '' : 's'}`,
+    deleteConfirmTitle: 'Confirmer la suppression',
+    deleteGenreConfirm: (genre) => `Supprimer le thème "${genre}" ? Il sera retiré de tous tes puzzles et envies.`,
+    deleteBrandConfirm: (brand) => `Supprimer la marque "${brand}" ? Elle sera retirée de tous tes puzzles et envies.`,
+    deleteArtistConfirm: (artist) => `Supprimer l'artiste "${artist}" ? Il sera retiré de tous tes puzzles et envies.`,
   },
   share: {
     title: 'Partage',
@@ -652,6 +662,8 @@ const en: Dict = {
     unknownBrand: 'Unknown publisher',
     inProgressDefaultTime: 'in progress',
     close: 'Close',
+    cancel: 'Cancel',
+    delete: 'Delete',
   },
   login: {
     tagline: 'Your collection, synced everywhere',
@@ -710,7 +722,6 @@ const en: Dict = {
     pieces: (n) => `${n} pieces`,
     ownerFilterMine: 'My puzzles',
     ownerFilterOf: (pseudo) => `${pseudo}'s puzzles`,
-    deleteGenreConfirm: (genre) => `Delete the theme "${genre}"? It will be removed from all your puzzles and wishes.`,
   },
   wishlist: {
     title: 'My Wishlist 💗',
@@ -871,6 +882,10 @@ const en: Dict = {
     sortLabel: 'Sort by',
     ratingAtLeast: (n) => (n >= 5 ? '★ 5' : `★ ${n}+`),
     seeResults: (n) => `See ${n} puzzle${n === 1 ? '' : 's'}`,
+    deleteConfirmTitle: 'Confirm deletion',
+    deleteGenreConfirm: (genre) => `Delete the theme "${genre}"? It will be removed from all your puzzles and wishes.`,
+    deleteBrandConfirm: (brand) => `Delete the brand "${brand}"? It will be removed from all your puzzles and wishes.`,
+    deleteArtistConfirm: (artist) => `Delete the artist "${artist}"? They will be removed from all your puzzles and wishes.`,
   },
   share: {
     title: 'Share',
