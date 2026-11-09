@@ -200,6 +200,7 @@ export interface Dict {
     button: string;
     reset: string;
     statusLabel: string;
+    genreLabel: string;
     brandLabel: string;
     artistLabel: string;
     piecesLabel: string;
@@ -531,6 +532,7 @@ const fr: Dict = {
     button: 'Filtres',
     reset: 'Réinitialiser',
     statusLabel: 'Statut',
+    genreLabel: 'Thèmes',
     brandLabel: 'Marque',
     artistLabel: 'Artiste',
     piecesLabel: 'Pièces',
@@ -861,6 +863,7 @@ const en: Dict = {
     button: 'Filters',
     reset: 'Reset',
     statusLabel: 'Status',
+    genreLabel: 'Themes',
     brandLabel: 'Brand',
     artistLabel: 'Artist',
     piecesLabel: 'Pieces',

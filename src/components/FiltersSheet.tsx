@@ -8,6 +8,9 @@ interface FiltersSheetProps {
   statuses: Status[];
   selectedStatuses: Set<Status>;
   onToggleStatus: (s: Status) => void;
+  genres: string[];
+  selectedGenres: string[];
+  onToggleGenre: (g: string) => void;
   brands: string[];
   selectedBrands: Set<string>;
   onToggleBrand: (b: string) => void;
@@ -30,6 +33,9 @@ export default function FiltersSheet({
   statuses,
   selectedStatuses,
   onToggleStatus,
+  genres,
+  selectedGenres,
+  onToggleGenre,
   brands,
   selectedBrands,
   onToggleBrand,
@@ -112,6 +118,19 @@ export default function FiltersSheet({
             ))}
           </div>
         </div>
+
+        {genres.length > 0 && (
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+              {t.filters.genreLabel}
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {genres.map((g) => (
+                <Chip key={g} label={g} onClick={() => onToggleGenre(g)} style={chipStyle(selectedGenres.includes(g))} />
+              ))}
+            </div>
+          </div>
+        )}
 
         {brands.length > 0 && (
           <div style={{ marginBottom: 18 }}>

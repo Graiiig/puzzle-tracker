@@ -396,6 +396,9 @@ export default function HomeScreen({
           statuses={STATUSES}
           selectedStatuses={statusFilter}
           onToggleStatus={onToggleStatus}
+          genres={genreOptions}
+          selectedGenres={selectedGenres}
+          onToggleGenre={onToggleGenre}
           brands={brandOptions}
           selectedBrands={brandFilter}
           onToggleBrand={onToggleBrand}
