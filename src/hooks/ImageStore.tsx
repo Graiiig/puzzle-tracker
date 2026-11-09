@@ -74,11 +74,17 @@ export function ImageStoreProvider({ userId, children }: { userId: string | null
           .from('photos')
           .upload(path(id, userId), blob, { upsert: true, contentType: 'image/jpeg' });
         if (error) return false;
-        setUrls((u) => ({ ...u, [id]: URL.createObjectURL(blob) }));
+        setUrls((u) => {
+          const prev = u[id];
+          if (prev && prev !== NOT_FOUND) URL.revokeObjectURL(prev);
+          return { ...u, [id]: URL.createObjectURL(blob) };
+        });
         return true;
       },
       clearImage: (id) => {
         setUrls((u) => {
+          const prev = u[id];
+          if (prev && prev !== NOT_FOUND) URL.revokeObjectURL(prev);
           const next = { ...u };
           delete next[id];
           return next;
