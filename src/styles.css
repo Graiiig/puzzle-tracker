@@ -305,6 +305,20 @@ button {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* App-wide, not just .chip: a long-press anywhere (not only on a chip)
+     was still selecting text underneath it, e.g. the confirm dialog's own
+     message. Inputs/textareas get it back below — they need normal text
+     selection to be editable. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.app-shell input,
+.app-shell textarea {
+  user-select: text;
+  -webkit-user-select: text;
+  -webkit-touch-callout: default;
 }
 
 @media (min-width: 560px) {
@@ -330,11 +344,6 @@ button {
   flex-shrink: 0;
   box-shadow: 0 1px 4px oklch(50% 0.05 340 / 0.1);
   border: none;
-  /* Without this, holding a chip to long-press-delete it triggers the
-     WebView's native text-selection/callout instead. */
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
 }
 
 .card-row {
