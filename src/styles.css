@@ -330,6 +330,11 @@ button {
   flex-shrink: 0;
   box-shadow: 0 1px 4px oklch(50% 0.05 340 / 0.1);
   border: none;
+  /* Without this, holding a chip to long-press-delete it triggers the
+     WebView's native text-selection/callout instead. */
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 .card-row {
