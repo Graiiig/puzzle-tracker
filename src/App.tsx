@@ -17,6 +17,7 @@ import { useShares } from './hooks/useShares';
 import { useAchievementNotifications } from './hooks/useAchievementNotifications';
 import { useChampionships } from './hooks/useChampionships';
 import { useGenrePrefs } from './hooks/useGenrePrefs';
+import { useFieldDeletion } from './hooks/useFieldDeletion';
 import { useDismissedLiveBanner } from './hooks/useDismissedLiveBanner';
 import { computeAchievements, type Achievement } from './utils/achievements';
 import { achievementTitle, tierLabel } from './utils/achievementLabels';
@@ -58,9 +59,21 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   } = usePuzzles(userId);
   const { wishlist, addWishlistItem, updateWishlistItem, deleteWishlistItem, refresh: refreshWishlist } = useWishlist(userId);
   const { removedGenres, removeGenre } = useGenrePrefs(userId);
+  const { clearBrand, clearArtist } = useFieldDeletion();
   async function handleDeleteGenre(genre: Genre) {
-    if (!window.confirm(t.home.deleteGenreConfirm(genre))) return;
     if (await removeGenre(genre)) {
+      refreshCollection();
+      refreshWishlist();
+    }
+  }
+  async function handleDeleteBrand(brand: string) {
+    if (await clearBrand(brand)) {
+      refreshCollection();
+      refreshWishlist();
+    }
+  }
+  async function handleDeleteArtist(artist: string) {
+    if (await clearArtist(artist)) {
       refreshCollection();
       refreshWishlist();
     }
@@ -592,6 +605,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onClearGenres={() => setSelectedGenres([])}
           removedGenres={removedGenres}
           onDeleteGenre={handleDeleteGenre}
+          onDeleteBrand={handleDeleteBrand}
+          onDeleteArtist={handleDeleteArtist}
           sortMode={sortMode}
           onSetSortMode={setSortMode}
           statusFilter={statusFilter}

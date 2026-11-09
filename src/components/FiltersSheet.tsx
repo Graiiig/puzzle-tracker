@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import Chip from './Chip';
+import ConfirmDialog from './ConfirmDialog';
 import { useLanguage } from '../hooks/useLanguage';
 import { PIECE_BUCKETS } from '../utils/filters';
 import { chipStyle } from '../utils/format';
@@ -8,6 +10,9 @@ interface FiltersSheetProps {
   statuses: Status[];
   selectedStatuses: Set<Status>;
   onToggleStatus: (s: Status) => void;
+  genres: string[];
+  selectedGenres: string[];
+  onToggleGenre: (g: string) => void;
   brands: string[];
   selectedBrands: Set<string>;
   onToggleBrand: (b: string) => void;
@@ -24,12 +29,21 @@ interface FiltersSheetProps {
   onReset: () => void;
   onClose: () => void;
   resultCount: number;
+  canDelete: boolean;
+  onDeleteGenre: (g: string) => void;
+  onDeleteBrand: (b: string) => void;
+  onDeleteArtist: (a: string) => void;
 }
+
+type PendingDelete = { type: 'genre' | 'brand' | 'artist'; value: string };
 
 export default function FiltersSheet({
   statuses,
   selectedStatuses,
   onToggleStatus,
+  genres,
+  selectedGenres,
+  onToggleGenre,
   brands,
   selectedBrands,
   onToggleBrand,
@@ -46,8 +60,13 @@ export default function FiltersSheet({
   onReset,
   onClose,
   resultCount,
+  canDelete,
+  onDeleteGenre,
+  onDeleteBrand,
+  onDeleteArtist,
 }: FiltersSheetProps) {
   const { t } = useLanguage();
+  const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
 
   return (
     <div
@@ -113,6 +132,25 @@ export default function FiltersSheet({
           </div>
         </div>
 
+        {genres.length > 0 && (
+          <div style={{ marginBottom: 18 }}>
+            <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
+              {t.filters.genreLabel}
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {genres.map((g) => (
+                <Chip
+                  key={g}
+                  label={g}
+                  onClick={() => onToggleGenre(g)}
+                  onLongPress={canDelete ? () => setPendingDelete({ type: 'genre', value: g }) : undefined}
+                  style={chipStyle(selectedGenres.includes(g))}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         {brands.length > 0 && (
           <div style={{ marginBottom: 18 }}>
             <div style={{ fontSize: 12, fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>
@@ -120,7 +158,13 @@ export default function FiltersSheet({
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {brands.map((b) => (
-                <Chip key={b} label={b} onClick={() => onToggleBrand(b)} style={chipStyle(selectedBrands.has(b))} />
+                <Chip
+                  key={b}
+                  label={b}
+                  onClick={() => onToggleBrand(b)}
+                  onLongPress={canDelete ? () => setPendingDelete({ type: 'brand', value: b }) : undefined}
+                  style={chipStyle(selectedBrands.has(b))}
+                />
               ))}
             </div>
           </div>
@@ -133,7 +177,13 @@ export default function FiltersSheet({
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {artists.map((a) => (
-                <Chip key={a} label={a} onClick={() => onToggleArtist(a)} style={chipStyle(selectedArtists.has(a))} />
+                <Chip
+                  key={a}
+                  label={a}
+                  onClick={() => onToggleArtist(a)}
+                  onLongPress={canDelete ? () => setPendingDelete({ type: 'artist', value: a }) : undefined}
+                  style={chipStyle(selectedArtists.has(a))}
+                />
               ))}
             </div>
           </div>
@@ -201,6 +251,28 @@ export default function FiltersSheet({
           {t.filters.seeResults(resultCount)}
         </div>
       </div>
+
+      {pendingDelete && (
+        <ConfirmDialog
+          title={t.filters.deleteConfirmTitle}
+          message={
+            pendingDelete.type === 'genre'
+              ? t.filters.deleteGenreConfirm(pendingDelete.value)
+              : pendingDelete.type === 'brand'
+                ? t.filters.deleteBrandConfirm(pendingDelete.value)
+                : t.filters.deleteArtistConfirm(pendingDelete.value)
+          }
+          confirmLabel={t.common.delete}
+          cancelLabel={t.common.cancel}
+          onCancel={() => setPendingDelete(null)}
+          onConfirm={() => {
+            if (pendingDelete.type === 'genre') onDeleteGenre(pendingDelete.value);
+            else if (pendingDelete.type === 'brand') onDeleteBrand(pendingDelete.value);
+            else onDeleteArtist(pendingDelete.value);
+            setPendingDelete(null);
+          }}
+        />
+      )}
     </div>
   );
 }
