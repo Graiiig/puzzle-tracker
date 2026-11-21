@@ -51,6 +51,7 @@ export interface Dict {
     menuStats: string;
     menuAchievements: string;
     menuChampionships: string;
+    menuTimer: string;
     menuSettings: string;
     menuSignOut: string;
     menuLanguage: string;
@@ -318,6 +319,21 @@ export interface Dict {
     daysUntil: (n: number) => string;
     ongoing: string;
   };
+  timer: {
+    title: string;
+    tabStopwatch: string;
+    tabCountdown: string;
+    start: string;
+    pause: string;
+    resume: string;
+    reset: string;
+    durationLabel: string;
+    presetMinutes: (n: number) => string;
+    customLabel: string;
+    finishedTitle: string;
+    finishedBody: string;
+    newCountdown: string;
+  };
 }
 
 const fr: Dict = {
@@ -370,6 +386,7 @@ const fr: Dict = {
     menuStats: 'Statistiques',
     menuAchievements: 'Succès',
     menuChampionships: 'Championnats',
+    menuTimer: 'Minuteur',
     menuSettings: 'Réglages',
     menuSignOut: 'Se déconnecter',
     menuLanguage: '🌐 English',
@@ -659,6 +676,21 @@ const fr: Dict = {
     daysUntil: (n) => (n === 0 ? "Aujourd'hui" : n === 1 ? 'Dans 1 jour' : `Dans ${n} jours`),
     ongoing: 'En cours',
   },
+  timer: {
+    title: 'Minuteur',
+    tabStopwatch: 'Chrono',
+    tabCountdown: 'Minuteur',
+    start: 'Démarrer',
+    pause: 'Pause',
+    resume: 'Reprendre',
+    reset: 'Réinitialiser',
+    durationLabel: 'Durée',
+    presetMinutes: (n) => `${n} min`,
+    customLabel: 'Personnalisé (minutes)',
+    finishedTitle: 'Temps écoulé ⏰',
+    finishedBody: 'Le minuteur est arrivé à zéro.',
+    newCountdown: 'Nouveau minuteur',
+  },
 };
 
 const en: Dict = {
@@ -710,6 +742,7 @@ const en: Dict = {
     menuStats: 'Statistics',
     menuAchievements: 'Achievements',
     menuChampionships: 'Championships',
+    menuTimer: 'Timer',
     menuSettings: 'Settings',
     menuSignOut: 'Sign out',
     menuLanguage: '🌐 Français',
@@ -996,6 +1029,21 @@ const en: Dict = {
     moreInfo: 'More info',
     daysUntil: (n) => (n === 0 ? 'Today' : n === 1 ? 'In 1 day' : `In ${n} days`),
     ongoing: 'Happening now',
+  },
+  timer: {
+    title: 'Timer',
+    tabStopwatch: 'Stopwatch',
+    tabCountdown: 'Countdown',
+    start: 'Start',
+    pause: 'Pause',
+    resume: 'Resume',
+    reset: 'Reset',
+    durationLabel: 'Duration',
+    presetMinutes: (n) => `${n} min`,
+    customLabel: 'Custom (minutes)',
+    finishedTitle: "Time's up ⏰",
+    finishedBody: 'The countdown reached zero.',
+    newCountdown: 'New countdown',
   },
 };
 

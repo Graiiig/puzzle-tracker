@@ -60,7 +60,8 @@ export type Screen =
   | 'settings'
   | 'achievements'
   | 'premium'
-  | 'championships';
+  | 'championships'
+  | 'timer';
 export type DetailSource = 'collection' | 'wishlist';
 
 export interface Championship {

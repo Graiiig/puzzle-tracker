@@ -40,6 +40,7 @@ import StatsScreen from './screens/StatsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import AchievementsScreen from './screens/AchievementsScreen';
 import ChampionshipsScreen from './screens/ChampionshipsScreen';
+import TimerScreen from './screens/TimerScreen';
 import PremiumScreen from './screens/PremiumScreen';
 import ImportLegacyDataOverlay from './components/ImportLegacyDataOverlay';
 import PremiumLimitOverlay from './components/PremiumLimitOverlay';
@@ -596,6 +597,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onGoStats={() => setScreen('stats')}
           onGoAchievements={() => setScreen('achievements')}
           onGoChampionships={() => setScreen('championships')}
+          onGoTimer={() => setScreen('timer')}
           liveChampionship={liveChampionship}
           onDismissLiveBanner={dismissLiveBanner}
           search={search}
@@ -723,6 +725,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
       {screen === 'championships' && (
         <ChampionshipsScreen championships={championships} onClose={() => setScreen('home')} />
       )}
+
+      {screen === 'timer' && <TimerScreen onClose={() => setScreen('home')} />}
 
       {screen === 'add' && (
         <AddScreen

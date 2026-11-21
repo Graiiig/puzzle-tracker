@@ -23,6 +23,7 @@ interface HomeScreenProps {
   onGoStats: () => void;
   onGoAchievements: () => void;
   onGoChampionships: () => void;
+  onGoTimer: () => void;
   liveChampionship: Championship | null;
   onDismissLiveBanner: (championshipId: string) => void;
   search: string;
@@ -67,6 +68,7 @@ export default function HomeScreen({
   onGoStats,
   onGoAchievements,
   onGoChampionships,
+  onGoTimer,
   liveChampionship,
   onDismissLiveBanner,
   search,
@@ -187,6 +189,7 @@ export default function HomeScreen({
                     { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false, highlight: false },
                     { icon: '🏅', label: t.home.menuAchievements, onClick: onGoAchievements, disabled: false, highlight: false },
                     { icon: '🏆', label: t.home.menuChampionships, onClick: onGoChampionships, disabled: false, highlight: false },
+                    { icon: '⏱️', label: t.home.menuTimer, onClick: onGoTimer, disabled: false, highlight: false },
                     { icon: '⚙️', label: t.home.menuSettings, onClick: onGoSettings, disabled: false, highlight: false },
                     { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false, highlight: false },
                   ].map((item) => (
