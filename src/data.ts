@@ -1,7 +1,7 @@
 import type { Genre, Priority, PuzzleForm, SortMode, Status } from './types';
 
 export const DEFAULT_GENRES: Genre[] = ['Paysage', 'Animaux', 'Art', 'Fantaisie', 'Ville'];
-export const SORT_MODES: SortMode[] = ['recent', 'alphabetical', 'pieces', 'difficulty'];
+export const SORT_MODES: SortMode[] = ['recent', 'alphabetical', 'pieces', 'difficulty', 'rating'];
 export const STATUSES: Status[] = ['todo', 'in_progress', 'done'];
 export const PRIORITIES: Priority[] = ['low', 'medium', 'high'];
 

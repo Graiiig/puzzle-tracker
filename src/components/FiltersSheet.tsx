@@ -21,8 +21,8 @@ interface FiltersSheetProps {
   onToggleArtist: (a: string) => void;
   selectedPieceBuckets: Set<PieceBucket>;
   onTogglePieceBucket: (b: PieceBucket) => void;
-  minRating: number;
-  onSetMinRating: (n: number) => void;
+  ratings: Set<number>;
+  onToggleRating: (n: number) => void;
   sortModes: SortMode[];
   sortMode: SortMode;
   onSetSortMode: (m: SortMode) => void;
@@ -52,8 +52,8 @@ export default function FiltersSheet({
   onToggleArtist,
   selectedPieceBuckets,
   onTogglePieceBucket,
-  minRating,
-  onSetMinRating,
+  ratings,
+  onToggleRating,
   sortModes,
   sortMode,
   onSetSortMode,
@@ -213,9 +213,9 @@ export default function FiltersSheet({
             {[1, 2, 3, 4, 5].map((n) => (
               <Chip
                 key={n}
-                label={t.filters.ratingAtLeast(n)}
-                onClick={() => onSetMinRating(minRating === n ? 0 : n)}
-                style={chipStyle(minRating === n)}
+                label={t.filters.ratingExact(n)}
+                onClick={() => onToggleRating(n)}
+                style={chipStyle(ratings.has(n))}
               />
             ))}
           </div>

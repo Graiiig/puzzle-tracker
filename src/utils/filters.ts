@@ -15,7 +15,7 @@ export interface PuzzleFilters {
   brands: Set<string>;
   artists: Set<string>;
   pieceBuckets: Set<PieceBucket>;
-  minRating: number;
+  ratings: Set<number>;
   search: string;
   ownerId?: string | null;
 }
@@ -30,6 +30,6 @@ export function matchesFilters(p: Puzzle, f: PuzzleFilters): boolean {
     (f.brands.size === 0 || f.brands.has(p.brand)) &&
     (f.artists.size === 0 || f.artists.has(p.artist)) &&
     (f.pieceBuckets.size === 0 || f.pieceBuckets.has(pieceBucketOf(p.pieces))) &&
-    (f.minRating === 0 || p.rating >= f.minRating)
+    (f.ratings.size === 0 || f.ratings.has(p.rating))
   );
 }

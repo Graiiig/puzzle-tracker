@@ -3,7 +3,8 @@ import { useImageStore } from '../hooks/ImageStore';
 import { useImageLightbox } from '../hooks/useImageLightbox';
 import { useLanguage } from '../hooks/useLanguage';
 import { useToast } from '../hooks/useToast';
-import { compressImageFile } from '../utils/image';
+import RotatePhotoOverlay from './RotatePhotoOverlay';
+import { compressImageFile, type Rotation } from '../utils/image';
 
 interface ImageSlotProps {
   id: string;
@@ -24,19 +25,27 @@ export default function ImageSlot({ id, ownerId, shape = 'rounded', radius = 14,
   const { showToast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const src = getImage(id);
 
   useEffect(() => {
     ensureLoaded(id, ownerId);
   }, [id, ownerId, ensureLoaded]);
 
-  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
+    setPendingFile(file);
+  }
+
+  async function handleConfirmRotate(rotation: Rotation) {
+    if (!pendingFile) return;
+    const file = pendingFile;
+    setPendingFile(null);
     setBusy(true);
     try {
-      const dataUrl = await compressImageFile(file);
+      const dataUrl = await compressImageFile(file, rotation);
       const saved = await setImage(id, dataUrl);
       if (!saved) {
         showToast({ icon: '⚠️', title: t.imageSlot.saveError, variant: 'error' });
@@ -49,52 +58,58 @@ export default function ImageSlot({ id, ownerId, shape = 'rounded', radius = 14,
   }
 
   return (
-    <div
-      onClick={(e) => {
-        if (viewOnly) {
-          if (!src) return;
+    <>
+      <div
+        onClick={(e) => {
+          if (viewOnly) {
+            if (!src) return;
+            e.stopPropagation();
+            openLightbox(src);
+            return;
+          }
           e.stopPropagation();
-          openLightbox(src);
-          return;
-        }
-        e.stopPropagation();
-        inputRef.current?.click();
-      }}
-      style={{
-        borderRadius: shape === 'rect' ? 0 : radius,
-        overflow: 'hidden',
-        background: src ? undefined : 'var(--surface-alt)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 6,
-        cursor: 'pointer',
-        position: 'relative',
-        ...style,
-      }}
-    >
-      {busy ? (
-        <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)' }}>{t.imageSlot.loading}</span>
-      ) : src ? (
-        <img src={src} alt={placeholder} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-      ) : (
-        <>
-          <span style={{ fontSize: 22 }}>📷</span>
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              color: 'var(--text-muted)',
-              textAlign: 'center',
-              padding: '0 8px',
-            }}
-          >
-            {placeholder}
-          </span>
-        </>
+          inputRef.current?.click();
+        }}
+        style={{
+          borderRadius: shape === 'rect' ? 0 : radius,
+          overflow: 'hidden',
+          background: src ? undefined : 'var(--surface-alt)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 6,
+          cursor: 'pointer',
+          position: 'relative',
+          ...style,
+        }}
+      >
+        {busy ? (
+          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)' }}>{t.imageSlot.loading}</span>
+        ) : src ? (
+          <img src={src} alt={placeholder} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <>
+            <span style={{ fontSize: 22 }}>📷</span>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: 'var(--text-muted)',
+                textAlign: 'center',
+                padding: '0 8px',
+              }}
+            >
+              {placeholder}
+            </span>
+          </>
+        )}
+        <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
+      </div>
+
+      {pendingFile && (
+        <RotatePhotoOverlay file={pendingFile} onConfirm={handleConfirmRotate} onCancel={() => setPendingFile(null)} />
       )}
-      <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
-    </div>
+    </>
   );
 }

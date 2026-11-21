@@ -51,6 +51,7 @@ export interface Dict {
     menuStats: string;
     menuAchievements: string;
     menuChampionships: string;
+    menuTimer: string;
     menuSettings: string;
     menuSignOut: string;
     menuLanguage: string;
@@ -182,6 +183,8 @@ export interface Dict {
     photoPlaceholder: string;
     puzzlePhotoPlaceholder: string;
     addPhotoPlaceholder: string;
+    rotateTitle: string;
+    useThisPhoto: string;
   };
   app: {
     authLoading: string;
@@ -207,7 +210,7 @@ export interface Dict {
     piecesLabel: string;
     ratingLabel: string;
     sortLabel: string;
-    ratingAtLeast: (n: number) => string;
+    ratingExact: (n: number) => string;
     seeResults: (n: number) => string;
     deleteConfirmTitle: string;
     deleteGenreConfirm: (genre: string) => string;
@@ -316,6 +319,21 @@ export interface Dict {
     daysUntil: (n: number) => string;
     ongoing: string;
   };
+  timer: {
+    title: string;
+    tabStopwatch: string;
+    tabCountdown: string;
+    start: string;
+    pause: string;
+    resume: string;
+    reset: string;
+    durationLabel: string;
+    presetMinutes: (n: number) => string;
+    customLabel: string;
+    finishedTitle: string;
+    finishedBody: string;
+    newCountdown: string;
+  };
 }
 
 const fr: Dict = {
@@ -368,6 +386,7 @@ const fr: Dict = {
     menuStats: 'Statistiques',
     menuAchievements: 'Succès',
     menuChampionships: 'Championnats',
+    menuTimer: 'Minuteur',
     menuSettings: 'Réglages',
     menuSignOut: 'Se déconnecter',
     menuLanguage: '🌐 English',
@@ -500,6 +519,8 @@ const fr: Dict = {
     photoPlaceholder: 'photo',
     puzzlePhotoPlaceholder: 'photo du puzzle',
     addPhotoPlaceholder: 'ajouter une photo',
+    rotateTitle: 'Faire pivoter si besoin',
+    useThisPhoto: 'Utiliser cette photo',
   },
   app: {
     authLoading: 'Chargement...',
@@ -527,6 +548,7 @@ const fr: Dict = {
     alphabetical: 'Alphabétique',
     pieces: 'Pièces',
     difficulty: 'Difficulté',
+    rating: 'Note',
   },
   pieceBucket: {
     lt500: '< 500',
@@ -544,7 +566,7 @@ const fr: Dict = {
     piecesLabel: 'Pièces',
     ratingLabel: 'Note minimum',
     sortLabel: 'Trier par',
-    ratingAtLeast: (n) => (n >= 5 ? '★ 5' : `★ ${n}+`),
+    ratingExact: (n) => `★ ${n}`,
     seeResults: (n) => `Voir ${n} puzzle${n === 1 ? '' : 's'}`,
     deleteConfirmTitle: 'Confirmer la suppression',
     deleteGenreConfirm: (genre) => `Supprimer le thème "${genre}" ? Il sera retiré de tous tes puzzles et envies.`,
@@ -654,6 +676,21 @@ const fr: Dict = {
     daysUntil: (n) => (n === 0 ? "Aujourd'hui" : n === 1 ? 'Dans 1 jour' : `Dans ${n} jours`),
     ongoing: 'En cours',
   },
+  timer: {
+    title: 'Minuteur',
+    tabStopwatch: 'Chrono',
+    tabCountdown: 'Minuteur',
+    start: 'Démarrer',
+    pause: 'Pause',
+    resume: 'Reprendre',
+    reset: 'Réinitialiser',
+    durationLabel: 'Durée',
+    presetMinutes: (n) => `${n} min`,
+    customLabel: 'Personnalisé (minutes)',
+    finishedTitle: 'Temps écoulé ⏰',
+    finishedBody: 'Le minuteur est arrivé à zéro.',
+    newCountdown: 'Nouveau minuteur',
+  },
 };
 
 const en: Dict = {
@@ -705,6 +742,7 @@ const en: Dict = {
     menuStats: 'Statistics',
     menuAchievements: 'Achievements',
     menuChampionships: 'Championships',
+    menuTimer: 'Timer',
     menuSettings: 'Settings',
     menuSignOut: 'Sign out',
     menuLanguage: '🌐 Français',
@@ -836,6 +874,8 @@ const en: Dict = {
     photoPlaceholder: 'photo',
     puzzlePhotoPlaceholder: 'puzzle photo',
     addPhotoPlaceholder: 'add a photo',
+    rotateTitle: 'Rotate if needed',
+    useThisPhoto: 'Use this photo',
   },
   app: {
     authLoading: 'Loading...',
@@ -863,6 +903,7 @@ const en: Dict = {
     alphabetical: 'Alphabetical',
     pieces: 'Pieces',
     difficulty: 'Difficulty',
+    rating: 'Rating',
   },
   pieceBucket: {
     lt500: '< 500',
@@ -880,7 +921,7 @@ const en: Dict = {
     piecesLabel: 'Pieces',
     ratingLabel: 'Minimum rating',
     sortLabel: 'Sort by',
-    ratingAtLeast: (n) => (n >= 5 ? '★ 5' : `★ ${n}+`),
+    ratingExact: (n) => `★ ${n}`,
     seeResults: (n) => `See ${n} puzzle${n === 1 ? '' : 's'}`,
     deleteConfirmTitle: 'Confirm deletion',
     deleteGenreConfirm: (genre) => `Delete the theme "${genre}"? It will be removed from all your puzzles and wishes.`,
@@ -988,6 +1029,21 @@ const en: Dict = {
     moreInfo: 'More info',
     daysUntil: (n) => (n === 0 ? 'Today' : n === 1 ? 'In 1 day' : `In ${n} days`),
     ongoing: 'Happening now',
+  },
+  timer: {
+    title: 'Timer',
+    tabStopwatch: 'Stopwatch',
+    tabCountdown: 'Countdown',
+    start: 'Start',
+    pause: 'Pause',
+    resume: 'Resume',
+    reset: 'Reset',
+    durationLabel: 'Duration',
+    presetMinutes: (n) => `${n} min`,
+    customLabel: 'Custom (minutes)',
+    finishedTitle: "Time's up ⏰",
+    finishedBody: 'The countdown reached zero.',
+    newCountdown: 'New countdown',
   },
 };
 

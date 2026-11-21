@@ -23,6 +23,7 @@ interface HomeScreenProps {
   onGoStats: () => void;
   onGoAchievements: () => void;
   onGoChampionships: () => void;
+  onGoTimer: () => void;
   liveChampionship: Championship | null;
   onDismissLiveBanner: (championshipId: string) => void;
   search: string;
@@ -44,8 +45,8 @@ interface HomeScreenProps {
   onToggleArtist: (a: string) => void;
   pieceBucketFilter: Set<PieceBucket>;
   onTogglePieceBucket: (b: PieceBucket) => void;
-  minRating: number;
-  onSetMinRating: (n: number) => void;
+  ratingFilter: Set<number>;
+  onToggleRating: (n: number) => void;
   onResetFilters: () => void;
   onOpenPuzzle: (id: string) => void;
   onAdd: () => void;
@@ -67,6 +68,7 @@ export default function HomeScreen({
   onGoStats,
   onGoAchievements,
   onGoChampionships,
+  onGoTimer,
   liveChampionship,
   onDismissLiveBanner,
   search,
@@ -88,8 +90,8 @@ export default function HomeScreen({
   onToggleArtist,
   pieceBucketFilter,
   onTogglePieceBucket,
-  minRating,
-  onSetMinRating,
+  ratingFilter,
+  onToggleRating,
   onResetFilters,
   onOpenPuzzle,
   onAdd,
@@ -119,7 +121,7 @@ export default function HomeScreen({
       brands: brandFilter,
       artists: artistFilter,
       pieceBuckets: pieceBucketFilter,
-      minRating,
+      ratings: ratingFilter,
       search,
     }),
   );
@@ -128,7 +130,7 @@ export default function HomeScreen({
   const brandOptions: string[] = collectBrands(owned);
   const artistOptions: string[] = collectArtists(owned);
   const activeFilterCount =
-    statusFilter.size + brandFilter.size + artistFilter.size + pieceBucketFilter.size + (minRating > 0 ? 1 : 0);
+    statusFilter.size + brandFilter.size + artistFilter.size + pieceBucketFilter.size + ratingFilter.size;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)', position: 'relative' }}>
@@ -187,6 +189,7 @@ export default function HomeScreen({
                     { icon: '📊', label: t.home.menuStats, onClick: onGoStats, disabled: false, highlight: false },
                     { icon: '🏅', label: t.home.menuAchievements, onClick: onGoAchievements, disabled: false, highlight: false },
                     { icon: '🏆', label: t.home.menuChampionships, onClick: onGoChampionships, disabled: false, highlight: false },
+                    { icon: '⏱️', label: t.home.menuTimer, onClick: onGoTimer, disabled: false, highlight: false },
                     { icon: '⚙️', label: t.home.menuSettings, onClick: onGoSettings, disabled: false, highlight: false },
                     { icon: '🚪', label: t.home.menuSignOut, onClick: onSignOut, disabled: false, highlight: false },
                   ].map((item) => (
@@ -413,8 +416,8 @@ export default function HomeScreen({
           onToggleArtist={onToggleArtist}
           selectedPieceBuckets={pieceBucketFilter}
           onTogglePieceBucket={onTogglePieceBucket}
-          minRating={minRating}
-          onSetMinRating={onSetMinRating}
+          ratings={ratingFilter}
+          onToggleRating={onToggleRating}
           sortModes={SORT_MODES}
           sortMode={sortMode}
           onSetSortMode={onSetSortMode}
