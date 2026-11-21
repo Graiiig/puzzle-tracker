@@ -44,8 +44,8 @@ interface HomeScreenProps {
   onToggleArtist: (a: string) => void;
   pieceBucketFilter: Set<PieceBucket>;
   onTogglePieceBucket: (b: PieceBucket) => void;
-  minRating: number;
-  onSetMinRating: (n: number) => void;
+  ratingFilter: Set<number>;
+  onToggleRating: (n: number) => void;
   onResetFilters: () => void;
   onOpenPuzzle: (id: string) => void;
   onAdd: () => void;
@@ -88,8 +88,8 @@ export default function HomeScreen({
   onToggleArtist,
   pieceBucketFilter,
   onTogglePieceBucket,
-  minRating,
-  onSetMinRating,
+  ratingFilter,
+  onToggleRating,
   onResetFilters,
   onOpenPuzzle,
   onAdd,
@@ -119,7 +119,7 @@ export default function HomeScreen({
       brands: brandFilter,
       artists: artistFilter,
       pieceBuckets: pieceBucketFilter,
-      minRating,
+      ratings: ratingFilter,
       search,
     }),
   );
@@ -128,7 +128,7 @@ export default function HomeScreen({
   const brandOptions: string[] = collectBrands(owned);
   const artistOptions: string[] = collectArtists(owned);
   const activeFilterCount =
-    statusFilter.size + brandFilter.size + artistFilter.size + pieceBucketFilter.size + (minRating > 0 ? 1 : 0);
+    statusFilter.size + brandFilter.size + artistFilter.size + pieceBucketFilter.size + ratingFilter.size;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)', position: 'relative' }}>
@@ -413,8 +413,8 @@ export default function HomeScreen({
           onToggleArtist={onToggleArtist}
           selectedPieceBuckets={pieceBucketFilter}
           onTogglePieceBucket={onTogglePieceBucket}
-          minRating={minRating}
-          onSetMinRating={onSetMinRating}
+          ratings={ratingFilter}
+          onToggleRating={onToggleRating}
           sortModes={SORT_MODES}
           sortMode={sortMode}
           onSetSortMode={onSetSortMode}

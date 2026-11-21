@@ -54,7 +54,7 @@ export function chipStyle(active: boolean, gradient = 'var(--accent-gradient)'):
   };
 }
 
-export function sortList<T extends { name: string; pieces: number; difficulty?: number }>(
+export function sortList<T extends { name: string; pieces: number; difficulty?: number; rating?: number }>(
   list: T[],
   mode: SortMode,
 ): T[] {
@@ -62,6 +62,7 @@ export function sortList<T extends { name: string; pieces: number; difficulty?: 
   if (mode === 'alphabetical') arr.sort((a, b) => a.name.localeCompare(b.name));
   else if (mode === 'pieces') arr.sort((a, b) => b.pieces - a.pieces);
   else if (mode === 'difficulty') arr.sort((a, b) => (b.difficulty ?? 0) - (a.difficulty ?? 0));
+  else if (mode === 'rating') arr.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
   // 'recent': the list already arrives most-recent-first (fetched with
   // created_at descending), so no reordering is needed here.
   return arr;

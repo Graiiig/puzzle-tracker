@@ -123,7 +123,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
   const [brandFilter, setBrandFilter] = useState<Set<string>>(new Set());
   const [artistFilter, setArtistFilter] = useState<Set<string>>(new Set());
   const [pieceBucketFilter, setPieceBucketFilter] = useState<Set<PieceBucket>>(new Set());
-  const [minRating, setMinRating] = useState(0);
+  const [ratingFilter, setRatingFilter] = useState<Set<number>>(new Set());
   const [addMode, setAddMode] = useState<'collection' | 'wishlist'>('collection');
   const [form, setForm] = useState<PuzzleForm>({ ...EMPTY_FORM });
   const [formTargetId, setFormTargetId] = useState<string>(() => crypto.randomUUID());
@@ -171,7 +171,7 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
     setBrandFilter(new Set());
     setArtistFilter(new Set());
     setPieceBucketFilter(new Set());
-    setMinRating(0);
+    setRatingFilter(new Set());
   }
 
   function openPuzzle(id: string, from: Extract<Screen, 'home' | 'stats'> = 'home') {
@@ -617,8 +617,8 @@ function AppShell({ userId, onSignOut }: { userId: string; onSignOut: () => void
           onToggleArtist={(a) => toggleSetItem(setArtistFilter, a)}
           pieceBucketFilter={pieceBucketFilter}
           onTogglePieceBucket={(b) => toggleSetItem(setPieceBucketFilter, b)}
-          minRating={minRating}
-          onSetMinRating={setMinRating}
+          ratingFilter={ratingFilter}
+          onToggleRating={(n) => toggleSetItem(setRatingFilter, n)}
           onResetFilters={resetPuzzleFilters}
           onOpenPuzzle={openPuzzle}
           onAdd={openAddFromHome}

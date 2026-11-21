@@ -207,7 +207,7 @@ export interface Dict {
     piecesLabel: string;
     ratingLabel: string;
     sortLabel: string;
-    ratingAtLeast: (n: number) => string;
+    ratingExact: (n: number) => string;
     seeResults: (n: number) => string;
     deleteConfirmTitle: string;
     deleteGenreConfirm: (genre: string) => string;
@@ -527,6 +527,7 @@ const fr: Dict = {
     alphabetical: 'Alphabétique',
     pieces: 'Pièces',
     difficulty: 'Difficulté',
+    rating: 'Note',
   },
   pieceBucket: {
     lt500: '< 500',
@@ -544,7 +545,7 @@ const fr: Dict = {
     piecesLabel: 'Pièces',
     ratingLabel: 'Note minimum',
     sortLabel: 'Trier par',
-    ratingAtLeast: (n) => (n >= 5 ? '★ 5' : `★ ${n}+`),
+    ratingExact: (n) => `★ ${n}`,
     seeResults: (n) => `Voir ${n} puzzle${n === 1 ? '' : 's'}`,
     deleteConfirmTitle: 'Confirmer la suppression',
     deleteGenreConfirm: (genre) => `Supprimer le thème "${genre}" ? Il sera retiré de tous tes puzzles et envies.`,
@@ -863,6 +864,7 @@ const en: Dict = {
     alphabetical: 'Alphabetical',
     pieces: 'Pieces',
     difficulty: 'Difficulty',
+    rating: 'Rating',
   },
   pieceBucket: {
     lt500: '< 500',
@@ -880,7 +882,7 @@ const en: Dict = {
     piecesLabel: 'Pieces',
     ratingLabel: 'Minimum rating',
     sortLabel: 'Sort by',
-    ratingAtLeast: (n) => (n >= 5 ? '★ 5' : `★ ${n}+`),
+    ratingExact: (n) => `★ ${n}`,
     seeResults: (n) => `See ${n} puzzle${n === 1 ? '' : 's'}`,
     deleteConfirmTitle: 'Confirm deletion',
     deleteGenreConfirm: (genre) => `Delete the theme "${genre}"? It will be removed from all your puzzles and wishes.`,
