@@ -182,6 +182,8 @@ export interface Dict {
     photoPlaceholder: string;
     puzzlePhotoPlaceholder: string;
     addPhotoPlaceholder: string;
+    rotateTitle: string;
+    useThisPhoto: string;
   };
   app: {
     authLoading: string;
@@ -500,6 +502,8 @@ const fr: Dict = {
     photoPlaceholder: 'photo',
     puzzlePhotoPlaceholder: 'photo du puzzle',
     addPhotoPlaceholder: 'ajouter une photo',
+    rotateTitle: 'Faire pivoter si besoin',
+    useThisPhoto: 'Utiliser cette photo',
   },
   app: {
     authLoading: 'Chargement...',
@@ -837,6 +841,8 @@ const en: Dict = {
     photoPlaceholder: 'photo',
     puzzlePhotoPlaceholder: 'puzzle photo',
     addPhotoPlaceholder: 'add a photo',
+    rotateTitle: 'Rotate if needed',
+    useThisPhoto: 'Use this photo',
   },
   app: {
     authLoading: 'Loading...',

@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import ImageSlot from '../components/ImageSlot';
+import RotatePhotoOverlay from '../components/RotatePhotoOverlay';
 import { useImageStore } from '../hooks/ImageStore';
 import { useImageLightbox } from '../hooks/useImageLightbox';
 import { useLanguage } from '../hooks/useLanguage';
 import { useToast } from '../hooks/useToast';
 import { usePuzzleEanStats } from '../hooks/usePuzzleEanStats';
 import type { DetailSource, Puzzle, WishlistItem } from '../types';
-import { compressImageFile } from '../utils/image';
+import { compressImageFile, type Rotation } from '../utils/image';
 import { dotString, formatDate, formatMinutesAsHours, priorityStyle, ratingLabel, starString, statusStyle } from '../utils/format';
 import { generateShareCardBlob } from '../utils/shareCard';
 import { shareImageBlob } from '../utils/shareImage';
@@ -98,6 +99,7 @@ export default function DetailScreen({
   const communityStats = usePuzzleEanStats(puzzle?.ean ?? '');
   const progressInputRef = useRef<HTMLInputElement>(null);
   const [sharing, setSharing] = useState(false);
+  const [pendingProgressFile, setPendingProgressFile] = useState<File | null>(null);
   const item = source === 'collection' ? puzzle : wishlistItem;
   if (!item) return null;
 
@@ -121,12 +123,19 @@ export default function DetailScreen({
     }
   }
 
-  async function handleAddProgressPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleAddProgressPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = '';
+    if (!file) return;
+    setPendingProgressFile(file);
+  }
+
+  async function handleConfirmProgressPhoto(rotation: Rotation) {
+    const file = pendingProgressFile;
+    setPendingProgressFile(null);
     if (!file || !puzzle) return;
     try {
-      const dataUrl = await compressImageFile(file);
+      const dataUrl = await compressImageFile(file, rotation);
       const photoId = `puzzle-progress-${puzzle.id}-${crypto.randomUUID()}`;
       const saved = await setImage(photoId, dataUrl);
       if (!saved) {
@@ -155,6 +164,7 @@ export default function DetailScreen({
   const imgId = source === 'collection' ? 'puzzle-img-' + item.id : 'wish-img-' + item.id;
 
   return (
+    <>
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)' }}>
       <div style={{ position: 'relative', flexShrink: 0 }}>
         <ImageSlot
@@ -516,5 +526,14 @@ export default function DetailScreen({
         )}
       </div>
     </div>
+
+    {pendingProgressFile && (
+      <RotatePhotoOverlay
+        file={pendingProgressFile}
+        onConfirm={handleConfirmProgressPhoto}
+        onCancel={() => setPendingProgressFile(null)}
+      />
+    )}
+    </>
   );
 }
