@@ -3,6 +3,17 @@ const JPEG_QUALITY = 0.8;
 
 export type Rotation = 0 | 90 | 180 | 270;
 
+/**
+ * Reads a just-picked file into memory right away. Some Android pickers (notably the system
+ * Photo Picker) only grant the app a short-lived read permission on the underlying content://
+ * URI, so waiting until later to read it — e.g. after the user interacts with a rotation UI —
+ * can fail. Capturing the bytes immediately avoids that.
+ */
+export async function readPickedFile(file: File): Promise<File> {
+  const bytes = await file.arrayBuffer();
+  return new File([bytes], file.name, { type: file.type });
+}
+
 /** Accepts any Blob (a File input, or e.g. a fetched remote image). */
 export function compressImageFile(file: Blob, rotation: Rotation = 0): Promise<string> {
   return new Promise((resolve, reject) => {
