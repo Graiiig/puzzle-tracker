@@ -7,7 +7,7 @@ import { useLanguage } from '../hooks/useLanguage';
 import { useToast } from '../hooks/useToast';
 import { usePuzzleEanStats } from '../hooks/usePuzzleEanStats';
 import type { DetailSource, Puzzle, WishlistItem } from '../types';
-import { compressImageFile, type Rotation } from '../utils/image';
+import { compressImageFile, readPickedFile, type Rotation } from '../utils/image';
 import { dotString, formatDate, formatMinutesAsHours, priorityStyle, ratingLabel, starString, statusStyle } from '../utils/format';
 import { generateShareCardBlob } from '../utils/shareCard';
 import { shareImageBlob } from '../utils/shareImage';
@@ -123,11 +123,15 @@ export default function DetailScreen({
     }
   }
 
-  function handleAddProgressPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleAddProgressPhoto(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    setPendingProgressFile(file);
+    try {
+      setPendingProgressFile(await readPickedFile(file));
+    } catch {
+      showToast({ icon: '⚠️', title: t.imageSlot.readError, variant: 'error' });
+    }
   }
 
   async function handleConfirmProgressPhoto(rotation: Rotation) {

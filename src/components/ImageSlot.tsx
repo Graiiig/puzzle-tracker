@@ -4,7 +4,7 @@ import { useImageLightbox } from '../hooks/useImageLightbox';
 import { useLanguage } from '../hooks/useLanguage';
 import { useToast } from '../hooks/useToast';
 import RotatePhotoOverlay from './RotatePhotoOverlay';
-import { compressImageFile, type Rotation } from '../utils/image';
+import { compressImageFile, readPickedFile, type Rotation } from '../utils/image';
 
 interface ImageSlotProps {
   id: string;
@@ -32,11 +32,15 @@ export default function ImageSlot({ id, ownerId, shape = 'rounded', radius = 14,
     ensureLoaded(id, ownerId);
   }, [id, ownerId, ensureLoaded]);
 
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    setPendingFile(file);
+    try {
+      setPendingFile(await readPickedFile(file));
+    } catch {
+      showToast({ icon: '⚠️', title: t.imageSlot.readError, variant: 'error' });
+    }
   }
 
   async function handleConfirmRotate(rotation: Rotation) {
